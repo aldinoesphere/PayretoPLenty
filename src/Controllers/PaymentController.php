@@ -132,14 +132,8 @@ class PaymentController extends Controller
 		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
 		$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
 
-		$ccSettings = explode(',', $this->paymentService->getPaymentSettings('credit-card'));
-		$cardType = '';
-
-		if (is_array($ccSettings['cardType'])) {
-			$cardType = implode(' ', $ccSettings['cardType']);
-		} else {
-			$cardType = $ccSettings['cardType'];
-		}
+		$ccSettings = $this->paymentService->getPaymentSettings('credit-card');
+		$cardType = str_replace(',', ' ', $ccSettings['cardType'])
 		
 		$data = [
 			'cardType' => $cardType,
