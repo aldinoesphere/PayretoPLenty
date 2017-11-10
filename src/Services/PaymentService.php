@@ -180,20 +180,15 @@ class PaymentService
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		
+		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		
 		$parameters = array_merge(
 			$this->getCredentials(),
 			$this->getTransactionParameters($basket),
 			$this->getCcParameters($paymentMethod)
 		);
-		// $parameters = [
-		// 	'authentication.userId' => $payretoSettings['userId'],
-		// 	'authentication.password' => $payretoSettings['password'],
-		// 	'authentication.entityId' => $ccSettings['entityId'],
-		// 	'amount' => $basket->basketAmount,
-		// 	'currency' => $basket->currency,
-		// 	'paymentType' => $ccSettings['transactionMode']
-		// ];
+
+		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 
 		try
 		{
@@ -207,8 +202,6 @@ class PaymentService
 				'content' => 'An error occurred while processing your transaction. Please contact our support.'
 			];
 		}
-
-		$this->getLogger(__METHOD__)->error('Payreto:parameters', $checkoutId);
 		$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
 
 		return [
