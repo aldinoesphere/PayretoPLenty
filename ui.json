@@ -12,7 +12,7 @@
                         "label": "Credit Card",
                         "menu": "settings/orders/payreto",
                         "urlKey": "credit-card",
-                        "entryPoint": "../../../../../payreto/settings/credit-card"
+                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ACC"
                     },
                     {
                         "label": "Credit Card (Recurring)",
@@ -60,7 +60,7 @@
                         "label": "Easy Credit",
                         "menu": "settings/orders/payreto",
                         "urlKey": "easy-credit",
-                        "entryPoint": "../../../../../payreto/settings/easy-credit"
+                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ECP"
                     }
     ]
 }

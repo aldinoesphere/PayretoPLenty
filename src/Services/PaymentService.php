@@ -185,14 +185,12 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials(),
 			$this->getTransactionParameters($basket),
-			$this->getCcParameters($paymentMethod)
+			$this->getCcParameters($paymentMethod),
+			$this->getServerToServerParameters($basket, $PaymentMethod)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-		$this->getLogger(__METHOD__)->error('Payreto:getBillingAddress', $this->getBillingAddress($basket));
-		$this->getLogger(__METHOD__)->error('Payreto:getBillingCountryCode', $this->getBillingCountryCode($basket->customerInvoiceAddressId));
-		$this->getLogger(__METHOD__)->error('Payreto:getShippingAddress', $this->getShippingAddress($basket));
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $this->getBasketItems($basket));
+		$this->getLogger(__METHOD__)->error('Payreto:Items', $this->itemRepository->findItemById($basket->itemId));
 
 		try
 		{
@@ -201,6 +199,7 @@ class PaymentService
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
 			} else {
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse;
 			}
 		}
@@ -219,6 +218,11 @@ class PaymentService
 		];
 	}
 
+	/**
+	 * Get the Credential payment
+	 *
+	 * @return array
+	 */
 	public function getCredentials() {
 		$payretoSettings = $this->getPayretoSettings();
 		$credentials = [
@@ -229,19 +233,109 @@ class PaymentService
 		return $credentials;
 	}
 
+	/**
+	 * Get the Credit Card Parameters payment
+	 *
+	 * @param class PaymentMethod
+	 * @return array|null
+	 */
 	public function getCcParameters(PaymentMethod $paymentMethod) 
 	{
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 
-		$ccSettings = $this->getPaymentSettings('credit-card');
-		$ccParameters = [
-			'authentication.entityId' => $ccSettings['entityId'],
-			'paymentType' => $ccSettings['transactionMode']
-		];
+		$ccParameters = '';
+
+		if ($paymentMethod->paymentKey != 'PAYRETO_ACC') {
+			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+			$ccParameters = [
+				'authentication.entityId' => $ccSettings['entityId'],
+				'paymentType' => $ccSettings['transactionMode']
+			];
+		}
 
 		return $ccParameters;
 	}
 
+	/**
+	 * Get the Server To Server Parameters paymen
+	 *
+	 * @param Basket $basket
+	 * @param PaymentMethod $paymentMethod
+	 * @return array|null
+	 */
+	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
+	{
+
+		$ccParameters = '';
+
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+			$ccParameters =array_merge( 
+					[
+						'authentication.entityId' => $ccSettings['entityId'],
+						'paymentType' => $ccSettings['transactionMode'],
+						'shopperResultUrl' => $this->paymentHelper->getDomain() . 'checkout',
+						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>0,
+						'customParameters[RISK_ANZAHLPRODUKTEIMWARENKORB]' =>1,
+						'customParameters[RISK_KUNDENSTATUS]' => 'NEUKUNDE',
+						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
+						'customParameters[RISK_NEGATIVEZAHLUNGSINFORMATION]' => 'KEINE_ZAHLUNGSSTOERUNGEN',
+						'customParameters[RISK_RISIKOARTIKELIMWARENKORB]' => false,
+						'testMode' => 'EXTERNAL'
+					],
+					$this->getBillingParameters($basket),
+					$this->getShippingParameters($basket),
+					$this->getChartParameters()
+				);
+		}
+
+		return $ccParameters;
+	}
+
+	public function getShippingParameters($basket) 
+	{
+		$shippings = $this->getShippingAddress($basket);
+		$shippingParameters = [
+			'shipping.city' => $shippings->town,
+			'shipping.country' => 'DE',
+			'shipping.street1' => $shippings->address1,
+			'shipping.postcode' => $shippings->postalCode
+		];
+
+		return $shippingParameters;
+	}
+
+	public function getChartParameters() 
+	{
+		$chartParameters = [
+			'cart.items[0].name' => 'Product 1',
+			'cart.items[0].type' => 'basic',
+			'cart.items[0].price' => 19.00,
+			'cart.items[0].currency' => 'EUR',
+			'cart.items[0].quantity' => 1,
+			'cart.items[0].merchantItemId' => 1
+		];
+
+		return $chartParameters;
+	}
+
+	public function getBillingParameters($basket) 
+	{
+		$billings = $this->getBillingAddress($basket);
+		$billingParameters = [
+			'billing.city' => $billings->town,
+			'billing.country' => 'DE',
+			'billing.postcode' => $billings->postalCode
+		];
+
+		return $billingParameters;
+	}
+
+	/**
+	 * Get the Transaction Parameters payment
+	 *
+	 * @param class Basket
+	 * @return array
+	 */
 	public function getTransactionParameters(Basket $basket)
 	{
 		$transactionParameters = [];
