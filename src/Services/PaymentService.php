@@ -186,11 +186,11 @@ class PaymentService
 			$this->getCredentials(),
 			$this->getTransactionParameters($basket),
 			$this->getCcParameters($paymentMethod),
-			$this->getServerToServerParameters($basket, $PaymentMethod)
+			$this->getServerToServerParameters($basket, $paymentMethod)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-		$this->getLogger(__METHOD__)->error('Payreto:Items', $this->itemRepository->findItemById($basket->itemId));
+		$this->getLogger(__METHOD__)->error('Payreto:Items', $this->itemRepository);
 
 		try
 		{
