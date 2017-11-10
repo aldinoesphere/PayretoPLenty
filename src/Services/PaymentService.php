@@ -184,15 +184,26 @@ class PaymentService
 		
 		$parameters = array_merge(
 			$this->getCredentials(),
-			$this->getTransactionParameters($basket),
-			$this->getCcParameters($paymentMethod)
+			$this->getTransactionParameters(),
+			$this->getCcParameters()
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
+		$this->getLogger(__METHOD__)->error('Payreto:getBillingAddress', $this->getBillingAddress());
+		$this->getLogger(__METHOD__)->error('Payreto:getBillingCountryCode', $this->getBillingCountryCode());
+		$this->getLogger(__METHOD__)->error('Payreto:getShippingAddress', $this->getShippingAddress());
+		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $this->getBasketItems());
+		$this->getLogger(__METHOD__)->error('Payreto:getBasketItemName', $this->getBasketItemName());
 
 		try
 		{
-			$checkoutId = $this->gatewayService->getCheckoutId($parameters);
+			if ($paymentMethod->paymentKey != 'PAYRETO_ECP') {
+				$checkoutId = $this->gatewayService->getCheckoutId($parameters);
+				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
+			} else {
+				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+				$paymentPageUrl = $paymentResponse;
+			}
 		}
 		catch (\Exception $e)
 		{
@@ -202,7 +213,6 @@ class PaymentService
 				'content' => 'An error occurred while processing your transaction. Please contact our support.'
 			];
 		}
-		$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
 
 		return [
 			'type' => GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL,
@@ -220,7 +230,7 @@ class PaymentService
 		return $credentials;
 	}
 
-	public function getCcParameters($paymentMethod) 
+	public function getCcParameters(PaymentMethod $paymentMethod) 
 	{
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 
@@ -233,7 +243,7 @@ class PaymentService
 		return $ccParameters;
 	}
 
-	public function getTransactionParameters($basket)
+	public function getTransactionParameters(Basket $basket)
 	{
 		$transactionParameters = [];
 		$transactionParameters = [
@@ -413,52 +423,7 @@ class PaymentService
 		];
 	}
 
-	/**
-	 * send get currenty payment status to the gateway with transaction_id and returns error or success.
-	 *
-	 * @param string $transactionId
-	 * @param Order $order
-	 */
-	public function updateOrderStatus($transactionId, Order $order)
-	{
-		try {
-			// $skrillSettings = $this->getSkrillSettings();
-			// $parameters['email'] = $skrillSettings['merchantAccount'];
-			// $parameters['password'] = md5($skrillSettings['apiPassword']);
-			// $parameters['trn_id'] = $transactionId;
-
-			// $parametersLog = $parameters;
-			// $parametersLog['password'] = '*****';
-
-			// $this->getLogger(__METHOD__)->error('Skrill:parametersLog', $parametersLog);
-
-			// $response = $this->gatewayService->getPaymentStatus($parameters);
-			$response = '';
-
-			// $this->getLogger(__METHOD__)->error('Skrill:response', $response);
-		}
-		catch (\Exception $e)
-		{
-			$this->getLogger(__METHOD__)->error('Payreto:updateOrderStatusFailed', $e->getMessage());
-
-			// $this->orderRepository->updateOrder(['statusId' => 3], $order->id);
-
-			return [
-				'error' => true,
-				'errorMessage' => $e->getMessage()
-			];
-		}
-
-		if ($response['status'] != '2')
-		{
-			// $this->orderRepository->updateOrder(['statusId' => 3], $order->id);
-		}
-
-		return [
-			'success' => true,
-			'response' => $response
-		];
-	}
+	
 
 }
 

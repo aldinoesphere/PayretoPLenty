@@ -92,6 +92,27 @@ class GatewayService
 	 * @throws \Exception
 	 * @return string
 	 */
+	public function getServerToServer($parameters)
+	{
+		$checkoutUrl = $this->oppwaUrl . 'payments';
+		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
+
+		if (!$response)
+		{
+			throw new \Exception('Sid is not valid : ' . $response);
+		}
+
+		$response = json_decode($response, true);
+		return $response;
+	}
+
+	/**
+	 * Get Sid from gateway to use at payment page url
+	 *
+	 * @param array $parameters
+	 * @throws \Exception
+	 * @return array
+	 */
 	public function paymentConfirmation($checkoutId, $parameters)
 	{
 		$confirmationUrl = $this->oppwaUrl . 'checkouts/' . $checkoutId . '/payment';
@@ -104,8 +125,8 @@ class GatewayService
 			throw new \Exception('Sid is not valid : ' . $response);
 		}
 
-		$responseId = json_decode($response, true);
-		return $responseId;
+		$response = json_decode($response, true);
+		return $response;
 	}
 
 	/**
