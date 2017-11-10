@@ -283,6 +283,7 @@ class PaymentService
 						'customParameters[RISK_RISIKOARTIKELIMWARENKORB]' => false,
 						'testMode' => 'EXTERNAL'
 					],
+					$this->getCustomerParameters(),
 					$this->getBillingParameters($basket),
 					$this->getShippingParameters($basket),
 					$this->getChartParameters()
@@ -290,6 +291,20 @@ class PaymentService
 		}
 
 		return $ccParameters;
+	}
+
+	public function getCustomerParameters() 
+	{
+		$customerParameters = [
+			'customer.email' => 'test@test.com',
+			'customer.sex' => 'F',
+			'customer.phone' => '+4915111111111',
+			'customer.surname' => 'Jones',
+			'customer.birthDate' => '1980-01-01',
+			'customer.givenName' => 'Jane'
+		];
+
+		return $customerParameters;
 	}
 
 	public function getShippingParameters($basket) 
