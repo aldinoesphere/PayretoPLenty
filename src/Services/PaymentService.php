@@ -272,7 +272,8 @@ class PaymentService
 			$ccParameters =array_merge( 
 					[
 						'authentication.entityId' => $ccSettings['entityId'],
-						'paymentType' => $ccSettings['transactionMode'],
+						'paymentType' => 'PA',
+						'paymentBrand' => 'RATENKAUF',
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . 'checkout',
 						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>0,
 						'customParameters[RISK_ANZAHLPRODUKTEIMWARENKORB]' =>1,
