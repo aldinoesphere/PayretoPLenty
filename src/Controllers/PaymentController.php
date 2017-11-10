@@ -134,13 +134,8 @@ class PaymentController extends Controller
 
 		$ccSettings = $this->paymentService->getPaymentSettings('credit-card');
 		$cardType = '';
-		$this->getLogger(__METHOD__)->error('Payreto:ccSettings', $ccSettings['cardType']);
 
-		if (is_array($ccSettings['cardType'])) {
-			$cardType = implode(' ', $ccSettings['cardType']);
-		} else {
-			$cardType = $ccSettings['cardType'];
-		}
+		$cardType = str_ireplace(',', ' ', $ccSettings['cardType']);
 		
 		$data = [
 			'cardType' => $cardType,
