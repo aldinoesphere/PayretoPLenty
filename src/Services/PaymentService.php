@@ -278,7 +278,7 @@ class PaymentService
 						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>13,
 						'customParameters[RISK_KUNDENSTATUS]' => 'BESTANDSKUNDE',
 						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
-						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => true
+						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => true,
 						'testMode' => 'EXTERNAL'
 					],
 					$this->getCustomerParameters(),
