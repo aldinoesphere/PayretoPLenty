@@ -180,7 +180,7 @@ class PaymentService
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod->paymentKey);
 		
 		$parameters = array_merge(
 			$this->getCredentials(),
