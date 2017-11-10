@@ -122,7 +122,7 @@ img {
 					<label for="Shop Url">Shop Url</label>
 					<input type="text" class="input-text" name="shopUrl" value="{{ setting.shopUrl }}"/>
 				</div>
-			{% elseif settingType == 'credit-card' %}
+			{% elseif settingType == 'PAYRETO_ACC' %}
 				<div>
 					<label for="Enabled">Language *</label>
 					<select name="language" value="{{ setting.language }}">
@@ -165,7 +165,7 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
-			{% elseif settingType == 'easy-credit'  %}
+			{% elseif settingType == 'PAYRETO_ECP'  %}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">
