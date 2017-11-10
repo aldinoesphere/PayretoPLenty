@@ -81,6 +81,7 @@ class PayretoServiceProvider extends ServiceProvider
 		$eventDispatcher->listen(
 						GetPaymentMethodContent::class,
 						function (GetPaymentMethodContent $event) use ($paymentHelper, $basket, $paymentService, $paymentMethodService) {
+							$this->getLogger(__METHOD__)->error('Payreto:Event', $event);
 							if ($paymentHelper->isPayretoPaymentMopId($event->getMop()))
 							{
 								$content = $paymentService->getPaymentContent(
