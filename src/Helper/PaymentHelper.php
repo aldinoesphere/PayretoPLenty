@@ -240,7 +240,7 @@ class PaymentHelper
 	 */
 	public function isPayretoPaymentMopId($mopId)
 	{
-		$paymentMethods = $this->paymentMethodRepository->allForPlugin('PlentyPayreto');
+		$paymentMethods = $this->paymentMethodRepository->allForPlugin('Payreto');
 		
 		$this->getLogger(__METHOD__)->error('Payreto:isPayretoPaymentMopId', $paymentMethods);
 
