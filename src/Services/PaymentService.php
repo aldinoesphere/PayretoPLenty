@@ -279,6 +279,7 @@ class PaymentService
 						'customParameters[RISK_ANZAHLPRODUKTEIMWARENKORB]' =>1,
 						'customParameters[RISK_KUNDENSTATUS]' => 'NEUKUNDE',
 						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
+						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => true,
 						'customParameters[RISK_NEGATIVEZAHLUNGSINFORMATION]' => 'KEINE_ZAHLUNGSSTOERUNGEN',
 						'customParameters[RISK_RISIKOARTIKELIMWARENKORB]' => false,
 						'testMode' => 'EXTERNAL'
