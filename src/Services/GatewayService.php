@@ -1,11 +1,11 @@
 <?php
-namespace PmPay\Services;
+namespace Payreto\Services;
 
 use Plenty\Plugin\Log\Loggable;
 
 /**
 * Class GatewayService
-* @package PmPay\Services
+* @package Payreto\Services
 */
 class GatewayService
 {
