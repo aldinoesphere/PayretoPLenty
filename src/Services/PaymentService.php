@@ -275,13 +275,10 @@ class PaymentService
 						'paymentType' => 'PA',
 						'paymentBrand' => 'RATENKAUF',
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . 'checkout',
-						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>0,
-						'customParameters[RISK_ANZAHLPRODUKTEIMWARENKORB]' =>1,
-						'customParameters[RISK_KUNDENSTATUS]' => 'NEUKUNDE',
+						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>13,
+						'customParameters[RISK_KUNDENSTATUS]' => 'BESTANDSKUNDE',
 						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
-						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => true,
-						'customParameters[RISK_NEGATIVEZAHLUNGSINFORMATION]' => 'KEINE_ZAHLUNGSSTOERUNGEN',
-						'customParameters[RISK_RISIKOARTIKELIMWARENKORB]' => false,
+						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => true
 						'testMode' => 'EXTERNAL'
 					],
 					$this->getCustomerParameters(),
