@@ -340,6 +340,7 @@ class PaymentService
 		$billingParameters = [
 			'billing.city' => $billings->town,
 			'billing.country' => 'DE',
+			'billing.street1' => $billings->address1,
 			'billing.postcode' => $billings->postalCode
 		];
 
