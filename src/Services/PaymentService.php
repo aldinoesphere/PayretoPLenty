@@ -296,7 +296,7 @@ class PaymentService
 	public function getCustomerParameters() 
 	{
 		$customerParameters = [
-			'customer.email' => 'test@test.com',
+			'customer.email' => 'aldino.said@esphere.id',
 			'customer.sex' => 'F',
 			'customer.phone' => '+4915111111111',
 			'customer.surname' => 'Jones',
