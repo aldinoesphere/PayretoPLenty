@@ -163,7 +163,7 @@ class SettingsController extends Controller
 						);
 				break;
 
-			case 'credit-card':
+			case 'PAYRETO_ACC':
 				$settings['settings'][0]['PID_'.$plentyId] = array(
 							'language' => $this->request->get('language'),
 							'display' => $this->request->get('display'),
@@ -173,7 +173,7 @@ class SettingsController extends Controller
 						);		
 				break;
 
-			case 'easy-credit':
+			case 'PAYRETO_ECP':
 				$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
 							'display' => $this->request->get('display'),
