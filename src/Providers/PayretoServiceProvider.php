@@ -21,7 +21,12 @@ use Plenty\Plugin\Log\Loggable;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Methods\AccPaymentMethod;
+use Payreto\Methods\EcpPaymentMethod;
+use Payreto\Methods\DdsPaymentMethod;
 use Payreto\Methods\AecPaymentMethod;
+use Payreto\Methods\AdbPaymentMethod;
+use Payreto\Methods\PdrPaymentMethod;
+use Payreto\Methods\GrpPaymentMethod;
  
 class PayretoServiceProvider extends ServiceProvider
 {
@@ -44,9 +49,9 @@ class PayretoServiceProvider extends ServiceProvider
     ) {
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC', AccPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ECP', EcpPaymentMethod::class);
-    	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS', AccPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS', DdsPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM', AecPaymentMethod::class);
-    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ADB', AccPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ADB', AdbPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PDR', PdrPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_GRP', GrpPaymentMethod::class);
 
