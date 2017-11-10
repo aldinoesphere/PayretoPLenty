@@ -184,16 +184,15 @@ class PaymentService
 		
 		$parameters = array_merge(
 			$this->getCredentials(),
-			$this->getTransactionParameters(),
-			$this->getCcParameters()
+			$this->getTransactionParameters($basket),
+			$this->getCcParameters($paymentMethod)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-		$this->getLogger(__METHOD__)->error('Payreto:getBillingAddress', $this->getBillingAddress());
-		$this->getLogger(__METHOD__)->error('Payreto:getBillingCountryCode', $this->getBillingCountryCode());
-		$this->getLogger(__METHOD__)->error('Payreto:getShippingAddress', $this->getShippingAddress());
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $this->getBasketItems());
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItemName', $this->getBasketItemName());
+		$this->getLogger(__METHOD__)->error('Payreto:getBillingAddress', $this->getBillingAddress($basket));
+		$this->getLogger(__METHOD__)->error('Payreto:getBillingCountryCode', $this->getBillingCountryCode($basket->customerInvoiceAddressId));
+		$this->getLogger(__METHOD__)->error('Payreto:getShippingAddress', $this->getShippingAddress($basket));
+		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $this->getBasketItems($basket));
 
 		try
 		{
