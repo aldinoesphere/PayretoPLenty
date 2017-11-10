@@ -133,7 +133,7 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
 
 		$ccSettings = $this->paymentService->getPaymentSettings('credit-card');
-		$cardType = str_replace(',', ' ', $ccSettings['cardType'])
+		$cardType = str_replace(',', ' ', $ccSettings['cardType']);
 		
 		$data = [
 			'cardType' => $cardType,
