@@ -115,9 +115,9 @@ class PaymentController extends Controller
 
 		$orderId = $orderData->order->id;
 
-		$validation = $this->handleValidation($checkoutId, $orderId);
+		$validation = $this->handleValidation($checkoutId, $orderData);
 
-		$this->getLogger(__METHOD__)->error('Payreto:orderId', $orderId);
+		$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
 
 		$basketItems = $this->basketItemRepository->all();
 
@@ -157,9 +157,10 @@ class PaymentController extends Controller
 	/**
 	 * handle validation payment
 	 */
-	public function handleValidation($checkoutId, $orderId)
+	public function handleValidation($checkoutId, $orderData)
 	{
 		$paymentData = [];
+		$orderId = $orderData->order->id;
 
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 		
@@ -201,22 +202,11 @@ class PaymentController extends Controller
 		return $Basket->getBasket();
 	}
 
-	public function handleConfirmation(Twig $twig, $orderId) 
+	public function handleConfirmation(Twig $twig, $checkoutId) 
 	{
 		$orderContract = $this->orderContract;
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
 		// $shippingProviders = $this->paymentHelper->getShippingServiceProviderById($this->getBasket()->shippingProviderId);
-
-		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
-        $authHelper = pluginApp(AuthHelper::class);
-
-        //guarded
-        $order = $authHelper->processUnguarded(
-            function () use ($orderContract, $orderId) {
-                //unguarded
-                return $orderContract->findOrderById($orderId);
-            }
-        );
 
         $data = [
         	'data' => [
@@ -225,7 +215,8 @@ class PaymentController extends Controller
         			'deliveryAddress' => $this->paymentService->getShippingAddress($this->getBasket())
         		],
         		'paymentMethodName' => $paymentMethod->name
-        	]
+        	],
+        	'checkoutId' => $checkoutId
         ];
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
