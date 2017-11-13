@@ -200,7 +200,7 @@ class PaymentService
 			} else {
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-				$paymentPageUrl = $paymentResponse;
+				$paymentPageUrl = $paymentResponse['redirect']['url'];
 			}
 		}
 		catch (\Exception $e)
