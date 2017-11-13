@@ -224,7 +224,7 @@ class PaymentController extends Controller
         			'billingAddress' => $this->paymentService->getBillingAddress($this->getBasket()),
         			'deliveryAddress' => $this->paymentService->getShippingAddress($this->getBasket())
         		],
-        		'paymentMethodName' => $paymentMethodName->name
+        		'paymentMethodName' => $paymentMethod->name
         	]
         ];
 
