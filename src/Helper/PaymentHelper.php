@@ -8,6 +8,7 @@ use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Plenty\Modules\Payment\Contracts\PaymentPropertyRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
+use Plenty\Modules\Order\Shipping\ServiceProvider\Contracts\ShippingServiceProviderRepositoryContract;
 use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
@@ -44,13 +45,20 @@ class PaymentHelper
 	 * @var OrderRepositoryContract
 	 */
 	private $orderRepository;
+
+	/**
+	 *
+	 * @var shippingServiceProviders
+	 */
+	private $shippingServiceProviders;
 	
 	public function __construct(
 		PaymentMethodRepositoryContract $paymentMethodRepository,
 		PaymentRepositoryContract $paymentRepository,
 		PaymentPropertyRepositoryContract $paymentPropertyRepository,
 		PaymentOrderRelationRepositoryContract $paymentOrderRelationRepository,
-		OrderRepositoryContract $orderRepository
+		OrderRepositoryContract $orderRepository,
+		ShippingServiceProviderRepositoryContract $shippingServiceProviders
 	)
 	{
 		$this->paymentMethodRepository          = $paymentMethodRepository;
@@ -58,6 +66,7 @@ class PaymentHelper
 		$this->paymentRepository                = $paymentRepository;
 		$this->paymentPropertyRepository        = $paymentPropertyRepository;
 		$this->orderRepository                  = $orderRepository;
+		$this->shippingServiceProviders 		= $shippingServiceProviders;
 	}
 
 	/**
@@ -138,6 +147,10 @@ class PaymentHelper
 		$this->getLogger(__METHOD__)->error('Payreto:domain', $domain);
 
 		return $domain;
+	}
+
+	public function getShippingServiceProviderById($shippingServiceProviderId) {
+		return $this->shippingServiceProviders->find($shippingServiceProviderId);
 	}
 
 	public function getPaymentMethodByPaymentKey($paymentKey)

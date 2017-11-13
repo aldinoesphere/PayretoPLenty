@@ -195,12 +195,17 @@ class PaymentController extends Controller
 		}
 	}
 
+	public function getBasket()
+	{
+		$Basket = pluginApp(AfterBasketChanged::class);
+		return $Basket->getBasket();
+	}
+
 	public function handleConfirmation(Twig $twig, $orderId) 
 	{
-		$basket = pluginApp(AfterBasketChanged::class);
 		$orderContract = $this->orderContract;
-
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->getBasket()->methodOfPaymentId);
+		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
+		$shippingProviders = $this->paymentHelper->getShippingServiceProviderById($this->getBasket()->shippingProviderId);
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
         $authHelper = pluginApp(AuthHelper::class);
@@ -216,15 +221,17 @@ class PaymentController extends Controller
         $data = [
         	'data' => [
         		'order' => [
-        			'billingAddress' => $this->paymentService->getBillingAddress($basket->getBasket()),
-        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket->getBasket())
-        		]
+        			'billingAddress' => $this->paymentService->getBillingAddress($this->getBasket()),
+        			'deliveryAddress' => $this->paymentService->getShippingAddress($this->getBasket())
+        		],
+        		'paymentMethodName' => $paymentMethodName->name
         	]
         ];
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
+		$this->getLogger(__METHOD__)->error('Payreto:shippingProviders', $shippingProviders);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
 	}
