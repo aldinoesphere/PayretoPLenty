@@ -9,6 +9,7 @@ use Plenty\Modules\Basket\Events\Basket\AfterBasketChanged;
 use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
+use Plenty\Modules\Payment\Contracts\PaymentPropertyTypeRepositoryContract;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
@@ -198,6 +199,7 @@ class PaymentController extends Controller
 	public function handleConfirmation(Twig $twig, $orderId) 
 	{
 		$basket = pluginApp(AfterBasketChanged::class);
+		$paymentMethods = pluginApp(PaymentPropertyTypeRepositoryContract::class);
 		$orderContract = $this->orderContract;
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
@@ -222,6 +224,7 @@ class PaymentController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentMethods', $paymentMethods->findTypesById($basket->getBasket()->methodOfPaymentId));
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
 	}
