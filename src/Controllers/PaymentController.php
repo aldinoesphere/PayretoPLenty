@@ -75,12 +75,6 @@ class PaymentController extends Controller
 	private $paymentService;
 
 	/**
-	 *
-	 * @var paymentService
-	 */
-	private $basketItem;
-
-	/**
 	 * PaymentController constructor.
 	 *
 	 * @param Request $request
@@ -96,7 +90,6 @@ class PaymentController extends Controller
 					GatewayService $gatewayService,
 					PaymentHelper $paymentHelper,
 					OrderService $orderService,
-					BasketItem $basketItem,
 					OrderRepositoryContract $orderContract,
 					PaymentService $paymentService
 	) {
@@ -205,7 +198,7 @@ class PaymentController extends Controller
 
 	public function handleConfirmation(Twig $twig, $basketId) 
 	{
-		$basketItems = $this->basketItem->getBasketItem();
+		$basketItems = pluginApp(BasketItem::class);;
 		$orderContract = $this->orderContract;
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
@@ -219,7 +212,7 @@ class PaymentController extends Controller
             }
         );
 
-		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
+		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems->getBasketItem());
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation');
