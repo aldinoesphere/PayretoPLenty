@@ -205,7 +205,7 @@ class PaymentController extends Controller
 	{
 		$orderContract = $this->orderContract;
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
-		// $shippingProviders = $this->paymentHelper->getShippingServiceProviderById($this->getBasket()->shippingProviderId);
+		$shippingProviders = $this->paymentHelper->getShippingServiceProviderById($this->getBasket()->shippingProviderId);
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
         $authHelper = pluginApp(AuthHelper::class);

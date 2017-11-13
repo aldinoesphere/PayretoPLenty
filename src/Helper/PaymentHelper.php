@@ -150,7 +150,10 @@ class PaymentHelper
 	}
 
 	public function getShippingServiceProviderById($shippingServiceProviderId) {
-		return $this->shippingServiceProviders->find($shippingServiceProviderId);
+		$this->getLogger(__METHOD__)->error('Payreto:shippingServiceProviderId', $shippingServiceProviderId);
+		$shippingServiceProviders = $this->shippingServiceProviders->find($shippingServiceProviderId);
+		$this->getLogger(__METHOD__)->error('Payreto:shippingServiceProviders', $shippingServiceProviders);
+		return $shippingServiceProviders;
 	}
 
 	public function getPaymentMethodByPaymentKey($paymentKey)
