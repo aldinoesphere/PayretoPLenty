@@ -187,6 +187,11 @@ class PaymentController extends Controller
 
 	public function handleConfirmation(Twig $twig, $transactionId) 
 	{
+		$orderData = $this->orderService->placeOrder();
+		$basketItems = $this->basketItemRepository->all();
+		$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
+
 		return $twig->render('Payreto::Payment.PaymentConfirmation');
 	}
 
