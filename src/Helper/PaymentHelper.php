@@ -150,7 +150,7 @@ class PaymentHelper
 	}
 
 	public function getShippingServiceProviderById($shippingServiceProviderId) {
-		return $this->shippingServiceProviders->find($shippingServiceProviderId);
+		return $this->shippingServiceProviders->find(int $shippingServiceProviderId);
 	}
 
 	public function getPaymentMethodByPaymentKey($paymentKey)
