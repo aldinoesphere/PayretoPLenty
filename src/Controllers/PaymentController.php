@@ -214,13 +214,13 @@ class PaymentController extends Controller
         $data = [
         	'orderData' => [
         		'order' => [
-        			'billingAddress' => $this->paymentService->getBillingAddress($basket),
-        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket)
+        			'billingAddress' => $this->paymentService->getBillingAddress($basket->getBasket()),
+        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket->getBasket())
         		]
         	]
         ];
 
-		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $data);
+		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
