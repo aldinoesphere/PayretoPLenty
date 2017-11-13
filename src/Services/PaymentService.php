@@ -190,7 +190,7 @@ class PaymentService
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
-		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
+		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
 
 		try
 		{
