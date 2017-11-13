@@ -274,7 +274,7 @@ class PaymentService
 						'authentication.entityId' => $ccSettings['entityId'],
 						'paymentType' => 'PA',
 						'paymentBrand' => 'RATENKAUF',
-						'shopperResultUrl' => $this->paymentHelper->getDomain() . 'checkout',
+						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/checkout',
 						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>13,
 						'customParameters[RISK_KUNDENSTATUS]' => 'BESTANDSKUNDE',
 						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
