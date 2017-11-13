@@ -216,10 +216,10 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
-        	'checkoutId' => $id
+        	'checkoutId' => $this->request->get('id')
         ];
 
-		$this->getLogger(__METHOD__)->error('Payreto:data', $this->request->all());
+		$this->getLogger(__METHOD__)->error('Payreto:data', $this->request->get('id'));
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		$this->getLogger(__METHOD__)->error('Payreto:shippingProviders', $shippingProviders);
