@@ -223,7 +223,7 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
-		return $twig->render('Payreto::Payment.PaymentConfirmation', json_encode($data));
+		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
 	}
 
 }
