@@ -197,7 +197,7 @@ class PaymentController extends Controller
 
 	public function handleConfirmation(Twig $twig, $orderId) 
 	{
-		$basketItems = pluginApp(AfterBasketChanged::class);;
+		$basket = pluginApp(AfterBasketChanged::class);
 		$orderContract = $this->orderContract;
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
@@ -211,10 +211,19 @@ class PaymentController extends Controller
             }
         );
 
+        $data = [
+        	'orderData' => [
+        		'order' => [
+        			'billingAddress' => $this->paymentService->getBillingAddress($basket),
+        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket)
+        		]
+        	]
+        ];
+
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems->getBasket());
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
-		return $twig->render('Payreto::Payment.PaymentConfirmation');
+		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
 	}
 
 }
