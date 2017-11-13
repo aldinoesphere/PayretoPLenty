@@ -5,6 +5,7 @@ namespace Payreto\Controllers;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
 use Plenty\Plugin\Http\Response;
+use Plenty\Modules\Basket\Events\BasketItem;
 use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
@@ -74,6 +75,12 @@ class PaymentController extends Controller
 	private $paymentService;
 
 	/**
+	 *
+	 * @var paymentService
+	 */
+	private $basketItem;
+
+	/**
 	 * PaymentController constructor.
 	 *
 	 * @param Request $request
@@ -89,6 +96,7 @@ class PaymentController extends Controller
 					GatewayService $gatewayService,
 					PaymentHelper $paymentHelper,
 					OrderService $orderService,
+					BasketItem $basketItem,
 					OrderRepositoryContract $orderContract,
 					PaymentService $paymentService
 	) {
@@ -99,6 +107,7 @@ class PaymentController extends Controller
 		$this->gatewayService = $gatewayService;
 		$this->paymentHelper = $paymentHelper;
 		$this->orderService = $orderService;
+		$this->basketItem = $basketItem;
 		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
 	}
@@ -194,11 +203,11 @@ class PaymentController extends Controller
 		}
 	}
 
-	public function handleConfirmation(Twig $twig, $orderId) 
+	public function handleConfirmation(Twig $twig, $basketId) 
 	{
-		$basketItems = $this->basketItemRepository->all();
+		$basketItems = $this->basketItem->getBasketItem();
 		$orderContract = $this->orderContract;
-		
+
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
         $authHelper = pluginApp(AuthHelper::class);
 
