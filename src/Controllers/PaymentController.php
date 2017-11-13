@@ -220,7 +220,7 @@ class PaymentController extends Controller
         	]
         ];
 
-		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems->getBasket());
+		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);

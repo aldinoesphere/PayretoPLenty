@@ -368,7 +368,7 @@ class PaymentService
 	 * @param Basket $basket
 	 * @return Address
 	 */
-	private function getBillingAddress(Basket $basket)
+	public function getBillingAddress(Basket $basket)
 	{
 		$addressId = $basket->customerInvoiceAddressId;
 		return $this->addressRepository->findAddressById($addressId);
@@ -392,7 +392,7 @@ class PaymentService
 	 * @param Basket $basket
 	 * @return Address
 	 */
-	private function getShippingAddress(Basket $basket)
+	public function getShippingAddress(Basket $basket)
 	{
 		$addressId = $basket->customerShippingAddressId;
 		if ($addressId != null && $addressId != - 99)
