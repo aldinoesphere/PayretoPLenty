@@ -149,8 +149,8 @@ class PaymentHelper
 		return $domain;
 	}
 
-	public function getShippingServiceProviderById($shippingServiceProviderId) {
-		return $this->shippingServiceProviders->find(int $shippingServiceProviderId);
+	public function getShippingServiceProviderById((int) $shippingServiceProviderId) {
+		return $this->shippingServiceProviders->find($shippingServiceProviderId);
 	}
 
 	public function getPaymentMethodByPaymentKey($paymentKey)
