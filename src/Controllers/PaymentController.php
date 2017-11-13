@@ -202,7 +202,7 @@ class PaymentController extends Controller
 		return $Basket->getBasket();
 	}
 
-	public function handleConfirmation(Twig $twig, $checkoutId) 
+	public function handleConfirmation(Twig $twig, $id) 
 	{
 		$orderContract = $this->orderContract;
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
@@ -216,7 +216,7 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
-        	'checkoutId' => $checkoutId
+        	'checkoutId' => $id
         ];
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
