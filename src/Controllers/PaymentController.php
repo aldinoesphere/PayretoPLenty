@@ -5,7 +5,7 @@ namespace Payreto\Controllers;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
 use Plenty\Plugin\Http\Response;
-use Plenty\Modules\Basket\Events\BasketItem;
+use Plenty\Modules\Basket\Events\BasketItem\AfterBasketItemAdd;
 use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
@@ -197,7 +197,7 @@ class PaymentController extends Controller
 
 	public function handleConfirmation(Twig $twig, $basketId) 
 	{
-		$basketItems = pluginApp(BasketItem::class);;
+		$basketItems = pluginApp(AfterBasketItemAdd::class);;
 		$orderContract = $this->orderContract;
 
 		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
