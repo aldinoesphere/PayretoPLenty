@@ -193,12 +193,22 @@ class PaymentController extends Controller
 		}
 	}
 
-	public function handleConfirmation(Twig $twig, $transactionId) 
+	public function handleConfirmation(Twig $twig, $orderId) 
 	{
 		$basketItems = $this->basketItemRepository->all();
-		$orders = $this->orderContract->findOrderById(251);;
+		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
+        $authHelper = pluginApp(AuthHelper::class);
+
+        //guarded
+        $order = $authHelper->processUnguarded(
+            function () use ($orderContract, $orderId) {
+                //unguarded
+                return $orderContract->findOrderById($orderId);
+            }
+        );
+        
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
-		$this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
+		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation');
 	}
