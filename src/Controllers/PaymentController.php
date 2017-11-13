@@ -5,6 +5,7 @@ namespace Payreto\Controllers;
 use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
 use Plenty\Plugin\Http\Response;
+use Plenty\Modules\Basket\Models\Basket;
 use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
@@ -198,20 +199,12 @@ class PaymentController extends Controller
 	{
 		$basketItems = $this->basketItemRepository->all();
 		$orderContract = $this->orderContract;
-		
-		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
-        $authHelper = pluginApp(AuthHelper::class);
 
-        //guarded
-        $order = $authHelper->processUnguarded(
-            function () use ($orderContract, $orderId) {
-                //unguarded
-                return $orderContract->findOrderById($orderId);
-            }
-        );
+		/** @var \Plenty\Modules\Authorization\Services\AuthHelper $authHelper */
+        $Basket = pluginApp(Basket::class);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
-		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
+		$this->getLogger(__METHOD__)->error('Payreto:Basket', $Basket);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation');
 	}
