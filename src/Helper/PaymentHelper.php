@@ -120,6 +120,11 @@ class PaymentHelper
 		$this->orderRepository->updateOrder($status, $orderId);
 	}
 
+	public function getPaymentMethodById($paymentId) 
+	{
+		return $this->paymentMethodRepository->findByPaymentMethodId($paymentId);
+	}
+
 	/**
 	 * get domain from webstoreconfig.
 	 *
