@@ -212,7 +212,7 @@ class PaymentController extends Controller
         );
 
         $data = [
-        	'orderData' => [
+        	'data' => [
         		'order' => [
         			'billingAddress' => $this->paymentService->getBillingAddress($basket->getBasket()),
         			'deliveryAddress' => $this->paymentService->getShippingAddress($basket->getBasket())
@@ -223,7 +223,7 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 
-		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
+		return $twig->render('Payreto::Payment.PaymentConfirmation', json_encode($data));
 	}
 
 }
