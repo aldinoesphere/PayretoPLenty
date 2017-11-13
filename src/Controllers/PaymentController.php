@@ -6,7 +6,7 @@ use Plenty\Plugin\Controller;
 use Plenty\Plugin\Http\Request;
 use Plenty\Plugin\Http\Response;
 use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
-use Plenty\Modules\Basket\Contracts\BasketRepositoryContract;
+use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
@@ -39,11 +39,6 @@ class PaymentController extends Controller
 	private $basketItemRepository;
 
 	/**
-     * @var BasketRepositoryContract
-     */
-    private $basketContract;
-
-	/**
 	 * @var SessionStorage
 	 */
 	private $sessionStorage;
@@ -67,6 +62,11 @@ class PaymentController extends Controller
 	private $orderService;
 
 	/**
+     * @var OrderRepositoryContract
+     */
+    private $orderContract;
+
+	/**
 	 *
 	 * @var paymentService
 	 */
@@ -85,20 +85,20 @@ class PaymentController extends Controller
 					Response $response,
 					BasketItemRepositoryContract $basketItemRepository,
 					FrontendSessionStorageFactoryContract $sessionStorage,
-					BasketRepositoryContract $basketContract,
 					GatewayService $gatewayService,
 					PaymentHelper $paymentHelper,
 					OrderService $orderService,
+					OrderRepositoryContract $orderContract,
 					PaymentService $paymentService
 	) {
 		$this->request = $request;
 		$this->response = $response;
 		$this->basketItemRepository = $basketItemRepository;
-		$this->basketContract   = $basketContract;
 		$this->sessionStorage = $sessionStorage;
 		$this->gatewayService = $gatewayService;
 		$this->paymentHelper = $paymentHelper;
 		$this->orderService = $orderService;
+		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
 	}
 
@@ -196,9 +196,9 @@ class PaymentController extends Controller
 	public function handleConfirmation(Twig $twig, $transactionId) 
 	{
 		$basketItems = $this->basketItemRepository->all();
-		$basket = LocalizedBasket::wrap($this->basketContract->load(), 'de');
+		$orders = $this->orderContract->findOrderById($orderId);;
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
-		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
+		$this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation');
 	}
