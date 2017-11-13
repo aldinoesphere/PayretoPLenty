@@ -185,4 +185,9 @@ class PaymentController extends Controller
 		}
 	}
 
+	public function handleConfirmation(Twig $twig, $transactionId) 
+	{
+		return $twig->render('Payreto::Payment.PaymentConfirmation');
+	}
+
 }

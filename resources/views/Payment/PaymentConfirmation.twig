@@ -1,0 +1,14 @@
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+
+	{{ component( "Ceres::Basket.Components.BasketList" ) }}
+	{{ component( "Ceres::Basket.Components.Coupon" ) }}
+	{{ component( "Ceres::Basket.Components.BasketTotals" ) }}
+
+{% endblock %}
