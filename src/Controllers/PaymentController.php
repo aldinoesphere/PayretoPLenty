@@ -100,7 +100,6 @@ class PaymentController extends Controller
 		$this->gatewayService = $gatewayService;
 		$this->paymentHelper = $paymentHelper;
 		$this->orderService = $orderService;
-		$this->basketItem = $basketItem;
 		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
 	}
