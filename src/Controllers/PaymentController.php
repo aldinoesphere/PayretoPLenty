@@ -769,6 +769,29 @@ class PaymentController extends Controller
 		return $Basket->getBasket();
 	}
 
+	public function getBasketOrderItems(Basket $basket)
+	{
+		$itemContract = pluginApp(\Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract::class);
+
+		$basketOrderItems = [];
+		foreach ($basket->basketItems as $basketItem) {
+			$item = $itemContract->show($basketItem->itemId);
+			$itemText = $item->texts;
+
+			$basketOrderItems[] = [
+				'quantity' => $basketItem->quantity,
+				'orderItemName' => $itemText->first()->name1,
+				'amounts' => 
+				[
+					'priceOriginalGross' => $basketItem->price
+					'priceGross' => $basketItem->price
+				]
+			];
+		}
+
+		return $basketOrderItems;
+	}
+
 	public function handleConfirmation(Twig $twig) 
 	{
 		$orderContract = $this->orderContract;
@@ -791,14 +814,16 @@ class PaymentController extends Controller
         		'order' => [
         			'billingAddress' => $this->paymentService->getBillingAddress($basket),
         			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
-        			'amounts' => [
+        			'amounts' => 
+        			[
         				[
         					'netTotal' => $basket->basketAmountNet,
 							'grossTotal' => $basket->basketAmount,
 							'vatTotal' => '',
 							'invoiceTotal' => $basket->basketAmount
         				]
-        			]
+        			],
+        			'orderItems' => $this->getBasketOrderItems($basket)
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
