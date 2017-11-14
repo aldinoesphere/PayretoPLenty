@@ -321,7 +321,7 @@ class PaymentService
 		$chartParameters = [];
 		$i = 0;
 		foreach ($basket->basketItems as $basketItems) {
-			$item = $this->itemRepository->show($baskketItems->itemId);
+			$item = $this->itemRepository->show($basketItems->itemId);
 			$itemText = $item->texts;
 			$chartParameters['cart.items[' . $i . '].name'] = $itemText->first()->name1;
 			$chartParameters['cart.items[' . $i . '].type'] = 'basic';
