@@ -772,7 +772,8 @@ class PaymentController extends Controller
 	public function handleConfirmation(Twig $twig) 
 	{
 		$orderContract = $this->orderContract;
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
+		$basket = $this->getBasket();
+		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$basketItems = $this->basketItemRepository->all();
 		$checkoutId = $this->request->get('id');
 		$ccSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
@@ -788,8 +789,16 @@ class PaymentController extends Controller
         $data = [
         	'data' => [
         		'order' => [
-        			'billingAddress' => $this->paymentService->getBillingAddress($this->getBasket()),
-        			'deliveryAddress' => $this->paymentService->getShippingAddress($this->getBasket())
+        			'billingAddress' => $this->paymentService->getBillingAddress($basket),
+        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
+        			'amounts' => [
+        				[
+        					'netTotal' => $basket->basketAmountNet,
+							'grossTotal' => $basket->basketAmount,
+							'vatTotal' => '',
+							'invoiceTotal' => $basket->basketAmount
+        				]
+        			]
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
@@ -798,10 +807,10 @@ class PaymentController extends Controller
         	'checkoutId' => $paymentServerToServer['id']
         ];
 
-		$this->getLogger(__METHOD__)->error('Payreto:data', $this->request->get('id'));
+		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
-		$this->getLogger(__METHOD__)->error('Payreto:shippingProviders', $shippingProviders);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
 
 		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
 	}
