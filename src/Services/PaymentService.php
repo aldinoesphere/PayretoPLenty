@@ -12,7 +12,6 @@ use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 use Plenty\Modules\Payment\Events\Checkout\GetPaymentMethodContent;
 use Plenty\Modules\Payment\Method\Models\PaymentMethod;
 use Plenty\Modules\Order\Models\Order;
-use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
@@ -320,18 +319,9 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		$Item = pluginApp(\Plenty\Modules\Item\Manufacturer\Contracts\ManufacturerCommissionRepositoryContract::class);
-		$authHelper = pluginApp(AuthHelper::class);
-
-        /** @var Order $order */
-        // use processUnguarded to find orders for guests
-        $items = $authHelper->processUnguarded(
-            function () use ($Item, $basket) {
-                //unguarded
-                return $Item->find($basket->basketItems[0]->itemId);
-            }
-        );
-		$this->getLogger(__METHOD__)->error('Payreto:items', $items);
+		$item = $this->itemRepository->show($basket->basketItems[0]->itemId);
+		$this->getLogger(__METHOD__)->error('Payreto:item', $item);
+		$itemText = $item->texts;
 		$chartParameters['cart.items[0].name'] = 'Product 1';
 		$chartParameters['cart.items[0].type'] = 'basic';
 		$chartParameters['cart.items[0].price'] = $basket->basketItems[0]->price;
