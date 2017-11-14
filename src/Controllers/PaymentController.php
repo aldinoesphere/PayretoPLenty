@@ -730,7 +730,7 @@ class PaymentController extends Controller
 		];
 
 		if ($paymentKey == 'PAYRETO_ECP') {
-			array_push($parameters, [
+			$parameters = array_merge($parameters, [
 				'amount' => $orderData->order->amounts[0]->invoiceTotal,
 				'currency' => $orderData->order->amounts[0]->currency,
 				'paymentType' => 'CP',
