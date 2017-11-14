@@ -319,17 +319,15 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		foreach ($basket->basketItems as $basketItem) {
-			$item = $this->itemRepository->show($basketItem->itemId);
-			$this->getLogger(__METHOD__)->error('Payreto:item', $item);
-			$itemText = $item->texts;
-			$chartParameters['cart.items[0].name'] = $itemText->first()->name1;
-			$chartParameters['cart.items[0].type'] = 'basic';
-			$chartParameters['cart.items[0].price'] = $basketItem->price;
-			$chartParameters['cart.items[0].currency'] = $basket->currency;
-			$chartParameters['cart.items[0].quantity'] = $basketItem->quantity;
-			$chartParameters['cart.items[0].merchantItemId'] = $basketItem->itemId; 
-		}
+		$item = $this->itemRepository->show($basket->basketItem[0]->itemId);
+		$this->getLogger(__METHOD__)->error('Payreto:item', $item);
+		$itemText = $item->texts;
+		$chartParameters['cart.items[0].name'] = 'Product 1';
+		$chartParameters['cart.items[0].type'] = 'basic';
+		$chartParameters['cart.items[0].price'] = $basket->basketItem[0]->price;
+		$chartParameters['cart.items[0].currency'] = $basket->currency;
+		$chartParameters['cart.items[0].quantity'] = $basket->basketItem[0]->quantity;
+		$chartParameters['cart.items[0].merchantItemId'] = $basket->basketItem[0]->itemId; 
 
 		return $chartParameters;
 	}
