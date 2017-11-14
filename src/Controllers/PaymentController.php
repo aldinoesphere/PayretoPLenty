@@ -794,6 +794,11 @@ class PaymentController extends Controller
 		return $basketOrderItems;
 	}
 
+	public function getItemImages()
+	{
+
+	}
+
 	public function handleConfirmation(Twig $twig) 
 	{
 		$orderContract = $this->orderContract;
@@ -829,6 +834,7 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
+        	'itemImages' => $this->getItemImages(),
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
         	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
         	'checkoutId' => $paymentServerToServer['id']
