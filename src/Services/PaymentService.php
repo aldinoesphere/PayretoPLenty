@@ -328,7 +328,7 @@ class PaymentService
 			$chartParameters['cart.items[0].price'] = $basketItem->price;
 			$chartParameters['cart.items[0].currency'] = $basket->currency;
 			$chartParameters['cart.items[0].quantity'] = $basketItem->quantity;
-			$chartParameters['cart.items[0].merchantItemId'] = $basketItem->itemId;
+			$chartParameters['cart.items[0].merchantItemId'] = $basketItem->itemId; 
 		}
 
 		return $chartParameters;
