@@ -136,7 +136,7 @@ class GatewayService
 	 * @throws \Exception
 	 * @return array
 	 */
-	public function paymentConfirmationServerToServer($checkoutId, $parameters)
+	public function paymentServerToServer($checkoutId, $parameters)
 	{
 		$confirmationUrl = $this->oppwaUrl . 'payments/' . $checkoutId;
 		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');

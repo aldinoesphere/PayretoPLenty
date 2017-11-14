@@ -25,7 +25,7 @@
             {{ LayoutContainer.show("Ceres::OrderConfirmation.BeforeOrderDetails", data.order) }}
 
 
-            {% include "Ceres::Checkout.OrderDetails" with { orderData: data } %}
+            {% include "Payreto::Payment.OrderDetails" with { orderData: data } %}
 
             <hr>
             <div class="row">

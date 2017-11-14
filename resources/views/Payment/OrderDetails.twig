@@ -1,0 +1,284 @@
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+{% import "Ceres::Basket.Macros.GetBasketTotals" as BasketTotals %}
+
+{% set totalsConfigData = config("Ceres.basket.data")|split(', ') %}
+{% set basketTotalsCurrency = BasketTotals.getCurrency( orderData ) %}
+
+<div>
+    <div class="row">
+        <div class="col-md-6 m-b-2">
+            <div class="card small">
+                <!-- ORDER -->
+                <div class="card-header">
+                    <h5>{{ trans("Ceres::Template.orderId") }} {{ orderData.order.id }}</h5>
+                </div>
+                <div class="card-block">
+                    <div class="details">
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderDate") }}</strong>
+                            <span class="col-xs-6 col-sm-7">{{ orderData.order.createdAt | formatDateTime | date( trans("Ceres::Template.dateTimeFormat") ) }}</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderInvoiceAddress") }}</strong>
+                            <span class="col-xs-6 col-sm-7">
+                                                        <div>{{ orderData.order.billingAddress.name1 }}</div>
+                                                        <div>{{ orderData.order.billingAddress.name2 }} {{ orderData.order.billingAddress.name3 }}</div>
+                                                        <div>{{ orderData.order.billingAddress.name4 }}</div>
+                                                        <div>{{ orderData.order.billingAddress.address1 }} {{ orderData.order.billingAddress.address2 }}</div>
+                                                        <div>{{ orderData.order.billingAddress.postalCode }} {{ orderData.order.billingAddress.town }}</div>
+                                                    </span>
+                        </div>
+
+                        <div class="row m-t-1">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderShippingAddress") }}</strong>
+                            <span class="col-xs-6 col-sm-7">
+                                                        {% if orderData.order.billingAddress.id == orderData.order.deliveryAddress.id %}
+                                                            <span>
+                                                                {{ trans("Ceres::Template.addressSameAsInvoice") }}
+                                                            </span>
+                                                        {% else %}
+                                                            <span>
+                                                                <div>{{ orderData.order.deliveryAddress.name1 }}</div>
+                                                                <div>{{ orderData.order.deliveryAddress.name2 }} {{ orderData.order.deliveryAddress.name3 }}</div>
+                                                                <div>{{ orderData.order.deliveryAddress.name4 }}</div>
+                                                                <div>{{ orderData.order.deliveryAddress.address1 }} {{ orderData.order.deliveryAddress.address2 }}</div>
+                                                                <div>{{ orderData.order.deliveryAddress.postalCode }} {{ orderData.order.deliveryAddress.town }}</div>
+                                                            </span>
+                                                        {% endif %}
+                                                    </span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderPaymentMethod") }}</strong>
+                            <span class="col-xs-6 col-sm-7" id="payment_name_{{ orderData.order.id }}">{{ orderData.paymentMethodName }}</span>
+                        </div>
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderPaymentStatus") }}</strong>
+                            {% set paymentMethodId = -1 %}
+                            {% for propertyKey in orderData.order.properties %}
+                                {% if orderData.order.properties[loop.index0].typeId == 4 %}
+                                    {% set paymentStatus = entry.order.properties[loop.index0].value %}
+                                    <span class="col-xs-6 col-sm-7" id="payment_state_{{ orderData.order.id }}">{{ trans("Ceres::Template.paymentStatus_" ~ orderData.order.properties[loop.index0].value) }}</span>
+                                {% elseif orderData.order.properties[loop.index0].typeId == 3 %}
+                                    {% set paymentMethodId = orderData.order.properties[loop.index0].value %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% set currentTemplate = services.template.getCurrentTemplate() %}
+
+                        {% set loggedIn = frontend.Account.getIsAccountLoggedIn %}
+
+                        {% if loggedIn %}
+                            {% if paymentMethoId != -1 and showAdditionalPaymentInformation == true %}
+                                <change-payment-method  template="#vue-change-payment-method"
+                                                        :current-order="{{ orderData.order | json_encode() }}"
+                                                        :change-possible="{{ services.order.allowPaymentMethodSwitchFrom(paymentMethodId, orderData.order.id) | json_encode() }}"
+                                                        :allowed-payment-methods="{{ services.order.getPaymentMethodListForSwitch(paymentMethodId, orderData.order.id) | json_encode() }}"
+                                                        :payment-status="{{ paymentStatus | json_encode() }}"
+                                                        :current-template="{{ currentTemplate | json_encode() }}">
+                                </change-payment-method>
+                            {% endif %}
+                        {% endif %}
+
+                        {{ LayoutContainer.show("Ceres::OrderConfirmation.AdditionalPaymentInformation", orderData.order) }}
+
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderShippingProfile") }}</strong>
+                            <span class="col-xs-6 col-sm-7">{{ orderData.shippingProvider }} - {{ orderData.shippingProfileName }}</span>
+                        </div>
+
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">{{ trans("Ceres::Template.orderEstimatedShippingDate") }}</strong>
+                            {% set shippingDate = "" %}
+                            {% for date in orderData.order.dates %}
+                                {% if date.typeId == 8 %}
+                                    {% set shippingDate = date.date %}
+                                {% endif %}
+                            {% endfor %}
+                            <span class="col-xs-6 col-sm-7">{{ shippingDate | date( trans("Ceres::Template.dateFormat") ) }}</span>
+                        </div>
+                    </div>
+                    
+                    <hr>
+
+                    <div>
+                        <div class="row">
+                            <strong class="col-xs-6 col-sm-5">Tilgungsplan</strong>
+                            <span class="col-xs-6 col-sm-7">{{ orderData.tilgungsplan }}</span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <div class="row">
+                            <a href="{{ informationUrl }}" target="_blank"><strong class="col-xs-12 col-sm-12">Read pre-contractual information on Installments</strong></a>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- ORDER -->
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+            <div class="confirmation-order-list">
+
+                {% for item in orderData.order.orderItems %}
+                    {% if item.itemVariationId > 0 %}
+                        {% set currentVariationId = item.itemVariationId | trimNewlines %}
+                        <article class="cmp cmp-order-item">
+                            <a href="{{ orderData.itemURLs | getObjectValue(currentVariationId) }}" class="item-image">
+                                <img alt="{{ item.orderItemName }}" src="{{ orderData.itemImages | getObjectValue(currentVariationId) }}">
+                            </a>
+                            <div class="item-details small">
+                                <a href="{{ orderData.itemURLs | getObjectValue(currentVariationId)  }}" class="clearfix">
+                                    <div class="item-name">
+                                        {{ item.orderItemName }}
+                                    </div>
+                                </a>
+                                <div class="row">
+                                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderPricePerPiece") }}</strong>
+                                    <span class="col-xs-6 col-sm-9">{{ item.amounts[0].priceGross | formatMonetary( item.amounts[0].currency ) }}</span>
+                                </div>
+                                <div class="row">
+                                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderPeace") }}</strong>
+                                    <span class="col-xs-6 col-sm-9">{{ item.quantity }}</span>
+                                </div>
+                                <div class="row">
+                                    <strong class="col-xs-6 col-sm-3">{{ trans("Ceres::Template.orderTotal") }}</strong>
+                                    <strong class="col-xs-6 col-sm-9">{{ (item.quantity * item.amounts[0].priceGross) | formatMonetary( item.amounts[0].currency ) }}</strong>
+                                </div>
+                                {% if item.orderProperties %}
+                                    {% for property in item.orderProperties %}
+                                        <div class="row">
+                                            <strong class="col-xs-6 col-sm-3">{{ property.name }}</strong>
+                                            <span class="col-xs-6 col-sm-9">{{ property.value }}</span>
+                                        </div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+            <div class="gesamtsumme">
+                <!-- BASKET TOTALS -->
+                <div class="cmp cmp-totals">
+                    <h3>{{ trans("Ceres::Template.basketSum") }}</h3>
+                    <div>
+                        <dl>
+                            {% if "basket.value_of_items_net" in totalsConfigData %}
+                            <dt>
+                                {{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketNet") }})
+                            </dt><!--
+                     --><dd>
+                                {{ BasketTotals.getItemSumNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                            </dd>
+                            {% endif %}
+
+                            {% if "basket.value_of_items_gross" in totalsConfigData %}
+                            <dt>
+                                <strong>{{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
+                            </dt><!--
+                     --><dd>
+                                <strong>{{ BasketTotals.getItemSumGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                            </dd>
+                            {% endif %}
+
+                            {% if "basket.shipping_costs_net" in totalsConfigData %}
+                            <dt>
+                                {{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketNet") }})
+                            </dt><!--
+                     --><dd>
+                                {{ BasketTotals.getShippingAmountNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                            </dd>
+                            {% endif %}
+
+                            {% if "basket.shipping_costs_gross" in totalsConfigData %}
+                            <dt>
+                                <strong>{{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
+                            </dt><!--
+                     --><dd>
+                                <strong>{{ BasketTotals.getShippingAmountGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                            </dd>
+                            {% endif %}
+
+                            <hr>
+
+                            {% set grossNet = LayoutContainer.show("Ceres::OrderConfirmation.GrossNetReplace", orderData.order) %}
+                            {% if grossNet|trim is not empty %}
+                                {{ grossNet }}
+                            {% else %}
+                                {% if "basket.order_total_net" in totalsConfigData %}
+                                <dt>
+                                    {{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketNet") }})
+                                </dt><!--
+                                --><dd>
+                                {{ BasketTotals.getTotalAmountNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                            </dd>
+                                {% endif %}
+
+                                {% if BasketTotals.getCouponValue( orderData ) | trimNewlines != 0 %}
+                                <dt>
+                                    <strong>{{ trans("Ceres::Template.basketCoupon") }}</strong>
+                                </dt><!--
+                                --><dd>
+                                <strong>{{ BasketTotals.getCouponValue( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                            </dd>
+                                {% endif %}
+
+                                {% if "basket.vat" in totalsConfigData %}
+                                    <div class="vatTotals">
+                                        {% for vat in orderData.order.amounts[0].vats %}
+                                            <dt>
+                                                {{ trans("Ceres::Template.basketVAT") }} {{ vat.vatRate }}%
+                                            </dt><!--
+                                            --><dd>
+                                                {{ vat.value | formatMonetary( basketTotalsCurrency ) }}
+                                            </dd>
+                                        {% endfor %}
+
+                                    </div>
+                                {% endif %}
+
+                                {% if "basket.order_total_gross" in totalsConfigData %}
+                                    <div class="totalSum">
+                                        <hr>
+                                        <dt>
+                                            <strong>{{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
+                                        </dt><!--
+                                        --><dd>
+                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                        </dd>
+                                    </div>
+                                {% endif %}
+
+                            {% endif %}
+
+                            {{ LayoutContainer.show("Ceres::OrderConfirmation.AfterTotals", orderData.order) }}
+                        </dl>
+                    </div>
+                </div>
+                <!-- ./BASKET TOTALS -->
+            </div>
+        </div>
+    </div>
+</div>

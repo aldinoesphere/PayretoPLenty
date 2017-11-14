@@ -74,6 +74,8 @@ class PaymentController extends Controller
 	 */
 	private $paymentService;
 
+	private $payretoSettings;
+
 	/**
 	 *
 	 * @var ackReturnCodes
@@ -647,6 +649,8 @@ class PaymentController extends Controller
 		$this->orderService = $orderService;
 		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
+
+		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
 
 	/**
@@ -661,7 +665,7 @@ class PaymentController extends Controller
 		$orderData = $this->orderService->placeOrder();
 		$orderId = $orderData->order->id;
 
-		$validation = $this->placeOrder($checkoutId, $orderData);
+		$validation = $this->validation($checkoutId, $orderData);
 
 		#error_log
 		$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
@@ -705,7 +709,7 @@ class PaymentController extends Controller
 	/**
 	 * handle validation payment
 	 */
-	public function placeOrder($checkoutId, $orderData)
+	public function validation($checkoutId, $orderData)
 	{
 		$paymentData = [];
 		$orderId = $orderData->order->id;
@@ -715,20 +719,24 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:Value', $orderData->order->properties[0]->value);
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
-		$payretoSettings = $this->paymentService->getPayretoSettings();
-
 		$ccSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
 		$this->getLogger(__METHOD__)->error('Payreto:orderId', $orderId);
 
 		$parameters = [
-			'authentication.userId' => $payretoSettings['userId'],
-			'authentication.password' => $payretoSettings['password'],
+			'authentication.userId' => $this->payretoSettings['userId'],
+			'authentication.password' => $this->payretoSettings['password'],
 			'authentication.entityId' => $ccSettings['entityId']
 		];
 
 		if ($paymentKey == 'PAYRETO_ECP') {
-			$paymentConfirmation = $this->gatewayService->paymentConfirmationServerToServer($checkoutId, $parameters);
+			$parameters = [
+				'amount' => $orderData->order->amounts[0]->invoiceTotal,
+				'currency' => $orderData->order->amounts[0]->currency,
+				'paymentType' => 'CP',
+				'testMode' => 'EXTERNAL'
+			];
+			$paymentConfirmation = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
 		} else {
 			$paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
 		}
@@ -760,11 +768,21 @@ class PaymentController extends Controller
 		return $Basket->getBasket();
 	}
 
-	public function handleConfirmation(Twig $twig, $id) 
+	public function handleConfirmation(Twig $twig) 
 	{
 		$orderContract = $this->orderContract;
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($this->getBasket()->methodOfPaymentId);
-		// $shippingProviders = $this->paymentHelper->getShippingServiceProviderById($this->getBasket()->shippingProviderId);
+		$basketItems = $this->basketItemRepository->all();
+		$checkoutId = $this->request->get('id');
+		$ccSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+
+		$parameters = [
+			'authentication.userId' => $this->payretoSettings['userId'],
+			'authentication.password' => $this->payretoSettings['password'],
+			'authentication.entityId' => $ccSettings['entityId']
+		];
+
+		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
 
         $data = [
         	'data' => [
@@ -774,7 +792,8 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
-        	'checkoutId' => $this->request->get('id')
+        	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
+        	'checkoutId' => $paymentServerToServer['id']
         ];
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $this->request->get('id'));
