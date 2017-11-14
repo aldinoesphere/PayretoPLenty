@@ -730,12 +730,12 @@ class PaymentController extends Controller
 		];
 
 		if ($paymentKey == 'PAYRETO_ECP') {
-			array_push([
+			array_push($parameters, [
 				'amount' => $orderData->order->amounts[0]->invoiceTotal,
 				'currency' => $orderData->order->amounts[0]->currency,
 				'paymentType' => 'CP',
 				'testMode' => 'EXTERNAL'
-			], $parameters);
+			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
 		} else {
