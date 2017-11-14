@@ -162,7 +162,7 @@ class GatewayService
 	public function backOfficePayment($checkoutId, $parameters)
 	{
 		$url = $this->oppwaUrl . 'payments/' . $checkoutId;
-		$parameters =http_build_query($parameters, '', '&');
+		$parameters = http_build_query($parameters, '', '&');
 
 		$response = $this->getGatewayResponse($url, $parameters);
 

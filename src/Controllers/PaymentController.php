@@ -736,7 +736,7 @@ class PaymentController extends Controller
 				'paymentType' => 'CP',
 				'testMode' => 'EXTERNAL'
 			];
-			$paymentConfirmation = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
+			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
 		} else {
 			$paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
 		}
