@@ -186,8 +186,8 @@ class PaymentService
 			$this->getServerToServerParameters($basket, $paymentMethod)
 		);
 
-		foreach ($basket->basketItem as $basketItem) {
-			$this->getLogger(__METHOD__)->error('Payreto:basketItem', $basketItem);
+		foreach ($basket->basketItems as $basketItems) {
+			$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
