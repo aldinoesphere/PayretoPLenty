@@ -132,7 +132,7 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters 
+	 * @param array $parameters
 	 * @throws \Exception
 	 * @return array
 	 */
@@ -142,6 +142,29 @@ class GatewayService
 		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
+
+		if (!$response)
+		{
+			throw new \Exception('Sid is not valid : ' . $response);
+		}
+
+		$response = json_decode($response, true);
+		return $response;
+	}
+
+	/**
+	 * Get Sid from gateway to use at payment page url
+	 *
+	 * @param array $parameters
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function backOfficePayment($checkoutId, $parameters)
+	{
+		$url = $this->oppwaUrl . 'payments/' . $checkoutId;
+		$parameters =http_build_query($parameters, '', '&');
+
+		$response = $this->getGatewayResponse($url, $parameters);
 
 		if (!$response)
 		{
