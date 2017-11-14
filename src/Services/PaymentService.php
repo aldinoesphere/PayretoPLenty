@@ -319,10 +319,9 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		$Item = pluginApp(Plenty\Modules\Item\Manufacturer\Contracts\ManufacturerCommissionRepositoryContract::class);
+		$Item = pluginApp(\Plenty\Modules\Item\Manufacturer\Contracts\ManufacturerCommissionRepositoryContract::class);
 		$item = $Item->find($basket->basketItems[0]->itemId);
 		$this->getLogger(__METHOD__)->error('Payreto:item', $item);
-		$itemText = $item->texts;
 		$chartParameters['cart.items[0].name'] = 'Product 1';
 		$chartParameters['cart.items[0].type'] = 'basic';
 		$chartParameters['cart.items[0].price'] = $basket->basketItems[0]->price;
