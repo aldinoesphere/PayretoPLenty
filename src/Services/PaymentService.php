@@ -326,7 +326,7 @@ class PaymentService
         /** @var Order $order */
         // use processUnguarded to find orders for guests
         $items = $authHelper->processUnguarded(
-            function () use ($Item, $basket->basketItems[0]->itemId) {
+            function () use ($Item, $basket) {
                 //unguarded
                 return $Item->find($basket->basketItems[0]->itemId);
             }
