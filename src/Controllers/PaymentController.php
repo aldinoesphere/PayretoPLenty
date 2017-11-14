@@ -794,9 +794,16 @@ class PaymentController extends Controller
 		return $basketOrderItems;
 	}
 
-	public function getItemImages()
+	public function getItemImages($basket)
 	{
+		$imageRepository = pluginApp(\Plenty\Modules\Item\ItemImage\Contracts\ItemImageRepositoryContract::class);
+		$itemImages = [];
+		foreach ($basket->basketItems as $basketItem) {
+			$imageUrl = $imageRepository->show($basketItem->variationId);
+			$itemImages[$basketItem->variationId] = $imageUrl;
+		}
 
+		return $itemImages;
 	}
 
 	public function handleConfirmation(Twig $twig) 
