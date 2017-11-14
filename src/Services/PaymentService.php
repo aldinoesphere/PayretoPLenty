@@ -240,9 +240,9 @@ class PaymentService
 	public function getCcParameters(PaymentMethod $paymentMethod) 
 	{
 
-		$ccParameters = '';
+		$ccParameters = [];
 
-		if ($paymentMethod->paymentKey != 'PAYRETO_ACC') {
+		if ($paymentMethod->paymentKey != 'PAYRETO_ECP') {
 			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$ccParameters = [
 				'authentication.entityId' => $ccSettings['entityId'],
@@ -263,7 +263,7 @@ class PaymentService
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 
-		$ccParameters = '';
+		$ccParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
