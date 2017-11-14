@@ -783,7 +783,7 @@ class PaymentController extends Controller
 				'orderItemName' => $itemText->first()->name1,
 				'amounts' => 
 				[
-					'priceOriginalGross' => $basketItem->price
+					'priceOriginalGross' => $basketItem->price,
 					'priceGross' => $basketItem->price
 				]
 			];

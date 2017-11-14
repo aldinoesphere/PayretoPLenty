@@ -282,7 +282,7 @@ class PaymentService
 					$this->getCustomerParameters(),
 					$this->getBillingParameters($basket),
 					$this->getShippingParameters($basket),
-					$this->getChartParameters()
+					$this->getChartParameters($basket)
 				);
 		}
 
@@ -320,7 +320,7 @@ class PaymentService
 	{
 		$chartParameters = [];
 		foreach ($basket->basketItems as $basketItem) {
-			$item = $this->itemRepository->show($baskketItem->itemId);
+			$item = $this->itemRepository->show($basketItem->itemId);
 			$this->getLogger(__METHOD__)->error('Payreto:item', $item);
 			$itemText = $item->texts;
 			$chartParameters['cart.items[0].name'] = $itemText->first()->name1;
