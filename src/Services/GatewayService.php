@@ -132,7 +132,7 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters
+	 * @param array $parameters 
 	 * @throws \Exception
 	 * @return array
 	 */
