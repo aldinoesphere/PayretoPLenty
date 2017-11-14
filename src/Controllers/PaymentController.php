@@ -769,7 +769,7 @@ class PaymentController extends Controller
 		return $Basket->getBasket();
 	}
 
-	public function getBasketOrderItems(Basket $basket)
+	public function getBasketOrderItems($basket)
 	{
 		$itemContract = pluginApp(\Plenty\Modules\Item\Item\Contracts\ItemRepositoryContract::class);
 
