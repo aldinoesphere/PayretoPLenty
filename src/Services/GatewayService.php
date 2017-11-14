@@ -130,6 +130,29 @@ class GatewayService
 	}
 
 	/**
+	 * Get Sid from gateway to use at payment page url
+	 *
+	 * @param array $parameters
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function paymentConfirmationServerToServer($checkoutId, $parameters)
+	{
+		$confirmationUrl = $this->oppwaUrl . 'payments/' . $checkoutId;
+		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
+
+		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
+
+		if (!$response)
+		{
+			throw new \Exception('Sid is not valid : ' . $response);
+		}
+
+		$response = json_decode($response, true);
+		return $response;
+	}
+
+	/**
 	 * get currenty payment status from gateway
 	 *
 	 * @param $parameters
