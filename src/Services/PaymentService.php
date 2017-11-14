@@ -282,7 +282,7 @@ class PaymentService
 					$this->getCustomerParameters(),
 					$this->getBillingParameters($basket),
 					$this->getShippingParameters($basket),
-					$this->getChartParameters()
+					$this->getChartParameters($basket)
 				);
 		}
 
