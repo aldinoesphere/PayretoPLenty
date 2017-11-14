@@ -793,6 +793,7 @@ class PaymentController extends Controller
         		'paymentMethodName' => $paymentMethod->name
         	],
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
+        	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
         	'checkoutId' => $paymentServerToServer['id']
         ];
 
