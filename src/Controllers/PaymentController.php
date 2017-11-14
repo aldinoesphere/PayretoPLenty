@@ -841,7 +841,7 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
-        	'itemImages' => $this->getItemImages(),
+        	'itemImages' => $this->getItemImages($basket),
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
         	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
         	'checkoutId' => $paymentServerToServer['id']
