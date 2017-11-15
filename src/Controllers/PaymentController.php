@@ -777,7 +777,7 @@ class PaymentController extends Controller
 		foreach ($basket->basketItems as $basketItem) {
 			$item = $itemContract->show($basketItem->itemId);
 			$itemText = $item->texts;
-
+            $this->getLogger(__METHOD__)->error('Payreto:item', $item);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
