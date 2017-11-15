@@ -808,6 +808,7 @@ class PaymentController extends Controller
             );
 			$itemImages[$basketItem->variationId] = $itemImage;
 		}
+        $this->getLogger(__METHOD__)->error('Payreto:itemImages', $itemImages);
 
 		return $itemImages;
 	}
