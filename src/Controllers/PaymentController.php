@@ -806,7 +806,7 @@ class PaymentController extends Controller
                     return $imageRepository->findByItemId($variationId);
                 }
             );
-			$itemImages[$basketItem->variationId] = json_decode($itemImage, true);
+			$itemImages[$basketItem->variationId] = $itemImage;
 		}
         $this->getLogger(__METHOD__)->error('Payreto:itemImages', $itemImages);
 
