@@ -186,7 +186,7 @@ class PaymentService
 			$this->getServerToServerParameters($basket, $paymentMethod)
 		);
 
-		// $this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
+		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials()); 
 

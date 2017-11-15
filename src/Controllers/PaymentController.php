@@ -786,7 +786,8 @@ class PaymentController extends Controller
 				[
 					[
 						'priceOriginalGross' => $basketItem->price,
-						'priceGross' => $basketItem->price
+						'priceGross' => $basketItem->price,
+                        'currency' => $basketItem->currency
 					]
 				]
 			];
@@ -807,9 +808,10 @@ class PaymentController extends Controller
                     return $imageRepository->findByItemId($variationId);
                 }
             );
+            $this->getLogger(__METHOD__)->error('Payreto:itemImage', $itemImage);
 			$itemImages[$basketItem->variationId] = $itemImage[0]['urlPreview'];
 		}
-        $this->getLogger(__METHOD__)->error('Payreto:itemImages', $itemImages);
+        
 
 		return $itemImages;
 	}
@@ -849,6 +851,7 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
+            'itemURLs' => '',
         	'itemImages' => $this->getItemImages($basket),
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
         	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
