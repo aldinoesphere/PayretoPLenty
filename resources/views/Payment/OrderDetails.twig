@@ -179,7 +179,7 @@
                                 {{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.valueNet | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}
+                                {{ orderData.valueNet }}
                             </dd>
                             {% endif %}
 
@@ -188,7 +188,7 @@
                                 <strong>{{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.valueGross | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}</strong>
+                                <strong>{{ orderData.valueGross }}</strong>
                             </dd>
                             {% endif %}
 
@@ -197,7 +197,7 @@
                                 {{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.shippingNet | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}
+                                {{ orderData.shippingNet }}
                             </dd>
                             {% endif %}
 
@@ -206,7 +206,7 @@
                                 <strong>{{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.shippingGross | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}</strong>
+                                <strong>{{ orderData.shippingGross }}</strong>
                             </dd>
                             {% endif %}
 
