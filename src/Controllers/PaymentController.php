@@ -781,13 +781,13 @@ class PaymentController extends Controller
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
-				'orderItemName' => $itemText->first()->name1,
+				'orderItemName' => 'field_' . $basketItem->itemId,
 				'amounts' => 
 				[
 					[
 						'priceOriginalGross' => $basketItem->price,
 						'priceGross' => $basketItem->price,
-                        'currency' => $basketItem->currency
+                        'currency' => $basket->currency
 					]
 				]
 			];
@@ -841,6 +841,7 @@ class PaymentController extends Controller
         			'amounts' => 
         			[
         				[
+                            'currency' => $basket->currency,
         					'netTotal' => $basket->basketAmountNet,
 							'grossTotal' => $basket->basketAmount,
 							'vatTotal' => '',
