@@ -777,7 +777,7 @@ class PaymentController extends Controller
 		foreach ($basket->basketItems as $basketItem) {
             #bhjdfbk
             $authHelper = pluginApp(AuthHelper::class);
-            $variationId = $basketItem->itemId;
+            $variationId = $basketItem->variationId;
             $itemImage = $authHelper->processUnguarded(
                 function () use ($itemContract, $variationId) {
                     return $itemContract->findByVariationId($variationId);
