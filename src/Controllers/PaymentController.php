@@ -815,7 +815,7 @@ class PaymentController extends Controller
                 }
             );
             $variationSalesPrice = $this->paymentHelper->getVariationSalesPrice($basketItem->variationId);
-            $this->getLogger(__METHOD__)->error('Payreto:variationSalesPrice', $variationSalesPrice);
+            
 			$itemImages[$basketItem->variationId] = $itemImage[0]['urlPreview'];
 		}
         
@@ -827,6 +827,7 @@ class PaymentController extends Controller
 	{
 		$orderContract = $this->orderContract;
 		$basket = $this->getBasket();
+        $this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$basketItems = $this->basketItemRepository->all();
 		$checkoutId = $this->request->get('id');
