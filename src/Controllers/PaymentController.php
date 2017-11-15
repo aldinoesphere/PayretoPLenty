@@ -806,7 +806,7 @@ class PaymentController extends Controller
                     return $imageRepository->findByItemId($variationId);
                 }
             );
-			$itemImages[$basketItem->variationId] = $itemImage;
+			$itemImages[$basketItem->variationId] = $itemImage[0]->url;
 		}
         $this->getLogger(__METHOD__)->error('Payreto:itemImages', $itemImages);
 
@@ -848,7 +848,7 @@ class PaymentController extends Controller
         		],
         		'paymentMethodName' => $paymentMethod->name
         	],
-        	'res' => $this->getItemImages($basket),
+        	'itemImages' => $this->getItemImages($basket),
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
         	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
         	'checkoutId' => $paymentServerToServer['id']
