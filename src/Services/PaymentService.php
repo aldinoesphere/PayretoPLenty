@@ -321,7 +321,7 @@ class PaymentService
 		$chartParameters = [];
 		$item = $this->itemRepository->show($basket->basketItems[0]->itemId);
 		$this->getLogger(__METHOD__)->error('Payreto:item', $item);
-		$itemName = $this->paymentHelper->getVariationDescription($basket->basketItems[0]->variationId);
+		$itemName = $this->paymentHelper->getVariationDescription($basket->basketItems[0]->variationId); 
 		$chartParameters['cart.items[0].name'] = $itemName[0]->name;
 		$chartParameters['cart.items[0].type'] = 'basic';
 		$chartParameters['cart.items[0].price'] = $basket->basketItems[0]->price;
