@@ -800,10 +800,10 @@ class PaymentController extends Controller
 		$itemImages = [];
 		foreach ($basket->basketItems as $basketItem) {
             $authHelper = pluginApp(AuthHelper::class);
-            $variationId = $basketItem->variationId;
+            $variationId = $basketItem->itemId;
             $itemImage = $authHelper->processUnguarded(
                 function () use ($imageRepository, $variationId) {
-                    return $imageRepository->findByVariationId($variationId);
+                    return $imageRepository->findByItemId($variationId);
                 }
             );
 			$itemImages[$basketItem->variationId] = $itemImage;
