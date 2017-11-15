@@ -776,9 +776,8 @@ class PaymentController extends Controller
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
 			$item = $itemContract->findById($basketItem->variationId);
-			$itemText = $item->texts;
             $this->getLogger(__METHOD__)->error('Payreto:variation', $item);
-            $this->getLogger(__METHOD__)->error('Payreto:variation.data', $item->data);
+            // $this->getLogger(__METHOD__)->error('Payreto:variation.data', $item->data);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
