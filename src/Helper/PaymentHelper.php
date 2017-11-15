@@ -245,6 +245,26 @@ class PaymentHelper
 	 * @param BasketItem $basketItem
 	 * @return string
 	 */
+	public function getVariationSalesPrice($variationId)
+	{
+		$variationSalesPrice = pluginApp(\Plenty\Modules\Item\VariationSalesPrice\Contracts\VariationSalesPriceRepositoryContract::class);
+		$authHelper = pluginApp(AuthHelper::class);
+
+        $variationSalesPriceItem = $authHelper->processUnguarded(
+            function () use ($variationSalesPrice, $variationId) {
+                return $variationSalesPrice->findByVariationId($variationId);
+            }
+        );
+
+		return $variationSalesPriceItem;
+	}
+
+	/**
+	 * get Variation Description
+	 *
+	 * @param BasketItem $basketItem
+	 * @return string
+	 */
 	public function getVariationDescription($variationId)
 	{
 		$variationDescriptionContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);

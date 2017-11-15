@@ -814,7 +814,8 @@ class PaymentController extends Controller
                     return $imageRepository->findByItemId($itemId);
                 }
             );
-            $this->getLogger(__METHOD__)->error('Payreto:itemImage', $itemImage);
+            $variationSalesPrice = $this->paymentHelper->getVariationSalesPrice($basketItem->variationId);
+            $this->getLogger(__METHOD__)->error('Payreto:variationSalesPrice', $variationSalesPrice);
 			$itemImages[$basketItem->variationId] = $itemImage[0]['urlPreview'];
 		}
         
