@@ -802,8 +802,8 @@ class PaymentController extends Controller
             $authHelper = pluginApp(AuthHelper::class);
             $variationId = $basketItem->variationId;
             $itemImage = $authHelper->processUnguarded(
-                function () use ($imageRepository, $orderId) {
-                    return $imageRepository->show($orderId, ['relation']);
+                function () use ($imageRepository, $variationId) {
+                    return $imageRepository->show($variationId);
                 }
             );
 			$itemImages[$basketItem->variationId] = $itemImage;
