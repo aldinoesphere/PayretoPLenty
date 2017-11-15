@@ -782,10 +782,12 @@ class PaymentController extends Controller
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
             $itemName = $this->paymentHelper->getVariationDescription($basketItem->variationId);
+            $itemImage = $this->getItemImages($basket);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
 				'orderItemName' => $itemName[0]->name,
+                'itemImage' => $itemImage[$basketItem->variationId],
 				'amounts' => 
 				[
 					[
@@ -857,7 +859,6 @@ class PaymentController extends Controller
         		'paymentMethodName' => $paymentMethod->name
         	],
             'itemURLs' => '',
-        	'itemImages' => $this->getItemImages($basket),
         	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
         	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
         	'checkoutId' => $paymentServerToServer['id']
