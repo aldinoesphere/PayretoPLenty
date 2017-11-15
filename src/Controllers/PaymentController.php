@@ -846,10 +846,6 @@ class PaymentController extends Controller
         		'order' => [
         			'billingAddress' => $this->paymentService->getBillingAddress($basket),
         			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
-                    'valueNet' => $basket->itemSumNet,
-                    'valueGross' => $basket->itemSum,
-                    'shippingNet' => $basket->shippingAmountNet,
-                    'shippingGross' => $basket->shippingAmount,
         			'amounts' => 
         			[
         				[
@@ -862,6 +858,10 @@ class PaymentController extends Controller
         			],
         			'orderItems' => $this->getBasketOrderItems($basket)
         		],
+                'valueNet' => $basket->itemSumNet,
+                'valueGross' => $basket->itemSum,
+                'shippingNet' => $basket->shippingAmountNet,
+                'shippingGross' => $basket->shippingAmount,
         		'paymentMethodName' => $paymentMethod->name
         	],
             'itemURLs' => '',
