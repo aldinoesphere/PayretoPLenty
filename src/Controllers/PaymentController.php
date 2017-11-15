@@ -827,7 +827,7 @@ class PaymentController extends Controller
 	{
 		$orderContract = $this->orderContract;
 		$basket = $this->getBasket();
-        $this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
+        $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$basketItems = $this->basketItemRepository->all();
 		$checkoutId = $this->request->get('id');
