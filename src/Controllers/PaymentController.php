@@ -781,10 +781,11 @@ class PaymentController extends Controller
 	{
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
+            $itemName = $this->paymentHelper->getVariationDescription($basketItem->variationId);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
-				'orderItemName' => $this->paymentHelper->getVariationDescription($basketItem->variationId)->name,
+				'orderItemName' => $itemName[0]->name,
 				'amounts' => 
 				[
 					[
