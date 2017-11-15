@@ -245,11 +245,11 @@ class PaymentHelper
 	 * @param BasketItem $basketItem
 	 * @return string
 	 */
-	private function getVariationDescription($variationId)
+	public function getVariationDescription($variationId)
 	{
 		$variationDescriptionContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
 		$authHelper = pluginApp(AuthHelper::class);
-		
+
         $variationDescription = $authHelper->processUnguarded(
             function () use ($variationDescriptionContract, $variationId) {
                 return $variationDescriptionContract->findByVariationId($variationId);
