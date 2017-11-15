@@ -780,6 +780,7 @@ class PaymentController extends Controller
 
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
+                'itemVariationId' => $basketItem->variationId,
 				'orderItemName' => $itemText->first()->name1,
 				'amounts' => 
 				[
