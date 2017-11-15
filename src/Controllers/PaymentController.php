@@ -775,8 +775,15 @@ class PaymentController extends Controller
 
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
-			$item = $itemContract->findByVariationId($basketItem->variationId);
-            $this->getLogger(__METHOD__)->error('Payreto:variation', $item);
+            #bhjdfbk
+            $authHelper = pluginApp(AuthHelper::class);
+            $variationId = $basketItem->itemId;
+            $itemImage = $authHelper->processUnguarded(
+                function () use ($itemContract, $variationId) {
+                    return $itemContract->findByVariationId($variationId);
+                }
+            );
+            $this->getLogger(__METHOD__)->error('Payreto:variation', $itemImage);
             // $this->getLogger(__METHOD__)->error('Payreto:variation.data', $item->data);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
