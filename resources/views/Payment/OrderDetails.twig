@@ -179,7 +179,7 @@
                                 {{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ BasketTotals.getItemSumNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                                {{ orderData.valueNet | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}
                             </dd>
                             {% endif %}
 
@@ -188,7 +188,7 @@
                                 <strong>{{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ BasketTotals.getItemSumGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                <strong>{{ orderData.valueGross | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}</strong>
                             </dd>
                             {% endif %}
 
@@ -197,7 +197,7 @@
                                 {{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ BasketTotals.getShippingAmountNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                                {{ orderData.shippingNet | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}
                             </dd>
                             {% endif %}
 
@@ -206,7 +206,7 @@
                                 <strong>{{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ BasketTotals.getShippingAmountGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                <strong>{{ orderData.shippingGross | formatMonetary( orderData.order.orderItems.amounts[0].currency ) }}</strong>
                             </dd>
                             {% endif %}
 
