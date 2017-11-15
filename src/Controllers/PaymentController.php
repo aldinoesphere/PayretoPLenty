@@ -771,11 +771,11 @@ class PaymentController extends Controller
 
 	public function getBasketOrderItems($basket)
 	{
-		$itemContract = pluginApp(\Plenty\Modules\Item\Variation\Contracts\VariationRepositoryContract::class);
+		$itemContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
 
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
-			$item = $itemContract->findById($basketItem->variationId);
+			$item = $itemContract->find($basketItem->variationId);
             $this->getLogger(__METHOD__)->error('Payreto:variation', $item);
             // $this->getLogger(__METHOD__)->error('Payreto:variation.data', $item->data);
 			$basketOrderItems[] = [
