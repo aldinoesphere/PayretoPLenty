@@ -449,25 +449,6 @@ class PaymentService
 	}
 
 	/**
-	 * get Variation Description
-	 *
-	 * @param BasketItem $basketItem
-	 * @return string
-	 */
-	private function getVariationDescription($variationId)
-	{
-		$variationDescriptionContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
-
-        $variationDescription = $authHelper->processUnguarded(
-            function () use ($variationDescriptionContract, $variationId) {
-                return $variationDescriptionContract->findByVariationId($variationId);
-            }
-        );
-
-		return $variationDescription;
-	}
-
-	/**
 	 * get basket item name
 	 *
 	 * @param BasketItem $basketItem

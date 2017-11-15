@@ -240,6 +240,26 @@ class PaymentHelper
 	}
 
 	/**
+	 * get Variation Description
+	 *
+	 * @param BasketItem $basketItem
+	 * @return string
+	 */
+	private function getVariationDescription($variationId)
+	{
+		$variationDescriptionContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
+		$authHelper = pluginApp(AuthHelper::class);
+		
+        $variationDescription = $authHelper->processUnguarded(
+            function () use ($variationDescriptionContract, $variationId) {
+                return $variationDescriptionContract->findByVariationId($variationId);
+            }
+        );
+
+		return $variationDescription;
+	}
+
+	/**
 	 * update the payment by transaction_id when status_url triggered if payment already created before.
 	 * create a payment if no payment created before.
 	 *
