@@ -799,8 +799,14 @@ class PaymentController extends Controller
 		$imageRepository = pluginApp(\Plenty\Modules\Item\ItemImage\Contracts\ItemImageRepositoryContract::class);
 		$itemImages = [];
 		foreach ($basket->basketItems as $basketItem) {
-			$imageUrl = $imageRepository->show($basketItem->variationId);
-			$itemImages[$basketItem->variationId] = $imageUrl;
+            $authHelper = pluginApp(AuthHelper::class);
+            $variationId = $basketItem->variationId;
+            $itemImage = $authHelper->processUnguarded(
+                function () use ($imageRepository, $orderId) {
+                    return $imageRepository->show($orderId, ['relation']);
+                }
+            );
+			$itemImages[$basketItem->variationId] = $itemImage;
 		}
 
 		return $itemImages;
