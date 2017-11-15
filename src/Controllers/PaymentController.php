@@ -796,7 +796,7 @@ class PaymentController extends Controller
 
 	public function getItemImages($basket)
 	{
-		$imageRepository = pluginApp(\Plenty\Modules\Item\VariationImage\Contracts\VariationImageRepositoryContract::class);
+		$imageRepository = pluginApp(\Plenty\Modules\Item\ItemImage\Contracts\ItemImageRepositoryContract::class);
 		$itemImages = [];
 		foreach ($basket->basketItems as $basketItem) {
             $authHelper = pluginApp(AuthHelper::class);
