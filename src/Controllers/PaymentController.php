@@ -74,6 +74,12 @@ class PaymentController extends Controller
 	 */
 	private $paymentService;
 
+    /**
+     *
+     * @var authHelper
+     */
+    private $authHelper;
+
 	private $payretoSettings;
 
 	/**
@@ -638,7 +644,8 @@ class PaymentController extends Controller
 					PaymentHelper $paymentHelper,
 					OrderService $orderService,
 					OrderRepositoryContract $orderContract,
-					PaymentService $paymentService
+					PaymentService $paymentService,
+                    AuthHelper $authHelper
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -649,6 +656,7 @@ class PaymentController extends Controller
 		$this->orderService = $orderService;
 		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
+        $this->authHelper = $authHelper;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -771,24 +779,12 @@ class PaymentController extends Controller
 
 	public function getBasketOrderItems($basket)
 	{
-		$itemContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
-
 		$basketOrderItems = [];
 		foreach ($basket->basketItems as $basketItem) {
-            #bhjdfbk
-            $authHelper = pluginApp(AuthHelper::class);
-            $variationId = $basketItem->variationId;
-            $itemImage = $authHelper->processUnguarded(
-                function () use ($itemContract, $variationId) {
-                    return $itemContract->findByVariationId($variationId);
-                }
-            );
-            $this->getLogger(__METHOD__)->error('Payreto:variation', $itemImage);
-            // $this->getLogger(__METHOD__)->error('Payreto:variation.data', $item->data);
 			$basketOrderItems[] = [
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
-				'orderItemName' => 'field_' . $basketItem->itemId,
+				'orderItemName' => $this->paymentService->getVariationDescription($basketItem->variationId),
 				'amounts' => 
 				[
 					[
@@ -808,11 +804,11 @@ class PaymentController extends Controller
 		$imageRepository = pluginApp(\Plenty\Modules\Item\ItemImage\Contracts\ItemImageRepositoryContract::class);
 		$itemImages = [];
 		foreach ($basket->basketItems as $basketItem) {
-            $authHelper = pluginApp(AuthHelper::class);
-            $variationId = $basketItem->itemId;
-            $itemImage = $authHelper->processUnguarded(
-                function () use ($imageRepository, $variationId) {
-                    return $imageRepository->findByItemId($variationId);
+            $itemId = $basketItem->itemId;
+
+            $itemImage = $this->authHelper->processUnguarded(
+                function () use ($imageRepository, $itemId) {
+                    return $imageRepository->findByItemId($itemId);
                 }
             );
             $this->getLogger(__METHOD__)->error('Payreto:itemImage', $itemImage);
