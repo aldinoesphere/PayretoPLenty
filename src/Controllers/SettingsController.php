@@ -181,7 +181,7 @@ class SettingsController extends Controller
 				break;
 
 			case 'PAYRETO_ECP':
-				return 'Easy Credit'
+				return 'Easy Credit';
 				break;
 		}
 	}
