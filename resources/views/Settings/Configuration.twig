@@ -165,7 +165,30 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
-			{% elseif settingType == 'PAYRETO_ECP'  %}
+			{% elseif settingType == 'PAYRETO_ECP' ||  settingType == 'PAYRETO_GRP' %}
+				<div>
+					<label for="Enabled">Server</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">Enabled *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">Entity-ID</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_ADB'  %}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">

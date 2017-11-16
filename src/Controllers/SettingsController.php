@@ -173,6 +173,22 @@ class SettingsController extends Controller
 						);		
 				break;
 
+			case 'PAYRETO_GRP':
+				$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'entityId' => $this->request->get('entityId')
+						);
+				break;
+
+			case 'PAYRETO_ADB':
+				$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'entityId' => $this->request->get('entityId')
+						);
+				break;
+
 			case 'PAYRETO_ECP':
 				$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
