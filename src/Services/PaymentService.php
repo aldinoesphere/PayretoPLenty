@@ -242,7 +242,7 @@ class PaymentService
 
 		$ccParameters = [];
 
-		if ($paymentMethod->paymentKey == 'PAYRETO_ACC') {
+		if ($paymentMethod->paymentKey != 'PAYRETO_ECP') {
 			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$ccParameters = [
 				'authentication.entityId' => $ccSettings['entityId'],
@@ -282,20 +282,6 @@ class PaymentService
 					$this->getCustomerParameters(),
 					$this->getBillingParameters($basket),
 					$this->getShippingParameters($basket),
-					$this->getChartParameters($basket)
-				);
-		} elseif ($paymentMethod->paymentKey == 'PAYRETO_GRP') {
-			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-			$ccParameters =array_merge( 
-					[
-						'authentication.entityId' => $ccSettings['entityId'],
-						'paymentType' => 'DB',
-						'paymentBrand' => 'GIROPAY',
-						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
-						'testMode' => 'INTERNAL'
-					],
-					$this->getCustomerParameters(),
-					$this->getBillingParameters($basket),
 					$this->getChartParameters($basket)
 				);
 		}
