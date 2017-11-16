@@ -702,7 +702,7 @@ class PaymentController extends Controller
 	public function handlePayment(Twig $twig, $checkoutId)
 	{
 		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
-		$this->getLogger(__METHOD__)->error('Payreto:requestAll', $this->request->all(););
+		$this->getLogger(__METHOD__)->error('Payreto:requestAll', $this->request->all());
 
 		$ccSettings = $this->paymentService->getPaymentSettings('credit-card');
 		$cardType = str_replace(',', ' ', $ccSettings['cardType']);
