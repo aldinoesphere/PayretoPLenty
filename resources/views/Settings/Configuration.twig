@@ -86,15 +86,30 @@ img {
 }
 </style>
 <script type="text/javascript">
-
-	function onChange(value) {
-		console.log(this.value);
-		console.log(value);
+	document.addEventListener("DOMContentLoaded", function(event) {
+		setTimeout(removeMessage, 5000);
+	});
+	function removeMessage() {
+		if (document.getElementById('successMessage')) {
+			document.getElementById('successMessage').style.display = 'none';
+		}
+		if (document.getElementById('errorMessage')) {
+			document.getElementById('errorMessage').style.display = 'none';
+		}
 	}
 </script>
 </head>
 <body>
 	<h3>{{ titleSetting }}</h3>
+	{% if status == 'success' %}
+		<div class="message success" id="successMessage">
+			{{ trans('Your settings have been saved', [], 'messages', locale) }}
+		</div>
+	{% elseif status == 'failed' %}
+		<div class="message failed" id="errorMessage">
+			{{ trans('Settings not saved', [], 'messages', locale) }}
+		</div>
+	{% endif %}
 	<div id="payretoSettings">
 		<form action="save" method="post" name="savesettings" class="settings">
 			<input type="hidden" name="settingType" value="{{ settingType }}" />
@@ -154,7 +169,7 @@ img {
 				<div class="div-separator clear"></div>
 				<div>
 					<label for="Merchant Email">Transaction-Mode </label>
-					<select name="transactionMode" onchange="onChange()" value="{{ setting.transactionMode }}">
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
 						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>Debit</option>
 						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
 					</select>
