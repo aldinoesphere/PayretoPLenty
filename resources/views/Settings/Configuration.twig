@@ -165,7 +165,7 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
-			{% elseif settingType == 'PAYRETO_ECP' ||  settingType == 'PAYRETO_GRP' %}
+			{% elseif settingType == 'PAYRETO_ECP' or  settingType == 'PAYRETO_GRP' %}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">
