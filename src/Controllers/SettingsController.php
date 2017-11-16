@@ -157,7 +157,7 @@ class SettingsController extends Controller
 				break;
 
 			case 'PAYRETO_DDS':
-				return 'DIrect Debit'
+				return 'DIrect Debit';
 				break;
 
 			case 'PAYRETO_PDR':
