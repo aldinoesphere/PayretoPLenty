@@ -203,49 +203,27 @@ class SettingsController extends Controller
 
 		$settings['settingType'] = $settingType;
 
-		switch ($settingType) {
-			case 'general-setting':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+		if ($settingType == 'general-setting') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'userId' => $this->request->get('userId'),
 							'password' => $this->request->get('password'),
 							'merchantEmail' => $this->request->get('merchantEmail'),
 							'shopUrl' => $this->request->get('shopUrl')
 						);
-				break;
-
-			case 'PAYRETO_ACC':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+		} elseif($settingType == 'PAYRETO_ACC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'language' => $this->request->get('language'),
 							'display' => $this->request->get('display'),
 							'cardType' => implode(',', $newCardTypes),
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId')
-						);		
-				break;
-
-			case 'PAYRETO_GRP':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+						);
+		} elseif($settingType == 'PAYRETO_GRP' || $settingType == 'PAYRETO_ADB' || $settingType == 'PAYRETO_ECP') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
 							'display' => $this->request->get('display'),
 							'entityId' => $this->request->get('entityId')
 						);
-				break;
-
-			case 'PAYRETO_ADB':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
-							'server' => $this->request->get('server'),
-							'display' => $this->request->get('display'),
-							'entityId' => $this->request->get('entityId')
-						);
-				break;
-
-			case 'PAYRETO_ECP':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
-							'server' => $this->request->get('server'),
-							'display' => $this->request->get('display'),
-							'entityId' => $this->request->get('entityId')
-						);
-				break;
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:settings', $settings);
