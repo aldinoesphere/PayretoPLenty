@@ -12,7 +12,7 @@
                         "label": "Credit Card (Recurring)",
                         "menu": "settings/orders/payreto",
                         "urlKey": "credit-card-recurring",
-                        "entryPoint": "../../../../../payreto/settings/credit-card"
+                        "entryPoint": "../../../../../payreto/settings/credit-card-recurring"
                     },
                     {
                         "label": "Credit Card",
@@ -21,16 +21,16 @@
                         "entryPoint": "../../../../../payreto/settings/PAYRETO_ACC"
                     },
                     {
+                        "label": "Direct Debit (Recurring)",
+                        "menu": "settings/orders/payreto",
+                        "urlKey": "deirect-debit-recurring",
+                        "entryPoint": "../../../../../payreto/settings/direct-debit-recurring"
+                    },
+                    {
                         "label": "Direct Debit",
                         "menu": "settings/orders/payreto",
                         "urlKey": "direct-debit",
                         "entryPoint": "../../../../../payreto/settings/PAYRETO_DDS"
-                    },
-                    {
-                        "label": "Direct Debit (Recurring)",
-                        "menu": "settings/orders/payreto",
-                        "urlKey": "deirect-debit-recurring",
-                        "entryPoint": "../../../../../payreto/settings/credit-card"
                     },
                     {
                         "label": "Paydirect",
@@ -42,7 +42,7 @@
                         "label": "Paypal (Recurring)",
                         "menu": "settings/orders/payreto",
                         "urlKey": "deirect-debit-recurring",
-                        "entryPoint": "../../../../../payreto/settings/credit-card"
+                        "entryPoint": "../../../../../payreto/settings/paypal-recurring"
                     },
                     {
                         "label": "Paypal",

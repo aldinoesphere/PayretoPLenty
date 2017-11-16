@@ -131,9 +131,59 @@ class SettingsController extends Controller
 							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
 							'plentyId' => $plentyId,
 							'settingType' => $settingType,
+							'titleSetting'	=> $this->getTitleSetting($settingType),
 							'setting' => $configuration
 						)
 		);
+	}
+
+	protected function getTitleSetting($settingType)
+	{
+		switch ($settingType) {
+			case 'general-setting':
+				return 'General Setting';
+				break;
+
+			case 'credit-card-recurring':
+				return 'Credit Card (recurring)';
+				break;
+
+			case 'PAYRETO_ACC':
+				return 'Credit Card';
+				break;
+
+			case 'direct-debit-recurring':
+				return 'Direct Debit (recurring)';
+				break;
+
+			case 'PAYRETO_DDS':
+				return 'DIrect Debit'
+				break;
+
+			case 'PAYRETO_PDR':
+				return 'Paydirect';
+				break;
+
+			case 'paypal-recurring':
+				return 'Paypal (recurring)';
+				break;
+
+			case 'PAYRETO_PPM':
+				return 'Paypal';
+				break;
+
+			case 'PAYRETO_ADB':
+				return 'Online Bank Transfer';
+				break;
+
+			case 'PAYRETO_GRP':
+				return 'Giropay';
+				break;
+
+			case 'PAYRETO_ECP':
+				return 'Easy Credit'
+				break;
+		}
 	}
 
 	/**
