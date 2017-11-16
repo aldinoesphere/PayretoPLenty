@@ -683,15 +683,17 @@ class PaymentController extends Controller
 		#error_log
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
 
-		#Reset all basket.
-		foreach ($basketItems as $basketItem)
-		{
-			$this->basketItemRepository->removeBasketItem($basketItem->id);
-		}
-
 		if ($validation) {
+            #Reset all basket.
+            foreach ($basketItems as $basketItem)
+            {
+                $this->basketItemRepository->removeBasketItem($basketItem->id);
+            }
+
 			return $this->response->redirectTo('execute-payment/'.$orderId);
-		}
+		} else {
+            return $this->response->redirectTo('checkout');
+        }
 	}
 
 	/**
