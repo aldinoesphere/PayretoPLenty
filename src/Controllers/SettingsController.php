@@ -218,7 +218,10 @@ class SettingsController extends Controller
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId')
 						);
-		} elseif($settingType == 'PAYRETO_GRP' || $settingType == 'PAYRETO_ADB' || $settingType == 'PAYRETO_ECP') {
+		} elseif($settingType == 'PAYRETO_GRP' 
+			|| $settingType == 'PAYRETO_ADB' 
+			|| $settingType == 'PAYRETO_ECP' 
+			|| $settingType == 'PAYRETO_PPM') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
 							'display' => $this->request->get('display'),
