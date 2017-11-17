@@ -719,7 +719,7 @@ class PaymentController extends Controller
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
 		$this->getLogger(__METHOD__)->error('Payreto:paymentBrand', $paymentBrand); 
-        
+
 		$data = [
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
@@ -762,11 +762,7 @@ class PaymentController extends Controller
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
 		} else {
-            if ($paymentKey == 'PAYRETO_GRP') {
-                $paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
-            } else {
-                $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
-            }
+            $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
 		}
 
 		
