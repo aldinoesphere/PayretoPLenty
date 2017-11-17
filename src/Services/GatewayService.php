@@ -14,7 +14,9 @@ class GatewayService
 	/**
 	 * @var string
 	 */
-	protected $oppwaUrl = 'https://test.oppwa.com/v1/';
+	protected $oppwaCheckoutUrl = 'https://test.oppwa.com/v1/checkout';
+
+	protected $oppwaPaymentUrl = 'https://test.oppwa.com/v1/paymentss';
 
 	/**
 	 * Get gateway response
@@ -73,7 +75,7 @@ class GatewayService
 	 */
 	public function getCheckoutId($parameters)
 	{
-		$checkoutUrl = $this->oppwaUrl . 'checkouts';
+		$checkoutUrl = $this->oppwaCheckoutUrl;
 		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
 
 		if (!$response)
@@ -94,7 +96,7 @@ class GatewayService
 	 */
 	public function getServerToServer($parameters)
 	{
-		$checkoutUrl = $this->oppwaUrl . 'payments';
+		$checkoutUrl = $this->oppwaPaymentUrl;
 		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
 
 		if (!$response)
@@ -115,7 +117,7 @@ class GatewayService
 	 */
 	public function paymentConfirmation($checkoutId, $parameters)
 	{
-		$confirmationUrl = $this->oppwaUrl . 'checkouts/' . $checkoutId . '/payment';
+		$confirmationUrl = $this->oppwaCheckoutUrl . '/' . $checkoutId . '/payment';
 		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
@@ -138,7 +140,7 @@ class GatewayService
 	 */
 	public function paymentServerToServer($checkoutId, $parameters)
 	{
-		$confirmationUrl = $this->oppwaUrl . 'payments/' . $checkoutId;
+		$confirmationUrl = $this->oppwaPaymentUrl. $checkoutId;
 		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
@@ -161,7 +163,7 @@ class GatewayService
 	 */
 	public function backOfficePayment($checkoutId, $parameters)
 	{
-		$url = $this->oppwaUrl . 'payments/' . $checkoutId;
+		$url = $this->oppwaPaymentUrl . $checkoutId;
 		$response = $this->getGatewayResponse($url, $parameters);
 
 		if (!$response)

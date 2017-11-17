@@ -182,8 +182,7 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials(),
 			$this->getTransactionParameters($basket),
-			$this->getCcParameters($paymentMethod),
-			$this->getServerToServerParameters($basket, $paymentMethod)
+			$this->getCcParameters($paymentMethod)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
@@ -192,15 +191,18 @@ class PaymentService
 
 		try
 		{
-			if ($paymentMethod->paymentKey != 'PAYRETO_ECP' || $paymentMethod->paymentKey != 'PAYRETO_GRP') {
-				$checkoutId = $this->gatewayService->getCheckoutId($parameters);
-				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
-			} else {
-				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
-				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-				// $paymentPageUrl = $paymentResponse['redirect']['url'];
-				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentResponse;
-			}
+			$checkoutId = $this->gatewayService->getCheckoutId($parameters);
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
+
+			// if ($paymentMethod->paymentKey != 'PAYRETO_ECP' || $paymentMethod->paymentKey != 'PAYRETO_GRP') {
+			// 	$checkoutId = $this->gatewayService->getCheckoutId($parameters);
+			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
+			// } else {
+			// 	$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+			// 	$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
+			// 	// $paymentPageUrl = $paymentResponse['redirect']['url'];
+			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentResponse;
+			// }
 		}
 		catch (\Exception $e)
 		{
@@ -243,13 +245,13 @@ class PaymentService
 
 		$ccParameters = [];
 
-		if ($paymentMethod->paymentKey == 'PAYRETO_ACC') {
+		// if ($paymentMethod->paymentKey == 'PAYRETO_ACC') {
 			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$ccParameters = [
 				'authentication.entityId' => $ccSettings['entityId'],
-				'paymentType' => $ccSettings['transactionMode']
+				'paymentType' => 'DB'
 			];
-		}
+		// }
 
 		return $ccParameters;
 	}
