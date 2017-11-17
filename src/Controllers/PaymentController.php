@@ -718,7 +718,7 @@ class PaymentController extends Controller
         $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
-		
+		$this->getLogger(__METHOD__)->error('Payreto:paymentBrand', $paymentBrand); 
 		$data = [
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
