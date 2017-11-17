@@ -196,7 +196,7 @@ class GatewayService
 	 */
 	public function doRefund($transactionId, $parameters)
 	{
-		$checkoutUrl = $this->oppwaUrl . 'payments/' . $transactionId;
+		$checkoutUrl = $this->oppwaPaymentUrl . '/' . $transactionId;
 		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
 
 		if (!$response)
