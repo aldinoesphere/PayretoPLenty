@@ -762,6 +762,7 @@ class PaymentController extends Controller
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
 		} else {
+            $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
             $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
 		}
 
