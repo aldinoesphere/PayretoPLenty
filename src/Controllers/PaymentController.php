@@ -761,7 +761,11 @@ class PaymentController extends Controller
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
 		} else {
-			$paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
+            if ($paymentKey == 'PAYRETO_GRP') {
+                $paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
+            } else {
+                $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
+            }
 		}
 
 		
