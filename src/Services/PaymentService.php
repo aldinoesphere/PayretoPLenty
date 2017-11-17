@@ -198,7 +198,11 @@ class PaymentService
 			} else {
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-				$paymentPageUrl = $paymentResponse['redirect']['url'];
+				if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+					$paymentPageUrl = $paymentResponse['redirect']['url'];
+				} else {
+					$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentResponse;
+				}
 			}
 		}
 		catch (\Exception $e)
