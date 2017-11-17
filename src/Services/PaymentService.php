@@ -192,13 +192,14 @@ class PaymentService
 
 		try
 		{
-			if ($paymentMethod->paymentKey != 'PAYRETO_ECP') {
+			if ($paymentMethod->paymentKey != 'PAYRETO_ECP' || $paymentMethod->paymentKey != 'PAYRETO_GRP') {
 				$checkoutId = $this->gatewayService->getCheckoutId($parameters);
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
 			} else {
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				// $paymentPageUrl = $paymentResponse['redirect']['url'];
+				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentResponse;
 			}
 		}
 		catch (\Exception $e)
