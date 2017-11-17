@@ -183,7 +183,7 @@ class SettingsController extends Controller
 
 			case 'paypal-recurring':
 				return [
-						'title' => 'Paypal (recurring)'
+						'title' => 'Paypal (recurring)',
 						'paymentBrand' => 'PAYPAL'
 					];
 				break;
