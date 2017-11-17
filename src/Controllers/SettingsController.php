@@ -137,7 +137,7 @@ class SettingsController extends Controller
 		);
 	}
 
-	protected function getOptionSetting($settingType)
+	public function getOptionSetting($settingType)
 	{
 		switch ($settingType) {
 			case 'general-setting':
