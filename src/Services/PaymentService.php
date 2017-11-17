@@ -291,7 +291,6 @@ class PaymentService
 						'authentication.entityId' => $ccSettings['entityId'],
 						'paymentType' => 'DB',
 						'paymentBrand' => 'GIROPAY',
-						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'testMode' => 'INTERNAL'
 					],
 					$this->getCustomerParameters(),

@@ -17,6 +17,7 @@ use Payreto\Services\GatewayService;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Services\OrderService;
+use Payreto\Controllers\SettingsController;
 /**
 * Class PaymentController
 * @package Payreto\Controllers
@@ -73,6 +74,12 @@ class PaymentController extends Controller
 	 * @var paymentService
 	 */
 	private $paymentService;
+
+    /**
+     *
+     * @var settingsController
+     */
+    private $settingsController;
 
     /**
      *
@@ -645,7 +652,8 @@ class PaymentController extends Controller
 					OrderService $orderService,
 					OrderRepositoryContract $orderContract,
 					PaymentService $paymentService,
-                    AuthHelper $authHelper
+                    AuthHelper $authHelper,
+                    SettingsController $settingsController
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -657,6 +665,7 @@ class PaymentController extends Controller
 		$this->orderContract    = $orderContract;
 		$this->paymentService = $paymentService;
         $this->authHelper = $authHelper;
+        $this->settingsController = $settingsController;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -703,12 +712,15 @@ class PaymentController extends Controller
 	{
 		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
 		$this->getLogger(__METHOD__)->error('Payreto:requestAll', $this->request->all());
-
-		$ccSettings = $this->paymentService->getPaymentSettings('credit-card');
-		$cardType = str_replace(',', ' ', $ccSettings['cardType']);
+        $basket = $this->getBasket();
+        $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
+        $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+        $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
 		
 		$data = [
-			'cardType' => $cardType,
+			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
 			'paymentPageUrl' => $paymentPageUrl
 		];
@@ -729,14 +741,14 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:Value', $orderData->order->properties[0]->value);
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
-		$ccSettings = $this->paymentService->getPaymentSettings($paymentKey);
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
 		$this->getLogger(__METHOD__)->error('Payreto:orderId', $orderId);
 
 		$parameters = [
 			'authentication.userId' => $this->payretoSettings['userId'],
 			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $ccSettings['entityId']
+			'authentication.entityId' => $paymentSettings['entityId']
 		];
 
 		if ($paymentKey == 'PAYRETO_ECP') {
@@ -833,12 +845,12 @@ class PaymentController extends Controller
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$basketItems = $this->basketItemRepository->all();
 		$checkoutId = $this->request->get('id');
-		$ccSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
 
 		$parameters = [
 			'authentication.userId' => $this->payretoSettings['userId'],
 			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $ccSettings['entityId']
+			'authentication.entityId' => $paymentSettings['entityId']
 		];
 
 		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);

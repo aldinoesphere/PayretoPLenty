@@ -131,57 +131,89 @@ class SettingsController extends Controller
 							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
 							'plentyId' => $plentyId,
 							'settingType' => $settingType,
-							'titleSetting'	=> $this->getTitleSetting($settingType),
+							'optionSetting'	=> $this->getOptionSetting($settingType),
 							'setting' => $configuration
 						)
 		);
 	}
 
-	protected function getTitleSetting($settingType)
+	protected function getOptionSetting($settingType)
 	{
 		switch ($settingType) {
 			case 'general-setting':
-				return 'General Setting';
+				return [
+					'title' =>	'General Setting'
+				];
 				break;
 
 			case 'credit-card-recurring':
-				return 'Credit Card (recurring)';
+				return [
+						'title' => 'Credit Card (recurring)',
+						'paymentBrand' => ''
+					];
 				break;
 
 			case 'PAYRETO_ACC':
-				return 'Credit Card';
+				return [
+						'title' => 'Credit Card',
+						'paymentBrand' => ''
+					];
 				break;
 
 			case 'direct-debit-recurring':
-				return 'Direct Debit (recurring)';
+				return [
+						'title' => 'Direct Debit (recurring)',
+						'paymentBrand' => 'DIRECTDEBIT_SEPA'
+					];
 				break;
 
 			case 'PAYRETO_DDS':
-				return 'DIrect Debit';
+				return [
+						'title' => 'DIrect Debit',
+						'paymentBrand' => 'DIRECTDEBIT_SEPA'
+					];
 				break;
 
 			case 'PAYRETO_PDR':
-				return 'Paydirect';
+				return [
+						'title' => 'Paydirect',
+						'paymentBrand' => 'PAYDIREKT'
+					];
 				break;
 
 			case 'paypal-recurring':
-				return 'Paypal (recurring)';
+				return [
+						'title' => 'Paypal (recurring)'
+						'paymentBrand' => 'PAYPAL'
+					];
 				break;
 
 			case 'PAYRETO_PPM':
-				return 'Paypal';
+				return [
+						'title' => 'Paypal',
+						'paymentBrand' => 'PAYPAL'
+					];
 				break;
 
 			case 'PAYRETO_ADB':
-				return 'Online Bank Transfer';
+				return [
+						'title' => 'Online Bank Transfer',
+						'paymentBrand' => 'SOFORTUEBERWEISUNG'
+					];
 				break;
 
 			case 'PAYRETO_GRP':
-				return 'Giropay';
+				return [
+						'title' => 'Giropay',
+						'paymentBrand' => 'GIROPAY'
+					];
 				break;
 
 			case 'PAYRETO_ECP':
-				return 'Easy Credit';
+				return [
+						'title' => 'Easy Credit',
+						'paymentBrand' => 'RATENKAUF'
+					];
 				break;
 		}
 	}
