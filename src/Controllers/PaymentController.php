@@ -718,7 +718,7 @@ class PaymentController extends Controller
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         $paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutId);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
-		$this->getLogger(__METHOD__)->error('Payreto:paymentSettings', $paymentSettingspaymentSettings);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentSettings', $paymentSettings);
         $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		$data = [
@@ -727,6 +727,8 @@ class PaymentController extends Controller
 			'paymentPageUrl' => $paymentPageUrl,
             'paymentWidgetUrl' => $paymentWidgetUrl 
 		];
+
+        $this->getLogger(__METHOD__)->error('Payreto:data', $data); 
 
 		return $twig->render('Payreto::Payment.PaymentWidget', $data);
 	}
