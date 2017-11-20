@@ -724,7 +724,7 @@ class PaymentController extends Controller
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
 			'paymentPageUrl' => $paymentPageUrl,
-            'paymentWidgetUrl' => $paymentWidgetUrl
+            'paymentWidgetUrl' => $paymentWidgetUrl 
 		];
 
 		return $twig->render('Payreto::Payment.PaymentWidget', $data);
