@@ -244,6 +244,7 @@ class SettingsController extends Controller
 						);
 		} elseif($settingType == 'PAYRETO_ACC') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
 							'language' => $this->request->get('language'),
 							'display' => $this->request->get('display'),
 							'cardType' => implode(',', $newCardTypes),
