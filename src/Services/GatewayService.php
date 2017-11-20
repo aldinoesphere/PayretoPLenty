@@ -80,9 +80,9 @@ class GatewayService
 	 */
 	public function getPaymentWidgetUrl($serverMode, $checkoutId) {
 		if ($serverMode == 'LIVE') {
-			return $paymentWidgetUrlLive . $checkoutId;
+			return $this->paymentWidgetUrlLive . $checkoutId;
 		} else {
-			return $paymentWidgetUrlTest . $checkoutId;
+			return $this->paymentWidgetUrlTest . $checkoutId;
 		}
 	}
 
