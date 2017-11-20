@@ -182,7 +182,9 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials(),
 			$this->getTransactionParameters($basket),
-			$this->getCcParameters($paymentMethod)
+			$this->getPaymentParameters($paymentMethod),
+			$this->getCustomerParameters(),
+			$this->getBillingParameters($basket)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
@@ -235,25 +237,23 @@ class PaymentService
 	}
 
 	/**
-	 * Get the Credit Card Parameters payment
+	 * Get the Payment Parameters
 	 *
 	 * @param class PaymentMethod
 	 * @return array|null
 	 */
-	public function getCcParameters(PaymentMethod $paymentMethod) 
+	public function getPaymentParameters(PaymentMethod $paymentMethod) 
 	{
 
-		$ccParameters = [];
-
-		// if ($paymentMethod->paymentKey == 'PAYRETO_ACC') {
-			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-			$ccParameters = [
-				'authentication.entityId' => $ccSettings['entityId'],
+		$paymentParameters = [];
+			
+			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+			$paymentParameters = [
+				'authentication.entityId' => $paymentSettings['entityId'],
 				'paymentType' => 'DB'
 			];
-		// }
 
-		return $ccParameters;
+		return $paymentParameters;
 	}
 
 	/**
@@ -266,11 +266,11 @@ class PaymentService
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 
-		$ccParameters = [];
+		$paymentParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-			$ccParameters =array_merge( 
+			$paymentParameters =array_merge( 
 					[
 						'authentication.entityId' => $ccSettings['entityId'],
 						'paymentType' => 'PA',
@@ -282,26 +282,12 @@ class PaymentService
 						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => 'true',
 						'testMode' => 'EXTERNAL'
 					],
-					$this->getCustomerParameters(),
-					$this->getBillingParameters($basket),
 					$this->getShippingParameters($basket),
 					$this->getChartParameters($basket)
 				);
-		} elseif ($paymentMethod->paymentKey == 'PAYRETO_GRP') {
-			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-			$ccParameters =array_merge( 
-					[
-						'authentication.entityId' => $ccSettings['entityId'],
-						'paymentType' => 'DB',
-						'paymentBrand' => 'GIROPAY',
-						'testMode' => 'INTERNAL'
-					],
-					$this->getCustomerParameters(),
-					$this->getBillingParameters($basket)
-				);
 		}
 
-		return $ccParameters;
+		return $paymentParameters;
 	}
 
 	public function getCustomerParameters() 
