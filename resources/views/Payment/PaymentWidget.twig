@@ -18,9 +18,7 @@
 						var ttTestMode = "<div class='testmode'>THIS IS A TEST. NO REAL MONEY WILL BE TRANSFERED</div>";
 						var headerWidget = "<h2 style='text-align: center'>Use alternative payment data</h2>";
 			            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
-			            {% if frameTestMode == 'TEST' %}
-				            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
-			            {% endif %}
+				        jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);
 					},
 					registrations: {
 			        	hideInitialPaymentForms: false,
