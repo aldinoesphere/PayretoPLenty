@@ -14,9 +14,9 @@ class GatewayService
 	/**
 	 * @var string
 	 */
-	protected $oppwaCheckoutUrl = 'https://test.oppwa.com/v1/checkout';
+	protected $oppwaCheckoutUrl = 'https://test.oppwa.com/v1/checkouts';
 
-	protected $oppwaPaymentUrl = 'https://test.oppwa.com/v1/paymentss';
+	protected $oppwaPaymentUrl = 'https://test.oppwa.com/v1/payments';
 
 	/**
 	 * Get gateway response
