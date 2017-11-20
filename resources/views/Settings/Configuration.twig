@@ -139,6 +139,15 @@ img {
 				</div>
 			{% elseif settingType == 'PAYRETO_ACC' %}
 				<div>
+					<label for="Enabled">Server</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
 					<label for="Enabled">Language *</label>
 					<select name="language" value="{{ setting.language }}">
 						<option value="de" {{ (setting.language == 'de') ? 'selected' : '' }}>English</option>
