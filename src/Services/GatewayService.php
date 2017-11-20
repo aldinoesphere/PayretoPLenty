@@ -85,6 +85,7 @@ class GatewayService
 
 		$responseId = json_decode($response, true);
 		$this->getLogger(__METHOD__)->error('Payreto:responseId', $responseId);
+		$this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
 		return $responseId["id"];
 	}
 
