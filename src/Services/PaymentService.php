@@ -251,10 +251,45 @@ class PaymentService
 			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters = [
 				'authentication.entityId' => $paymentSettings['entityId'],
-				'paymentType' => 'DB'
+				'paymentType' => 'DB',
+				'testMode' => $this->getTestMode($paymentMethod)
 			];
 
 		return $paymentParameters;
+	}
+
+	/**
+	 * Get the testMode Parameters
+	 *
+	 * @param class PaymentMethod
+	 * @return array|null
+	 */
+	public function getTestMode(PaymentMethod $paymentMethod) 
+	{
+
+		if ($this->getServerMode($paymentMethod) == "LIVE") {
+            return false;
+        }
+
+        if ($paymentMethod->paymentKey == 'PAYRETO_GRP') {
+            return 'INTERNAL';
+        } else {
+            return "EXTERNAL";
+        }
+	}
+
+
+	/**
+	 * Get the testMode Parameters
+	 *
+	 * @param class PaymentMethod
+	 * @return array|null
+	 */
+	public function getServerMode(PaymentMethod $paymentMethod) 
+	{
+
+		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+		return $paymentSettings['server'];
 	}
 
 	/**
