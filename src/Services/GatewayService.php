@@ -20,8 +20,8 @@ class GatewayService
 	protected $oppwaCheckoutUrl = 'https://oppwa.com/v1/checkouts';
 	protected $oppwaPaymentUrl = 'https://oppwa.com/v1/payments';
 
-	protected static $paymentWidgetUrlLive = 'https://oppwa.com/v1/paymentWidgets.js?checkoutId=';
-    protected static $paymentWidgetUrlTest = 'https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=';
+	protected $paymentWidgetUrlLive = 'https://oppwa.com/v1/paymentWidgets.js?checkoutId=';
+    protected $paymentWidgetUrlTest = 'https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=';
 
 	/**
 	 * Get gateway response
@@ -80,9 +80,9 @@ class GatewayService
 	 */
 	public function getPaymentWidgetUrl($serverMode, $checkoutId) {
 		if ($serverMode == 'LIVE') {
-			return self::paymentWidgetUrlLive . $checkoutId;
+			return $this->paymentWidgetUrlLive . $checkoutId;
 		} else {
-			return self::paymentWidgetUrlTest . $checkoutId;
+			return $this->paymentWidgetUrlTest . $checkoutId;
 		}
 	}
 
