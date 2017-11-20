@@ -718,7 +718,7 @@ class PaymentController extends Controller
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         $paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutId);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
-		$this->getLogger(__METHOD__)->error('Payreto:paymentBrand', $paymentBrand); 
+		$this->getLogger(__METHOD__)->error('Payreto:paymentSettings', $paymentSettingspaymentSettings); 
 
 		$data = [
 			'paymentBrand' => $paymentBrand,
