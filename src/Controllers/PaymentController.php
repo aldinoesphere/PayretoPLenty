@@ -711,19 +711,20 @@ class PaymentController extends Controller
 	public function handlePayment(Twig $twig, $checkoutId)
 	{
 		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
-		$this->getLogger(__METHOD__)->error('Payreto:requestAll', $this->request->all());
         $basket = $this->getBasket();
         $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
         $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+        $paymentWidgetUrl = $this->GatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutId);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
 		$this->getLogger(__METHOD__)->error('Payreto:paymentBrand', $paymentBrand); 
 
 		$data = [
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
-			'paymentPageUrl' => $paymentPageUrl
+			'paymentPageUrl' => $paymentPageUrl,
+            'paymentWidgetUrl' => $paymentWidgetUrl
 		];
 
 		return $twig->render('Payreto::Payment.PaymentWidget', $data);

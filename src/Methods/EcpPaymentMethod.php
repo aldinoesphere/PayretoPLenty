@@ -25,5 +25,5 @@ class EcpPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'easy-credit';
+	protected $settingsType = 'PAYRETO_ECP';
 }

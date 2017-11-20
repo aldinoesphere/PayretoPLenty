@@ -57,17 +57,17 @@ class AbstractPaymentMethod extends PaymentMethodService
 	}
 
 	/**
-	 * Check whether the payment setting is enabled
+	 * Check whether the payment setting is display
 	 *
 	 * @return bool
 	 */
 	protected function isEnabled()
 	{
-		// if (array_key_exists('enabled', $this->paymentService->settings) && $this->paymentService->settings['enabled'] == 1)
-		// {
-		// 	return true;
-		// }
-		// return false;
+		if (array_key_exists('display', $this->paymentService->settings) && $this->paymentService->settings['display'] == 1)
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -87,11 +87,11 @@ class AbstractPaymentMethod extends PaymentMethodService
 	 */
 	public function isActive()
 	{
-		// if ($this->isEnabled())
-		// {
-		// 	return true;
-		// }
-		return true;
+		if ($this->isEnabled())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**

@@ -10,7 +10,7 @@
 
     <div class="page-content checkout container-max">
     	<div>
-    		<script src="https://test.oppwa.com/v1/paymentWidgets.js?checkoutId={{ checkoutId }}" type="text/javascript"></script>
+    		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
 	    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
 		</div>
     </div>

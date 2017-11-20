@@ -25,5 +25,5 @@ class DdsPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'direct-debit';
+	protected $settingsType = 'PAYRETO_DDS';
 }

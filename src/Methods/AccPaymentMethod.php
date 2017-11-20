@@ -25,5 +25,5 @@ class AccPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'credit-card';
+	protected $settingsType = 'PAYRETO_ACC';
 }

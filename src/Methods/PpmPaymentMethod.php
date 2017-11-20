@@ -25,5 +25,5 @@ class PpmPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'paypal';
+	protected $settingsType = 'PAYRETO_PPM';
 }
