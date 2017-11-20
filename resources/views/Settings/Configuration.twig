@@ -224,6 +224,7 @@ img {
 					</select>
 				</div>
 				<div class="clear"></div>
+				<div class="div-separator clear"></div>
 				<div>
 					<label for="Merchant Email">Transaction-Mode </label>
 					<select name="transactionMode" value="{{ setting.transactionMode }}">
@@ -231,6 +232,7 @@ img {
 						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
 					</select>
 				</div>
+				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
 					<label for="Shop Url">Entity-ID</label>
@@ -254,6 +256,7 @@ img {
 					</select>
 				</div>
 				<div class="clear"></div>
+				<div class="div-separator clear"></div>
 				<div>
 					<label for="Merchant Email">Transaction-Mode </label>
 					<select name="transactionMode" value="{{ setting.transactionMode }}">
@@ -261,6 +264,8 @@ img {
 						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
 					</select>
 				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
 				<div>
 					<label for="Enabled">Minimum Age *</label>
 					<input type="text" class="input-text" name="minimumAge" value="{{ setting.minimumAge }}"/>
