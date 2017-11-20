@@ -84,6 +84,7 @@ class GatewayService
 		}
 
 		$responseId = json_decode($response, true);
+		$this->getLogger(__METHOD__)->error('Payreto:responseId', $responseId);
 		return $responseId["id"];
 	}
 
