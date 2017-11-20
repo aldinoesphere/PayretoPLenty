@@ -186,8 +186,7 @@ class PaymentService
 			$this->getCustomerParameters(),
 			$this->getBillingParameters($basket)
 		);
-		$regex = '/^(000\.000\.|000\.100\.1|000\.[36])/';
-		
+
 		$this->getLogger(__METHOD__)->error('Payreto:regex', $regex);
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);

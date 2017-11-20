@@ -724,7 +724,8 @@ class PaymentController extends Controller
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
 			'paymentPageUrl' => $paymentPageUrl,
-            'paymentWidgetUrl' => $paymentWidgetUrl 
+            'paymentWidgetUrl' => $paymentWidgetUrl,
+            'frameTestMode' => $paymentSettings['server']
 		];
 
         $this->getLogger(__METHOD__)->error('Payreto:data', $data); 
