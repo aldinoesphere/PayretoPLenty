@@ -724,6 +724,7 @@ class PaymentController extends Controller
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
 			'paymentPageUrl' => $paymentPageUrl,
+            'cancelUrl' => '/checkout',
             'paymentWidgetUrl' => $paymentWidgetUrl,
             'frameTestMode' => $paymentSettings['server']
 		];
