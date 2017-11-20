@@ -206,6 +206,71 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
+			{% elseif settingType == 'PAYRETO_DDS' %}
+				<div>
+					<label for="Enabled">Server</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">Enabled *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div>
+					<label for="Merchant Email">Transaction-Mode </label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>Debit</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">Entity-ID</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_PDR' %}
+				<div>
+					<label for="Enabled">Server</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">Enabled *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div>
+					<label for="Merchant Email">Transaction-Mode </label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>Debit</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
+					</select>
+				</div>
+				<div>
+					<label for="Enabled">Minimum Age *</label>
+					<input type="text" class="input-text" name="minimumAge" value="{{ setting.minimumAge }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">Entity-ID</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
 			{% endif %}
 			<div class="div-separator clear"></div>
 			<div>

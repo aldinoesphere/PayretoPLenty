@@ -259,6 +259,21 @@ class SettingsController extends Controller
 							'display' => $this->request->get('display'),
 							'entityId' => $this->request->get('entityId')
 						);
+		} elseif($settingType == 'PAYRETO_DDS') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId')
+						);
+		} elseif($settingType == 'PAYRETO_PDR') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'minimumAge' => $this->request->get('minimumAge'),
+							'entityId' => $this->request->get('entityId')
+						);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:settings', $settings);
