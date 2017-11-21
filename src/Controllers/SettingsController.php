@@ -182,7 +182,7 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paydirect',
 						'paymentBrand' => 'PAYDIREKT',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentRedirect'
 					];
 				break;
 
@@ -222,7 +222,7 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Easy Credit',
 						'paymentBrand' => 'RATENKAUF',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentRedirect'
 					];
 				break;
 		}
