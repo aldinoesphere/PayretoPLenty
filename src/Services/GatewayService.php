@@ -300,7 +300,7 @@ class GatewayService
             $parameters['customParameters[PAYDIREKT_payment.isPartial]'] =
             $transactionData['customParameters']['PAYDIREKT_payment.isPartial'];
         } if (!empty($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount'])) {
-            $parameters['customParameters[PAYDIREKT_payment.shippingAmount]'] =
+            // $parameters['customParameters[PAYDIREKT_payment.shippingAmount]'] =
             // self::setNumberFormat($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount']);
         }
 
@@ -313,7 +313,7 @@ class GatewayService
         if (!empty($transactionData['payment_registration'])) {
             $parameters['createRegistration'] = $transactionData['payment_registration'];
             if (!empty($transactionData['3D'])) {
-                  $parameters['customParameters[presentation.amount3D]'] =
+                  // $parameters['customParameters[presentation.amount3D]'] =
                   // self::setNumberFormat($transactionData['3D']['amount']);
                   $parameters['customParameters[presentation.currency3D]'] = $transactionData['3D']['currency'];
             }
