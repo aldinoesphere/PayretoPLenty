@@ -241,9 +241,9 @@ class PaymentService
 		$credentials = [
 			'authentication' => 
 					[
-						'userId' => $payretoSettings['login'],
+						'login' => $payretoSettings['userId'],
 						'password' => $payretoSettings['password'],
-						'entityId' => $paymentSettings['channel_id']
+						'channel_id' => $paymentSettings['entityId']
 					]
 		];
 
