@@ -731,7 +731,7 @@ class PaymentController extends Controller
 
         $this->getLogger(__METHOD__)->error('Payreto:data', $data); 
 
-		return $twig->render('Payreto::Payment.PaymentWidget', $data);
+		return $twig->render('Payreto::Payment.' . $optionSetting['paymentTemplate'] , $data);
 	}
 
 	/**
