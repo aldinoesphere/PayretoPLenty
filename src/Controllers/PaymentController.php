@@ -723,7 +723,7 @@ class PaymentController extends Controller
 		$data = [
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
-			'paymentPageUrl' => $paymentPageUrl,
+			'paymentPageUrl' => $this->paymentHelper->getDomain(),
             'cancelUrl' => '/checkout',
             'paymentWidgetUrl' => $paymentWidgetUrl,
             'frameTestMode' => $paymentSettings['server']
