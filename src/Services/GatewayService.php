@@ -224,7 +224,7 @@ class GatewayService
         return $parameters;
 	}
 
-	
+
     /**
      * get detail of cart item
      *
@@ -236,11 +236,11 @@ class GatewayService
         $parameters = array();
         for ($i=0; $i < count($cartItems); $i++) {
             $parameters['cart.items['.$i.'].merchantItemId'] = $cartItems[$i]['merchant_item_id'];
-            $parameters['cart.items['.$i.'].discount'] = self::setNumberFormat($cartItems[$i]['discount']);
+            $parameters['cart.items['.$i.'].discount'] = $cartItems[$i]['discount'];
             $parameters['cart.items['.$i.'].quantity'] = $cartItems[$i]['quantity'];
             $parameters['cart.items['.$i.'].name'] = $cartItems[$i]['name'];
-            $parameters['cart.items['.$i.'].price'] = self::setNumberFormat($cartItems[$i]['price']);
-            $parameters['cart.items['.$i.'].tax'] = self::setNumberFormat($cartItems[$i]['tax']);
+            $parameters['cart.items['.$i.'].price'] = $cartItems[$i]['price'];
+            $parameters['cart.items['.$i.'].tax'] = $cartItems[$i]['tax'];
         }
         return $parameters;
     }

@@ -188,7 +188,7 @@ class PaymentService
 		$this->getLogger(__METHOD__)->error('Payreto:regex', $regex);
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials()); 
+		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
 
 		try
 		{
@@ -333,9 +333,9 @@ class PaymentService
 			'billing' =>
 							[
 								'city' => $billings->town,
-								'country' => 'DE',
-								'street1' => $billings->address1,
-								'postcode' => $billings->postalCode
+								'country_code' => 'DE',
+								'street' => $billings->address1,
+								'zip' => $billings->postalCode
 							]
 		];
 
