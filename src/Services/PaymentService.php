@@ -301,7 +301,6 @@ class PaymentService
 						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => 'true',
 						'testMode' => 'EXTERNAL'
 					],
-					$this->getShippingParameters($basket),
 					$this->getChartParameters($basket)
 				);
 		}
