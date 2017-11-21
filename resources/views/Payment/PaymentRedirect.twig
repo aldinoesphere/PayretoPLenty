@@ -25,7 +25,7 @@
 </script>
 
 <input type="submit" value="Submit" style="display:none" />
-<script src="{$paymentWidgetUrl|escape:'html':'UTF-8'}" type="text/javascript"></script>
-<form action="{$responseUrl|escape:'html':'UTF-8'}" class="paymentWidgets"></form>
+<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+<form action="{{ paymentPageUrl }}" class="paymentWidgets"></form>
 
 {% endblock %}
