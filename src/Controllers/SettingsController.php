@@ -149,70 +149,80 @@ class SettingsController extends Controller
 			case 'credit-card-recurring':
 				return [
 						'title' => 'Credit Card (recurring)',
-						'paymentBrand' => ''
+						'paymentBrand' => '',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_ACC':
 				return [
 						'title' => 'Credit Card',
-						'paymentBrand' => ''
+						'paymentBrand' => '',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'direct-debit-recurring':
 				return [
 						'title' => 'Direct Debit (recurring)',
-						'paymentBrand' => 'DIRECTDEBIT_SEPA'
+						'paymentBrand' => 'DIRECTDEBIT_SEPA',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_DDS':
 				return [
 						'title' => 'DIrect Debit',
-						'paymentBrand' => 'DIRECTDEBIT_SEPA'
+						'paymentBrand' => 'DIRECTDEBIT_SEPA',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_PDR':
 				return [
 						'title' => 'Paydirect',
-						'paymentBrand' => 'PAYDIREKT'
+						'paymentBrand' => 'PAYDIREKT',
+						'paymentTemplate' => 'paymentRedirect'
 					];
 				break;
 
 			case 'paypal-recurring':
 				return [
 						'title' => 'Paypal (recurring)',
-						'paymentBrand' => 'PAYPAL'
+						'paymentBrand' => 'PAYPAL',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_PPM':
 				return [
 						'title' => 'Paypal',
-						'paymentBrand' => 'PAYPAL'
+						'paymentBrand' => 'PAYPAL',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_ADB':
 				return [
 						'title' => 'Online Bank Transfer',
-						'paymentBrand' => 'SOFORTUEBERWEISUNG'
+						'paymentBrand' => 'SOFORTUEBERWEISUNG',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_GRP':
 				return [
 						'title' => 'Giropay',
-						'paymentBrand' => 'GIROPAY'
+						'paymentBrand' => 'GIROPAY',
+						'paymentTemplate' => 'paymentWidget'
 					];
 				break;
 
 			case 'PAYRETO_ECP':
 				return [
 						'title' => 'Easy Credit',
-						'paymentBrand' => 'RATENKAUF'
+						'paymentBrand' => 'RATENKAUF',
+						'paymentTemplate' => 'paymentRedirect'
 					];
 				break;
 		}
