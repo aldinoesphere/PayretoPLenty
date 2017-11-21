@@ -271,7 +271,7 @@ class PaymentService
 		if ($this->getServerMode($paymentMethod) == "LIVE") {
             return false;
         }
-
+        $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
         if ($paymentMethod->paymentKey == 'PAYRETO_GRP') {
             return 'INTERNAL';
         } else {
