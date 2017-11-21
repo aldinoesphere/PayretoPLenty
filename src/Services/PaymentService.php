@@ -21,6 +21,7 @@ use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Services\Database\SettingsService;
 use Payreto\Services\GatewayService;
+use Payreto\Controllers\SettingsController;
 /**
 * 
 */
@@ -89,6 +90,12 @@ class PaymentService
 	private $orderRepository;
 
 	/**
+     *
+     * @var settingsController
+     */
+    private $settingsController;
+
+	/**
 	 * @var array
 	 */
 	public $settings = [];
@@ -103,7 +110,8 @@ class PaymentService
 		SettingsService $settingsService,
 		GatewayService $gatewayService,
 		OrderService $orderService,
-		OrderRepositoryContract $orderRepository
+		OrderRepositoryContract $orderRepository,
+		SettingsController $settingsController
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -115,6 +123,7 @@ class PaymentService
 		$this->gatewayService = $gatewayService;
 		$this->orderService = $orderService;
 		$this->orderRepository = $orderRepository;
+		 $this->settingsController = $settingsController;
 	}
 
 	/**
@@ -386,7 +395,7 @@ class PaymentService
 	public function getPaymentType(Basket $basket)
 	{
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
-        $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+        $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['transactionMode'];
 	}
