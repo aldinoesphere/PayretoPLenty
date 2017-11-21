@@ -17,10 +17,15 @@
 </style>
 
 <script type="text/javascript">
-	
+	var wpwlOptions = {
+		onReady: function(){
+			jQuery(".wpwl-form").submit();
+		}
+	}
 </script>
 
 <input type="submit" value="Submit" style="display:none" />
+<script src="https://test.oppwa.com/v1/static/e483c5af457467b78c9754743fcaa71f/js/static.min.js" async=""></script>
 <script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
 <form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
 
