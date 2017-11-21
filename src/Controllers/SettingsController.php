@@ -150,7 +150,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Credit Card (recurring)',
 						'paymentBrand' => '',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -158,7 +159,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Credit Card',
 						'paymentBrand' => '',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -166,7 +168,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Direct Debit (recurring)',
 						'paymentBrand' => 'DIRECTDEBIT_SEPA',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -174,7 +177,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'DIrect Debit',
 						'paymentBrand' => 'DIRECTDEBIT_SEPA',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -182,7 +186,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paydirect',
 						'paymentBrand' => 'PAYDIREKT',
-						'paymentTemplate' => 'PaymentRedirect'
+						'paymentTemplate' => 'PaymentRedirect',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -190,7 +195,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paypal (recurring)',
 						'paymentBrand' => 'PAYPAL',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -198,7 +204,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paypal',
 						'paymentBrand' => 'PAYPAL',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -206,7 +213,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Online Bank Transfer',
 						'paymentBrand' => 'SOFORTUEBERWEISUNG',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -214,7 +222,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Giropay',
 						'paymentBrand' => 'GIROPAY',
-						'paymentTemplate' => 'PaymentWidget'
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
 					];
 				break;
 
@@ -222,7 +231,8 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Easy Credit',
 						'paymentBrand' => 'RATENKAUF',
-						'paymentTemplate' => 'PaymentRedirect'
+						'paymentTemplate' => 'PaymentRedirect',
+						'paymentType' => 'DB'
 					];
 				break;
 		}

@@ -180,11 +180,9 @@ class PaymentService
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		$parameters = array_merge(
-			$this->getCredentials(),
-			$this->getTransactionParameters($basket),
-			$this->getPaymentParameters($paymentMethod),
-			$this->getCustomerParameters(),
-			$this->getBillingParameters($basket)
+			$this->getCredentials($paymentMethod),
+			$this->getTransactionParameters($basket, $paymentMethod),
+			$this->getCustomerParameters($basket)
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:regex', $regex);
@@ -228,35 +226,19 @@ class PaymentService
 	 *
 	 * @return array
 	 */
-	public function getCredentials() {
+	public function getCredentials(PaymentMethod $paymentMethod) {
 		$payretoSettings = $this->getPayretoSettings();
+		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 		$credentials = [
-			'authentication.userId' => $payretoSettings['userId'],
-			'authentication.password' => $payretoSettings['password']
+			'authentication' => 
+					[
+						'userId' => $payretoSettings['login'],
+						'password' => $payretoSettings['password'],
+						'entityId' => $paymentSettings['channel_id']
+					]
 		];
 
 		return $credentials;
-	}
-
-	/**
-	 * Get the Payment Parameters
-	 *
-	 * @param class PaymentMethod
-	 * @return array|null
-	 */
-	public function getPaymentParameters(PaymentMethod $paymentMethod) 
-	{
-
-		$paymentParameters = [];
-			
-			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-			$paymentParameters = [
-				'authentication.entityId' => $paymentSettings['entityId'],
-				'paymentType' => 'DB',
-				'testMode' => $this->getTestMode($paymentMethod)
-			];
-
-		return $paymentParameters;
 	}
 
 	/**
@@ -327,31 +309,37 @@ class PaymentService
 		return $paymentParameters;
 	}
 
-	public function getCustomerParameters() 
+	public function getCustomerParameters($basket) 
 	{
+		$shippings = $this->getShippingAddress($basket);
+		$billings = $this->getBillingAddress($basket);
 		$customerParameters = [
-			'customer.email' => 'aldino.said@esphere.id',
-			'customer.sex' => 'F',
-			'customer.phone' => '+4915111111111',
-			'customer.surname' => 'Jones',
-			'customer.birthDate' => '1980-01-01',
-			'customer.givenName' => 'Jane'
+			'customer' => 
+							[
+								'email' => 'aldino.said@esphere.id',
+								'sex' => 'F',
+								'phone' => '+4915111111111',
+								'last_name' => 'Jones',
+								'birthDate' => '1980-01-01',
+								'first_name' => 'Jane'
+							],
+			'shipping' => 
+							[
+								'city' => $shippings->town,
+								'country' => 'DE',
+								'street1' => $shippings->address1,
+								'postcode' => $shippings->postalCode
+							],
+			'billing' =>
+							[
+								'city' => $billings->town,
+								'country' => 'DE',
+								'street1' => $billings->address1,
+								'postcode' => $billings->postalCode
+							]
 		];
 
 		return $customerParameters;
-	}
-
-	public function getShippingParameters($basket) 
-	{
-		$shippings = $this->getShippingAddress($basket);
-		$shippingParameters = [
-			'shipping.city' => $shippings->town,
-			'shipping.country' => 'DE',
-			'shipping.street1' => $shippings->address1,
-			'shipping.postcode' => $shippings->postalCode
-		];
-
-		return $shippingParameters;
 	}
 
 	public function getChartParameters($basket) 
@@ -370,34 +358,38 @@ class PaymentService
 		return $chartParameters;
 	}
 
-	public function getBillingParameters($basket) 
-	{
-		$billings = $this->getBillingAddress($basket);
-		$billingParameters = [
-			'billing.city' => $billings->town,
-			'billing.country' => 'DE',
-			'billing.street1' => $billings->address1,
-			'billing.postcode' => $billings->postalCode
-		];
-
-		return $billingParameters;
-	}
-
 	/**
 	 * Get the Transaction Parameters payment
 	 *
 	 * @param class Basket
 	 * @return array
 	 */
-	public function getTransactionParameters(Basket $basket)
+	public function getTransactionParameters(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		$transactionParameters = [];
 		$transactionParameters = [
+			'transaction_id' => $basket->id,
 			'amount' => $basket->basketAmount,
-			'currency' => $basket->currency
+			'currency' => $basket->currency,
+			'payment_type' => $this->getPaymentType($basket),
+			'test_mode' => $this->getTestMode($paymentMethod)
 		];
 
 		return $transactionParameters;
+	}
+
+	/**
+	 * get payment type
+	 *
+	 * @param Basket $basket
+	 * @return Address
+	 */
+	public function getPaymentType(Basket $basket)
+	{
+		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+        $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['transactionMode'];
 	}
 
 	/**

@@ -33,7 +33,7 @@ class GatewayService
 	 */
 	private function getGatewayResponse($url, $parameters)
 	{
-		$postFields = http_build_query($parameters, '', '&');
+		$postFields = $parameters;
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -207,6 +207,193 @@ class GatewayService
 	public function getPaymentStatus($parameters)
 	{
 		
+	}
+
+	public static function getCredentialParameter($transactionData) 
+	{
+		$parameters = array();
+        $parameters['authentication.userId'] = $transactionData['login'];
+        $parameters['authentication.password'] = $transactionData['password'];
+        $parameters['authentication.entityId'] = $transactionData['channel_id'];
+
+        // test mode parameters (true)
+        if (!empty($transactionData['test_mode'])) {
+            $parameters['testMode'] = $transactionData['test_mode'];
+        }
+
+        return $parameters;
+	}
+
+	
+    /**
+     * get detail of cart item
+     *
+     * @param array $cartItems
+     * @return array $parameters
+     */
+    private static function getCartItemParameter($cartItems)
+    {
+        $parameters = array();
+        for ($i=0; $i < count($cartItems); $i++) {
+            $parameters['cart.items['.$i.'].merchantItemId'] = $cartItems[$i]['merchant_item_id'];
+            $parameters['cart.items['.$i.'].discount'] = self::setNumberFormat($cartItems[$i]['discount']);
+            $parameters['cart.items['.$i.'].quantity'] = $cartItems[$i]['quantity'];
+            $parameters['cart.items['.$i.'].name'] = $cartItems[$i]['name'];
+            $parameters['cart.items['.$i.'].price'] = self::setNumberFormat($cartItems[$i]['price']);
+            $parameters['cart.items['.$i.'].tax'] = self::setNumberFormat($cartItems[$i]['tax']);
+        }
+        return $parameters;
+    }
+
+
+	/**
+	 * get currenty payment status from gateway
+	 *
+	 * @param $parameters
+	 * @throws \Exception
+	 * @return array
+	 */
+	public function getCheckoutParameters($transactionData)
+	{
+		$parameters = [];
+		$parameters = self::getCredentialParameter($transactionData);
+        $parameters['merchantTransactionId'] = $transactionData['transaction_id'];
+        $parameters['customer.email'] = $transactionData['customer']['email'];
+        $parameters['customer.givenName'] = $transactionData['customer']['first_name'];
+        $parameters['customer.surname'] = $transactionData['customer']['last_name'];
+        $parameters['billing.street1'] = $transactionData['billing']['street'];
+        $parameters['billing.city'] = $transactionData['billing']['city'];
+        $parameters['billing.postcode'] = $transactionData['billing']['zip'];
+        $parameters['billing.country'] = $transactionData['billing']['country_code'];
+        $parameters['amount'] = $transactionData['amount'];
+        $parameters['currency'] = $transactionData['currency'];
+
+        $customerDateOfBirth = strtotime($transactionData['customer']['birthdate']);
+
+        if (isset($transactionData['customer']['sex'])) {
+            $parameters['customer.sex'] = $transactionData['customer']['sex'];
+        } if (isset($transactionData['customer']['birthdate']) && $customerDateOfBirth > 0) {
+            $parameters['customer.birthDate'] = $transactionData['customer']['birthdate'];
+        } if (isset($transactionData['customer']['phone'])) {
+            $parameters['customer.phone'] = $transactionData['customer']['phone'];
+        } if (!empty($transactionData['customer']['mobile'])) {
+            $parameters['customer.mobile'] = $transactionData['customer']['mobile'];
+        }
+
+        //klarna parameters
+        if (!empty($transactionData['cartItems'])) {
+            $parameters = array_merge($parameters, self::getCartItemParameter($transactionData['cartItems']));
+        } if (!empty($transactionData['customParameters']['KLARNA_CART_ITEM1_FLAGS'])) {
+            $parameters['customParameters[KLARNA_CART_ITEM1_FLAGS]'] =
+            $transactionData['customParameters']['KLARNA_CART_ITEM1_FLAGS'];
+        } if (!empty($transactionData['customParameters']['KLARNA_PCLASS_FLAG'])
+              && trim($transactionData['customParameters']['KLARNA_PCLASS_FLAG'])!=='') {
+            $parameters['customParameters[KLARNA_PCLASS_FLAG]'] =
+            $transactionData['customParameters']['KLARNA_PCLASS_FLAG'];
+        }
+
+        //paydirekt parameters
+        if (!empty($transactionData['customParameters']['PAYDIREKT_minimumAge'])) {
+            $parameters['customParameters[PAYDIREKT_minimumAge]'] =
+            $transactionData['customParameters']['PAYDIREKT_minimumAge'];
+        } if (!empty($transactionData['customParameters']['PAYDIREKT_payment.isPartial'])) {
+            $parameters['customParameters[PAYDIREKT_payment.isPartial]'] =
+            $transactionData['customParameters']['PAYDIREKT_payment.isPartial'];
+        } if (!empty($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount'])) {
+            $parameters['customParameters[PAYDIREKT_payment.shippingAmount]'] =
+            // self::setNumberFormat($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount']);
+        }
+
+        // payment type for RG.DB or only RG
+        if (!empty($transactionData['payment_type'])) {
+            $parameters['paymentType'] = $transactionData['payment_type'];
+        }
+
+        // registration parameter (true)
+        if (!empty($transactionData['payment_registration'])) {
+            $parameters['createRegistration'] = $transactionData['payment_registration'];
+            if (!empty($transactionData['3D'])) {
+                  $parameters['customParameters[presentation.amount3D]'] =
+                  // self::setNumberFormat($transactionData['3D']['amount']);
+                  $parameters['customParameters[presentation.currency3D]'] = $transactionData['3D']['currency'];
+            }
+        }
+
+        // recurring payment parameters : initial/repeated
+        if (!empty($transactionData['payment_recurring'])) {
+            $parameters['recurringType'] = $transactionData['payment_recurring'];
+        }
+
+        if (!empty($transactionData['customer_ip'])) {
+            $parameters['customer.ip'] = $transactionData['customer_ip'];
+        }
+
+        //easycredit parameter
+        if (!empty($transactionData['paymentBrand'])) {
+            $parameters['paymentBrand'] = $transactionData['paymentBrand'];
+        }
+
+        if (!empty($transactionData['shopperResultUrl'])) {
+            $parameters['shopperResultUrl'] = $transactionData['shopperResultUrl'];
+        }
+
+        if (isset($transactionData['customer']['birthdate']) && $customerDateOfBirth > 0) {
+            $parameters['customer.birthDate'] = $transactionData['customer']['birthdate'];
+        }
+
+        if (!empty($transactionData['customParameters']['RISK_ANZAHLPRODUKTEIMWARENKORB'])) {
+            $parameters['customParameters[RISK_ANZAHLPRODUKTEIMWARENKORB]'] =
+            $transactionData['customParameters']['RISK_ANZAHLPRODUKTEIMWARENKORB'];
+        }
+
+        if (isset($transactionData['customParameters']['RISK_ANZAHLBESTELLUNGEN'])) {
+            $parameters['customParameters[RISK_ANZAHLBESTELLUNGEN]'] =
+            $transactionData['customParameters']['RISK_ANZAHLBESTELLUNGEN'];
+        }
+
+        if (isset($transactionData['customParameters']['RISK_BESTELLUNGERFOLGTUEBERLOGIN'])) {
+            $parameters['customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]'] =
+            $transactionData['customParameters']['RISK_BESTELLUNGERFOLGTUEBERLOGIN'];
+        }
+
+        if (isset($transactionData['customParameters']['RISK_KUNDENSTATUS'])) {
+            $parameters['customParameters[RISK_KUNDENSTATUS]'] =
+            $transactionData['customParameters']['RISK_KUNDENSTATUS'];
+        }
+
+        if (isset($transactionData['customParameters']['RISK_KUNDESEIT'])) {
+            $parameters['customParameters[RISK_KUNDESEIT]'] = $transactionData['customParameters']['RISK_KUNDESEIT'];
+        }
+
+        if (!empty($transactionData['customParameters']['RISK_NEGATIVEZAHLUNGSINFORMATION'])) {
+            $parameters['customParameters[RISK_NEGATIVEZAHLUNGSINFORMATION]'] =
+            $transactionData['customParameters']['RISK_NEGATIVEZAHLUNGSINFORMATION'];
+        }
+
+        if (!empty($transactionData['customParameters']['RISK_RISIKOARTIKELIMWARENKORB'])) {
+            $parameters['customParameters[RISK_RISIKOARTIKELIMWARENKORB]'] =
+            $transactionData['customParameters']['RISK_RISIKOARTIKELIMWARENKORB'];
+        }
+        if (isset($transactionData['shipping']['city'])) {
+            $parameters['shipping.city'] = $transactionData['shipping']['city'];
+        }
+        if (isset($transactionData['shipping']['street1'])) {
+            $parameters['shipping.street1'] = $transactionData['shipping']['street1'];
+        }
+        if (isset($transactionData['shipping']['postcode'])) {
+            $parameters['shipping.postcode'] = $transactionData['shipping']['postcode'];
+        }
+        if (isset($transactionData['shipping']['country'])) {
+            $parameters['shipping.country'] = $transactionData['shipping']['country'];
+        }
+
+        if (!empty($transactionData['registrations'])) {
+            foreach ($transactionData['registrations'] as $key => $value) {
+                  $parameters['registrations['.$key.'].id'] = $value;
+            }
+        }
+
+        return http_build_query($parameters);
 	}
 
 	/**
