@@ -31,14 +31,13 @@ class GatewayService
 	 * @throws \Exception
 	 * @return string
 	 */
-	private function getGatewayResponse($url, $parameters)
+	private function getGatewayResponse($url, $checkoutParameters)
 	{
-		$postFields = $parameters;
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $checkoutParameters);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$responseData = curl_exec($ch);
@@ -93,20 +92,21 @@ class GatewayService
 	 * @throws \Exception
 	 * @return string
 	 */
-	public function getCheckoutId($parameters)
+	public function getCheckoutResponse($transactionData)
 	{
 		$checkoutUrl = $this->oppwaCheckoutUrlTest;
-		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
+		$checkoutParameters = $this->getCheckoutParameters($transactionData);
+		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
 
 		if (!$response)
 		{
 			throw new \Exception('Sid is not valid : ' . $response);
 		}
 
-		$responseId = json_decode($response, true);
+		$response = json_decode($response, true);
 		$this->getLogger(__METHOD__)->error('Payreto:responseId', $responseId);
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
-		return $responseId["id"];
+		return $response;
 	}
 
 	/**

@@ -201,9 +201,9 @@ class PaymentService
 
 		try
 		{
-			$checkoutId = $this->gatewayService->getCheckoutId($parameters);
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
+			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
 
 			// if ($paymentMethod->paymentKey != 'PAYRETO_ECP' || $paymentMethod->paymentKey != 'PAYRETO_GRP') {
 			// 	$checkoutId = $this->gatewayService->getCheckoutId($parameters);
