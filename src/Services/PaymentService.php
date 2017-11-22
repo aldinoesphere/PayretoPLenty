@@ -315,7 +315,7 @@ class PaymentService
 										'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
 										'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 										'RISK_KUNDESEIT' => '2016-01-01',
-										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
+										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->checkCustomerLoginStatus()
 									]
 		];
 
@@ -327,9 +327,9 @@ class PaymentService
      *
      * @return string|boolean
      */
-    protected function getLoginStatus()
+    protected function checkCustomerLoginStatus()
     {
-    	$loginStatus = $this->paymentHelper->getUserAuthentication();
+    	$loginStatus = $this->paymentHelper->checkCustomerLogin();
     	$this->getLogger(__METHOD__)->error('Payreto:loginStatus', $loginStatus);
     	return $loginStatus;
     }

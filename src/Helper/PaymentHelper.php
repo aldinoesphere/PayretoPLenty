@@ -193,9 +193,13 @@ class PaymentHelper
 		return $orders->totalsCount;
 	}
 
-	public function getUserAuthentication() {
-		$userAuth = pluginApp(\Plenty\Modules\Authorization\Contracts\AuthorizedUserRepositoryContract::class);
-		return $userAuth->getCurrentAuthorizedUser();
+	public function checkCustomerLogin() {
+		$customerService = pluginApp(\IO\Services\CustomerService::class);
+		if ($customerService->getContactId()) {
+			return 'true';
+		} else {
+			return 'false';
+		}
 	}
 
 	/**
