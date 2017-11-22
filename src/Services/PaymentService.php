@@ -196,22 +196,22 @@ class PaymentService
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
+		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
 
 		try
 		{
-			// if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
-			// {
+			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
+			{
 				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
-				$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
-			// } else {
-			// 	$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
-			// 	$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
-			// }
+			} else {
+				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
+				$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			}
 		}
 		catch (\Exception $e)
 		{
@@ -290,7 +290,9 @@ class PaymentService
 	{
 
 		$paymentParameters = [];
+
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
@@ -298,13 +300,12 @@ class PaymentService
 												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
 												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
-												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
 											]
 					],
 					$this->getChartParameters($basket)
 				);
 		}
-		$this->getLogger(__METHOD__)->error('Payreto:paymentParameters', $paymentParameters);
 
 		return $paymentParameters;
 	}
@@ -316,7 +317,7 @@ class PaymentService
      */
     protected function getLoginStatus()
     {
-    	return $this->paymentHelper->getUserAuthentication();
+    	
     }
 
 	/**
@@ -414,7 +415,7 @@ class PaymentService
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
         $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
-        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
+        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['transactionMode'];
 	}
 
 	/**
