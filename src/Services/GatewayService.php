@@ -88,7 +88,7 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters
+	 * @param array $transactionData
 	 * @throws \Exception
 	 * @return string
 	 */
@@ -112,11 +112,11 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters
+	 * @param array $transactionData
 	 * @throws \Exception
 	 * @return string
 	 */
-	public function getServerToServer($parameters)
+	public function getServerToServer($transactionData)
 	{
 		$checkoutUrl = $this->oppwaPaymentUrlTest;
 		$checkoutParameters = $this->getCheckoutParameters($transactionData);
