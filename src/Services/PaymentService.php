@@ -290,34 +290,21 @@ class PaymentService
 	{
 		$paymentParameters = [];
 
-		// if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
-			// $paymentParameters =array_merge( 
-			// 		[
-			// 			$this->getChartParameters($basket),
-			// 			'paymentBrand' => $this->getPaymentBrand($basket),
-			// 			'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
-			// 			'customParameters' => [
-			// 									'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
-			// 									'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
-			// 									'RISK_KUNDESEIT' => '2016-01-01',
-			// 									'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
-			// 								]
-			// 		]
-			// 	);
-		// }
-
-		$paymentParameters =
-		[
-				// $this->getChartParameters($basket),
-				'paymentBrand' => $this->getPaymentBrand($basket),
-				'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
-				'customParameters' => [
-										'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
-										'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
-										'RISK_KUNDESEIT' => '2016-01-01',
-										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->checkCustomerLoginStatus()
-									]
-		];
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			$paymentParameters =array_merge( 
+					[
+						$this->getChartParameters($basket),
+						'paymentBrand' => $this->getPaymentBrand($basket),
+						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
+						'customParameters' => [
+												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount($this->paymentHelper->getCustomerId()),
+												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+												'RISK_KUNDESEIT' => '2016-01-01',
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->checkCustomerLoginStatus()
+											]
+					]
+				);
+		}
 
 		return $paymentParameters;
 	}
@@ -329,9 +316,13 @@ class PaymentService
      */
     protected function checkCustomerLoginStatus()
     {
-    	$loginStatus = $this->paymentHelper->checkCustomerLogin();
-    	$this->getLogger(__METHOD__)->error('Payreto:loginStatus', $loginStatus);
-    	return $loginStatus;
+    	$customerId = $this->paymentHelper->getCustomerId();
+    	$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
+    	if ($customerId) {
+			return 'true';
+		} else {
+			return 'false';
+		}
     }
 
 	/**
@@ -341,7 +332,7 @@ class PaymentService
      */
     protected function getRiskKundenStatus()
     {
-    	if ($this->paymentHelper->getOrderCount(114) > 0) {
+    	if ($this->paymentHelper->getOrderCount($this->paymentHelper->getCustomerId()) > 0) {
             return 'BESTANDSKUNDE';
         }
         return 'NEUKUNDE';
@@ -383,9 +374,9 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		$items = $this->itemRepository->show($basket->basketItems);
-		$this->getLogger(__METHOD__)->error('Payreto:items', $items);
-		foreach ($items as $key => $item) {
+		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basket->basketItems);
+		foreach ($basket->basketItems as $key => $item) {
+			// $items = $this->itemRepository->show($item->itemId);
 			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
 			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
 			$chartParameters['cartItems'][$key]['type'] = 'basic';

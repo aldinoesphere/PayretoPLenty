@@ -193,13 +193,9 @@ class PaymentHelper
 		return $orders->totalsCount;
 	}
 
-	public function checkCustomerLogin() {
+	public function getCustomerId() {
 		$customerService = pluginApp(\IO\Services\CustomerService::class);
-		if ($customerService->getContactId()) {
-			return 'true';
-		} else {
-			return 'false';
-		}
+		return $customerService->getContactId();
 	}
 
 	/**
