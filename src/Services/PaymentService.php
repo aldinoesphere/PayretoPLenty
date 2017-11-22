@@ -239,13 +239,10 @@ class PaymentService
 		$payretoSettings = $this->getPayretoSettings();
 		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 		$credentials = [
-			'authentication' => 
-					[
 						'login' => $payretoSettings['userId'],
 						'password' => $payretoSettings['password'],
 						'channel_id' => $paymentSettings['entityId']
-					]
-		];
+					];
 
 		return $credentials;
 	}
