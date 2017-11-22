@@ -203,7 +203,7 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
-				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket));
+				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
@@ -287,7 +287,7 @@ class PaymentService
 	 * @param PaymentMethod $paymentMethod
 	 * @return array|null
 	 */
-	public function getServerToServerParameters(Basket $basket) 
+	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 
 		$paymentParameters = [];
