@@ -195,15 +195,7 @@ class PaymentHelper
 
 	public function getUserAuthentication() {
 		$userAuth = pluginApp(\Plenty\Modules\Authorization\Contracts\AuthorizedUserRepositoryContract::class);
-		$authHelper = pluginApp(AuthHelper::class);
-
-        $users = $authHelper->processUnguarded(
-            function () use ($userAuth) {
-                return $userAuth->getCurrentAuthorizedUser();
-            }
-        );
-
-		return $users;
+		return $userAuth->getCurrentAuthorizedUser();
 	}
 
 	/**

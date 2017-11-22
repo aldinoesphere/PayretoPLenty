@@ -331,6 +331,7 @@ class PaymentService
     {
     	$loginStatus = $this->paymentHelper->getUserAuthentication();
     	$this->getLogger(__METHOD__)->error('Payreto:loginStatus', $loginStatus);
+    	return $loginStatus;
     }
 
 	/**
