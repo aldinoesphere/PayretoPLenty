@@ -201,7 +201,7 @@ class PaymentService
 
 		try
 		{
-			if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
