@@ -232,7 +232,7 @@ class SettingsController extends Controller
 						'title' => 'Easy Credit',
 						'paymentBrand' => 'RATENKAUF',
 						'paymentTemplate' => 'PaymentRedirect',
-						'paymentType' => 'DB'
+						'paymentType' => 'PA'
 					];
 				break;
 		}

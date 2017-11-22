@@ -235,12 +235,12 @@ class GatewayService
     {
         $parameters = array();
         for ($i=0; $i < count($cartItems); $i++) {
-            $parameters['cart.items['.$i.'].merchantItemId'] = $cartItems[$i]['merchant_item_id'];
-            $parameters['cart.items['.$i.'].discount'] = $cartItems[$i]['discount'];
+            $parameters['cart.items['.$i.'].merchantItemId'] = $cartItems[$i]['merchantItemId'];
+            $parameters['cart.items['.$i.'].currency'] = $cartItems[$i]['currency'];
             $parameters['cart.items['.$i.'].quantity'] = $cartItems[$i]['quantity'];
             $parameters['cart.items['.$i.'].name'] = $cartItems[$i]['name'];
             $parameters['cart.items['.$i.'].price'] = $cartItems[$i]['price'];
-            $parameters['cart.items['.$i.'].tax'] = $cartItems[$i]['tax'];
+            $parameters['cart.items['.$i.'].type'] = $cartItems[$i]['type'];
         }
         return $parameters;
     }
@@ -300,8 +300,8 @@ class GatewayService
             $parameters['customParameters[PAYDIREKT_payment.isPartial]'] =
             $transactionData['customParameters']['PAYDIREKT_payment.isPartial'];
         } if (!empty($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount'])) {
-            // $parameters['customParameters[PAYDIREKT_payment.shippingAmount]'] =
-            // self::setNumberFormat($transactionData['customParameters']['PAYDIREKT_payment.shippingAmount']);
+            $parameters['customParameters[PAYDIREKT_payment.shippingAmount]'] =
+            $transactionData['customParameters']['PAYDIREKT_payment.shippingAmount'];
         }
 
         // payment type for RG.DB or only RG
@@ -313,8 +313,8 @@ class GatewayService
         if (!empty($transactionData['payment_registration'])) {
             $parameters['createRegistration'] = $transactionData['payment_registration'];
             if (!empty($transactionData['3D'])) {
-                  // $parameters['customParameters[presentation.amount3D]'] =
-                  // self::setNumberFormat($transactionData['3D']['amount']);
+                  $parameters['customParameters[presentation.amount3D]'] =
+                  $transactionData['3D']['amount'];
                   $parameters['customParameters[presentation.currency3D]'] = $transactionData['3D']['currency'];
             }
         }

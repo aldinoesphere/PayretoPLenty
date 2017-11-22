@@ -194,26 +194,23 @@ class PaymentService
 			$this->getCustomerParameters($basket)
 		);
 
-		$this->getLogger(__METHOD__)->error('Payreto:regex', $regex);
+		$this->getLogger(__METHOD__)->error('Payreto:orderCount', $this->paymentHelper->getOrderCount(114));
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
 
 		try
 		{
-			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
-
-			// if ($paymentMethod->paymentKey != 'PAYRETO_ECP' || $paymentMethod->paymentKey != 'PAYRETO_GRP') {
-			// 	$checkoutId = $this->gatewayService->getCheckoutId($parameters);
-			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
-			// } else {
-			// 	$paymentResponse = $this->gatewayService->getServerToServer($parameters);
-			// 	$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-			// 	// $paymentPageUrl = $paymentResponse['redirect']['url'];
-			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentResponse;
-			// }
+			if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			{
+				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
+				$paymentPageUrl = $paymentResponse['redirect']['url'];
+			} else {
+				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
+				$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			}
 		}
 		catch (\Exception $e)
 		{
@@ -294,18 +291,16 @@ class PaymentService
 		$paymentParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
-			$ccSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
-						'authentication.entityId' => $ccSettings['entityId'],
-						'paymentType' => 'PA',
-						'paymentBrand' => 'RATENKAUF',
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
-						'customParameters[RISK_ANZAHLBESTELLUNGEN]' =>13,
-						'customParameters[RISK_KUNDENSTATUS]' => 'BESTANDSKUNDE',
-						'customParameters[RISK_KUNDESEIT]' => '2016-01-01',
-						'customParameters[RISK_BESTELLUNGERFOLGTUEBERLOGIN]' => 'true',
-						'testMode' => 'EXTERNAL'
+						'customParameters' => [
+												'RISK_ANZAHLBESTELLUNGEN' => 13,
+												'RISK_KUNDENSTATUS' => 'BESTANDSKUNDE',
+												'RISK_KUNDESEIT' => '2016-01-01',
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+											]
 					],
 					$this->getChartParameters($basket)
 				);
@@ -350,15 +345,17 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		$item = $this->itemRepository->show($basket->basketItems[0]->itemId);
-		$this->getLogger(__METHOD__)->error('Payreto:item', $item);
-		$itemName = $this->paymentHelper->getVariationDescription($basket->basketItems[0]->variationId); 
-		$chartParameters['cart.items[0].name'] = $itemName[0]->name;
-		$chartParameters['cart.items[0].type'] = 'basic';
-		$chartParameters['cart.items[0].price'] = $basket->basketItems[0]->price;
-		$chartParameters['cart.items[0].currency'] = $basket->currency;
-		$chartParameters['cart.items[0].quantity'] = $basket->basketItems[0]->quantity;
-		$chartParameters['cart.items[0].merchantItemId'] = $basket->basketItems[0]->itemId; 
+		$items = $this->itemRepository->show($basket->basketItems);
+		$this->getLogger(__METHOD__)->error('Payreto:items', $items);
+		foreach ($items as $key => $item) {
+			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
+			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
+			$chartParameters['cartItems'][$key]['type'] = 'basic';
+			$chartParameters['cartItems'][$key]['price'] = $item->price;
+			$chartParameters['cartItems'][$key]['currency'] = $basket->currency;
+			$chartParameters['cartItems'][$key]['quantity'] = $item->quantity;
+			$chartParameters['cartItems'][$key]['merchantItemId'] = $item->itemId;	
+		} 
 
 		return $chartParameters;
 	}
