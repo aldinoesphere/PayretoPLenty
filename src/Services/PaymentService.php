@@ -290,21 +290,34 @@ class PaymentService
 	{
 		$paymentParameters = [];
 
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
-			$paymentParameters =array_merge( 
-					[
-						// $this->getChartParameters($basket),
-						// 'paymentBrand' => $this->getPaymentBrand($basket),
-						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
-						'customParameters' => [
-												// 'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
-												// 'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
-												'RISK_KUNDESEIT' => '2016-01-01',
-												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
-											]
-					]
-				);
-		}
+		// if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+			// $paymentParameters =array_merge( 
+			// 		[
+			// 			$this->getChartParameters($basket),
+			// 			'paymentBrand' => $this->getPaymentBrand($basket),
+			// 			'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
+			// 			'customParameters' => [
+			// 									'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
+			// 									'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+			// 									'RISK_KUNDESEIT' => '2016-01-01',
+			// 									'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+			// 								]
+			// 		]
+			// 	);
+		// }
+
+		$paymentParameters =
+		[
+				// $this->getChartParameters($basket),
+				'paymentBrand' => $this->getPaymentBrand($basket),
+				'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
+				'customParameters' => [
+										'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
+										'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+										'RISK_KUNDESEIT' => '2016-01-01',
+										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+									]
+		];
 
 		return $paymentParameters;
 	}
