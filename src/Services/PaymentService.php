@@ -482,48 +482,7 @@ class PaymentService
 			'phone' => $address->phone
 		];
 	}
-
-	/**
-	 * get basket items
-	 *
-	 * @param Basket $basket
-	 * @return array
-	 */
-	private function getBasketItems(Basket $basket)
-	{
-		$items = [];
-		/** @var BasketItem $basketItem */
-		foreach ($basket->basketItems as $basketItem)
-		{
-			$item = $basketItem->getAttributes();
-			$item['name'] = $this->getBasketItemName($basketItem);
-			$items[] = $item;
-		}
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $items);
-
-		return $items;
-	}
-
-	/**
-	 * get basket item name
-	 *
-	 * @param BasketItem $basketItem
-	 * @return string
-	 */
-	private function getBasketItemName(BasketItem $basketItem)
-	{
-		$this->getLogger(__METHOD__)->error('Payreto::item name', $basketItem);
-		/** @var \Plenty\Modules\Item\Item\Models\Item $item */
-		$item = $this->itemRepository->show($basketItem->itemId);
-
-		/** @var \Plenty\Modules\Item\Item\Models\ItemText $itemText */
-		$itemText = $item->texts;
-
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItemName', $itemText);
-
-		return $itemText->first()->name1;
-	}
-
+	
 	/**
 	 * Returns a random number with length as parameter given.
 	 *
