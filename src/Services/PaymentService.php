@@ -195,7 +195,7 @@ class PaymentService
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
-		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
+		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		try
 		{
