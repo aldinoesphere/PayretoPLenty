@@ -189,7 +189,7 @@ class PaymentHelper
                 return $order->allOrdersByContact($contactId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
             }
         );
-
+        $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
 		return $orders->totalsCount;
 	}
 

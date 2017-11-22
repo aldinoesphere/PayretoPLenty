@@ -292,8 +292,8 @@ class PaymentService
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$paymentParameters =array_merge( 
+					$this->getChartParameters($basket),
 					[
-						$this->getChartParameters($basket),
 						'paymentBrand' => $this->getPaymentBrand($basket),
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
