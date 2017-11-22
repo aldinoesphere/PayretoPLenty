@@ -415,7 +415,7 @@ class PaymentService
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
         $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
-        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['transactionMode'];
+        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
 	}
 
 	/**
