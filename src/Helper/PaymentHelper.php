@@ -13,7 +13,6 @@ use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 use Plenty\Plugin\Log\Loggable;
-use Plenty\Modules\Order\RelationReference\Contracts\OrderRelationReferenceRepositoryContract;
 
 /**
 * 
@@ -180,14 +179,14 @@ class PaymentHelper
 		return null;
 	}
 
-	public function getOrderCount($referenceId) 
+	public function getOrderCount($contactId) 
 	{
-		$order = pluginApp(OrderRelationReferenceRepositoryContract::class);
+		$order = pluginApp(\Plenty\Modules\Order\Contracts\OrderRepositoryContract::class);
 		$authHelper = pluginApp(AuthHelper::class);
 
         $orders = $authHelper->processUnguarded(
-            function () use ($order, $referenceId) {
-                return $order->findByAnyValues(['referenceId'=>$referenceId], 1, 50);
+            function () use ($order, $contactId) {
+                return $order->allOrdersByContact($contactId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
             }
         );
 
