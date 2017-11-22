@@ -204,7 +204,6 @@ class PaymentService
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
 				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
-				$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
@@ -291,7 +290,6 @@ class PaymentService
 	{
 
 		$paymentParameters = [];
-
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$paymentParameters =array_merge( 
 					[
@@ -306,6 +304,7 @@ class PaymentService
 					$this->getChartParameters($basket)
 				);
 		}
+		$this->getLogger(__METHOD__)->error('Payreto:paymentParameters', $paymentParameters);
 
 		return $paymentParameters;
 	}
