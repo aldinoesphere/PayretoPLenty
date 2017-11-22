@@ -202,7 +202,7 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
-				// $parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
+				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
@@ -288,19 +288,19 @@ class PaymentService
 	 */
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
-
 		$paymentParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
+						'paymentBrand' => $this->getPaymentBrand($basket),
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
 												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
 												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
-												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
 											]
 					],
 					$this->getChartParameters($basket)
@@ -417,6 +417,19 @@ class PaymentService
         $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
+	}
+
+	/**
+	 * get payment brand
+	 *
+	 * @param Basket $basket
+	 * @return Address
+	 */
+	public function getPaymentBrand(Basket $basket)
+	{
+		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+        return $optionSetting['paymentBrand'];
 	}
 
 	/**
