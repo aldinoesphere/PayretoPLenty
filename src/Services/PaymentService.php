@@ -316,8 +316,8 @@ class PaymentService
      */
     protected function getLoginStatus()
     {
-    	$status = pluginApp(AfterAccountAuthentication::class);
-    	return $status->getAccountContact();
+    	$status = pluginApp(\Plenty\Modules\Authorization\Contracts\AuthorizedUserRepositoryContract::class);
+    	return $status->getCurrentAuthorizedUser();
     }
 
 	/**
