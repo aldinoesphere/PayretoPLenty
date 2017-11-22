@@ -315,7 +315,7 @@ class PaymentService
 										'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
 										'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 										'RISK_KUNDESEIT' => '2016-01-01',
-										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+										'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
 									]
 		];
 
