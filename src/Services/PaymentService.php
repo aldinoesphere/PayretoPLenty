@@ -201,17 +201,17 @@ class PaymentService
 
 		try
 		{
-			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
-			{
+			// if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
+			// {
 				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
-			} else {
-				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
-				$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
-			}
+			// } else {
+			// 	$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
+			// 	$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+			// 	$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			// }
 		}
 		catch (\Exception $e)
 		{
@@ -415,7 +415,7 @@ class PaymentService
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
         $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
-        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['transactionMode'];
+        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
 	}
 
 	/**
