@@ -294,11 +294,11 @@ class PaymentService
 			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
-						'paymentBrand' => $this->getPaymentBrand($basket),
+						// 'paymentBrand' => $this->getPaymentBrand($basket),
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
-												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
-												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+												// 'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
+												// 'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
 												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
 											]
