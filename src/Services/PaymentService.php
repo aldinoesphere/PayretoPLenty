@@ -196,7 +196,6 @@ class PaymentService
 		);
 
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
-		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
 
 		try
@@ -212,6 +211,7 @@ class PaymentService
 				$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
 			}
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		}
 		catch (\Exception $e)
 		{

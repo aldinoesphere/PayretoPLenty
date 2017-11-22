@@ -119,7 +119,8 @@ class GatewayService
 	public function getServerToServer($parameters)
 	{
 		$checkoutUrl = $this->oppwaPaymentUrlTest;
-		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
+		$checkoutParameters = $this->getCheckoutParameters($transactionData);
+		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
 
 		if (!$response)
 		{
