@@ -16,6 +16,7 @@ use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Log\Loggable;
+use Plenty\Modules\Authentication\Events\AfterAccountAuthentication;
 
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
@@ -194,7 +195,6 @@ class PaymentService
 			$this->getCustomerParameters($basket)
 		);
 
-		$this->getLogger(__METHOD__)->error('Payreto:orderCount', $this->paymentHelper->getOrderCount(114));
 		$this->getLogger(__METHOD__)->error('Payreto:basket', $basket);
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 		$this->getLogger(__METHOD__)->error('Payreto:getCredentials', $this->getCredentials($paymentMethod)); 
@@ -203,6 +203,7 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
+				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
@@ -296,10 +297,10 @@ class PaymentService
 					[
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
-												'RISK_ANZAHLBESTELLUNGEN' => 13,
-												'RISK_KUNDENSTATUS' => 'BESTANDSKUNDE',
+												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
+												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
-												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
 											]
 					],
 					$this->getChartParameters($basket)
@@ -308,6 +309,30 @@ class PaymentService
 
 		return $paymentParameters;
 	}
+
+	/**
+     * Get risk kunden status
+     *
+     * @return string|boolean
+     */
+    protected function getLoginStatus()
+    {
+    	$status = pluginApp(AfterAccountAuthentication::class);
+    	return $status->isSuccessful();
+    }
+
+	/**
+     * Get risk kunden status
+     *
+     * @return string|boolean
+     */
+    protected function getRiskKundenStatus()
+    {
+    	if ($this->paymentHelper->getOrderCount(114) > 0) {
+            return 'BESTANDSKUNDE';
+        }
+        return 'NEUKUNDE';
+    }
 
 	public function getCustomerParameters($basket) 
 	{
