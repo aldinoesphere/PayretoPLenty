@@ -202,7 +202,7 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
-				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
+				// $parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
@@ -300,7 +300,7 @@ class PaymentService
 												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount(114),
 												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
-												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->getLoginStatus()
 											]
 					],
 					$this->getChartParameters($basket)
@@ -317,7 +317,8 @@ class PaymentService
      */
     protected function getLoginStatus()
     {
-    	
+    	$loginStatus = $this->paymentHelper->getUserAuthentication();
+    	$this->getLogger(__METHOD__)->error('Payreto:loginStatus', $loginStatus);
     }
 
 	/**
@@ -482,7 +483,7 @@ class PaymentService
 			'phone' => $address->phone
 		];
 	}
-	
+
 	/**
 	 * Returns a random number with length as parameter given.
 	 *

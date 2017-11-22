@@ -193,6 +193,19 @@ class PaymentHelper
 		return $orders->totalsCount;
 	}
 
+	public function getUserAuthentication() {
+		$userAuth = pluginApp(\Plenty\Modules\Authorization\Contracts\AuthorizedUserRepositoryContract::class);
+		$authHelper = pluginApp(AuthHelper::class);
+
+        $users = $authHelper->processUnguarded(
+            function () use ($userAuth) {
+                return $userAuth->getCurrentAuthorizedUser();
+            }
+        );
+
+		return $users;
+	}
+
 	/**
 	 * Create a credit payment when status_url triggered and no payment created before.
 	 *
