@@ -203,7 +203,8 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
-				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
+				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket));
+				$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
@@ -286,13 +287,12 @@ class PaymentService
 	 * @param PaymentMethod $paymentMethod
 	 * @return array|null
 	 */
-	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
+	public function getServerToServerParameters(Basket $basket) 
 	{
 
 		$paymentParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
-			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
