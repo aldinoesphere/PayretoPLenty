@@ -291,9 +291,9 @@ class PaymentService
 		$paymentParameters = [];
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
-			$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 			$paymentParameters =array_merge( 
 					[
+						// $this->getChartParameters($basket),
 						// 'paymentBrand' => $this->getPaymentBrand($basket),
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
@@ -302,8 +302,7 @@ class PaymentService
 												'RISK_KUNDESEIT' => '2016-01-01',
 												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => 'true'
 											]
-					],
-					$this->getChartParameters($basket)
+					]
 				);
 		}
 
