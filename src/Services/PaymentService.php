@@ -316,8 +316,7 @@ class PaymentService
      */
     protected function getLoginStatus()
     {
-    	$status = pluginApp(\Plenty\Modules\Authorization\Contracts\AuthorizedUserRepositoryContract::class);
-    	return $status->getCurrentAuthorizedUser();
+    	return $this->paymentHelper->getUserAuthentication();
     }
 
 	/**
