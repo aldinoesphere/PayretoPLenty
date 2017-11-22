@@ -317,7 +317,7 @@ class PaymentService
     protected function getLoginStatus()
     {
     	$status = pluginApp(AfterAccountAuthentication::class);
-    	return $status->isSuccessful();
+    	return $status->getAccountContact();
     }
 
 	/**
