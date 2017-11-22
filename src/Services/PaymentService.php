@@ -16,7 +16,6 @@ use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Log\Loggable;
-use Plenty\Modules\Authentication\Events\AfterAccountAuthentication;
 
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
