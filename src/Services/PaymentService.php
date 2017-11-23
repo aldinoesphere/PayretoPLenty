@@ -201,7 +201,7 @@ class PaymentService
 		{
 			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 			{
-				$parameters = $this->getServerToServerParameters($basket, $paymentMethod);
+				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
