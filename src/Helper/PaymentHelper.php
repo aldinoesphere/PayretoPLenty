@@ -192,7 +192,7 @@ class PaymentHelper
         );
 		
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
-	 	return (array)$orders;
+	 	return (object)$orders;
 	}
 
 	public function getCustomerId() {

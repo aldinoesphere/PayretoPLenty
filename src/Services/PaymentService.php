@@ -331,9 +331,9 @@ class PaymentService
      */
     protected function getRiskKundenStatus()
     {
-    	// if ($this->paymentHelper->getOrderCount((int)$this->paymentHelper->getCustomerId()) > 0) {
-     //        return 'BESTANDSKUNDE';
-     //    }
+    	if ($this->paymentHelper->getOrderCount((int)$this->paymentHelper->getCustomerId()) > 0) {
+            return 'BESTANDSKUNDE';
+        }
         return 'NEUKUNDE';
     }
 
