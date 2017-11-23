@@ -194,7 +194,7 @@ class PaymentService
 			$this->getCustomerParameters($basket)
 		);
 
-		$this->getLogger(__METHOD__)->error('Payreto:getOrderCount', $this->paymentHelper->getOrderCount(114));
+		$this->getLogger(__METHOD__)->error('Payreto:getOrderCount', $this->paymentHelper->getOrderCount(114)->totalsCount);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		try
