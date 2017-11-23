@@ -192,7 +192,8 @@ class PaymentHelper
         );
 		
 		foreach ($orders as $order) {
-		 	return $orders->totalsCount;
+			$this->getLogger(__METHOD__)->error('Payreto:order', $order);
+		 	return $order->totalsCount;
 		} 
 	}
 
