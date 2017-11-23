@@ -183,14 +183,15 @@ class PaymentHelper
 	public function getOrderCount($customerId) 
 	{
 		$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
-		$orderRepository = $this->orderRepository;
-		$authHelper = pluginApp(AuthHelper::class);
+		// $orderRepository = $this->orderRepository;
+		// $authHelper = pluginApp(AuthHelper::class);
 
-        $orders = $authHelper->processUnguarded(
-            function () use ($orderRepository, $customerId) {
-                return $orderRepository->allOrdersByContact($customerId, 1, 50, ['relation', 'reference']);
-            }
-        );
+  //       $orders = $authHelper->processUnguarded(
+  //           function () use ($orderRepository, $customerId) {
+  //               return $orderRepository->allOrdersByContact($customerId, 1, 50, ['relation', 'reference']);
+  //           }
+  //       );
+		$orders = [1,2];
         $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
 		return $orders; 
 	}
