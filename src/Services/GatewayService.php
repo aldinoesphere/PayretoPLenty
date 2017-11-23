@@ -163,7 +163,7 @@ class GatewayService
 	 */
 	public function paymentServerToServer($checkoutId, $parameters)
 	{
-		$confirmationUrl = $this->oppwaPaymentUrlTest . $checkoutId;
+		$confirmationUrl = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
 		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
