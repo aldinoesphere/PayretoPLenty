@@ -195,7 +195,7 @@ class PaymentService
 		);
 		$totalsCount = $this->paymentHelper->getOrderCount(114);
 
-		$this->getLogger(__METHOD__)->error('Payreto:getOrderCount', $totalsCount->totalsCount);
+		$this->getLogger(__METHOD__)->error('Payreto:getOrderCount', $totalsCount['totalsCount']);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		try
