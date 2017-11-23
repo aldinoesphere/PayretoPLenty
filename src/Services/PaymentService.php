@@ -194,6 +194,8 @@ class PaymentService
 			$this->getCustomerParameters($basket)
 		);
 
+		$this->paymentHelper->mapStatus();
+
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		try

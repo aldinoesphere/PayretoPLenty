@@ -135,6 +135,11 @@ class PaymentHelper
 		return $this->paymentMethodRepository->findByPaymentMethodId($paymentId);
 	}
 
+	public function mapStatus() {
+		$statusConstants = $this->paymentRepository->getStatusConstants();
+		$this->getLogger(__METHOD__)->error('Payreto:statusConstants', $statusConstants);
+	}
+
 	/**
 	 * get domain from webstoreconfig.
 	 *
@@ -190,7 +195,7 @@ class PaymentHelper
                 return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']);
             }
         );
-        
+
 	 	return $orders->getTotalCount();
 	}
 
