@@ -762,7 +762,7 @@ class PaymentController extends Controller
 				'amount' => $orderData->order->amounts[0]->invoiceTotal,
 				'currency' => $orderData->order->amounts[0]->currency,
 				'paymentType' => 'CP',
-				'testMode' => 'EXTERNAL'
+				'testMode' => $this->paymentService->getTestMode($paymentMethod)
 			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
