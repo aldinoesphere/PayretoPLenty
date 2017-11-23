@@ -373,7 +373,6 @@ class PaymentService
 		$chartParameters = [];
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basket->basketItems);
 		foreach ($basket->basketItems as $key => $item) {
-			// $items = $this->itemRepository->show($item->itemId);
 			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
 			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
 			$chartParameters['cartItems'][$key]['type'] = 'basic';

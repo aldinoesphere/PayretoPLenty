@@ -186,7 +186,7 @@ class GatewayService
 	 */
 	public function backOfficePayment($checkoutId, $parameters)
 	{
-		$url = $this->oppwaPaymentUrlTest . $checkoutId;
+		$url = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
 		$response = $this->getGatewayResponse($url, $parameters);
 
 		if (!$response)
