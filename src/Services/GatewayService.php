@@ -138,10 +138,10 @@ class GatewayService
 	 * @throws \Exception
 	 * @return array
 	 */
-	public function paymentConfirmation($checkoutId, $parameters)
+	public function paymentConfirmation($checkoutId, $transactionData)
 	{
 		$confirmationUrl = $this->oppwaCheckoutUrlTest . '/' . $checkoutId . '/payment';
-		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
+		$confirmationUrl .= '?' . self::getCredentialParameter($transactionData);
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
 
