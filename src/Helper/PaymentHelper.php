@@ -181,7 +181,7 @@ class PaymentHelper
 
 	public function getOrderCount($customerId) 
 	{
-		$order = pluginApp(\OrderRepositoryContract::class);
+		$order = pluginApp(OrderRepositoryContract::class);
 		$authHelper = pluginApp(AuthHelper::class);
 
         $orders = $authHelper->processUnguarded(
