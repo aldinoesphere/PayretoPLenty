@@ -185,9 +185,10 @@ class PaymentHelper
 		$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
 		$orderRepository = $this->orderRepository;
 		$authHelper = pluginApp(AuthHelper::class);
+
         $orders = $authHelper->processUnguarded(
             function () use ($orderRepository, $customerId) {
-                return $orderRepository->allOrdersByContact($customerId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
+                return $orderRepository->allOrdersByContact($customerId, 1, 50, ['relation', 'reference']);
             }
         );
         $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
