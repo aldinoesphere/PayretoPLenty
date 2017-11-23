@@ -187,12 +187,12 @@ class PaymentHelper
 
         $orders = $authHelper->processUnguarded(
             function () use ($orderRepository, $customerId) {
-                return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']):array;
+                return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']);
             }
         );
 		
 		$this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
-	 	return $orders;
+	 	return (array)$orders;
 	}
 
 	public function getCustomerId() {
