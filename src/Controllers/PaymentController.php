@@ -850,6 +850,7 @@ class PaymentController extends Controller
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$basketItems = $this->basketItemRepository->all();
 		$checkoutId = $this->request->get('id');
+        $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId); 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
 
 		$parameters = [
@@ -859,6 +860,7 @@ class PaymentController extends Controller
 		];
 
 		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
+        $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
 
         $data = [
         	'data' => [
