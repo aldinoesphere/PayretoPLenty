@@ -190,7 +190,10 @@ class PaymentHelper
                 return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']);
             }
         );
-		return $orders; 
+		
+		foreach ($orders as $order) {
+		 	return $orders->totalsCount;
+		} 
 	}
 
 	public function getCustomerId() {
