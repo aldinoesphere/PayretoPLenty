@@ -204,7 +204,7 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paypal',
 						'paymentBrand' => 'PAYPAL',
-						'paymentTemplate' => 'PaymentWidget',
+						'paymentTemplate' => 'PaymentRedirect',
 						'paymentType' => 'DB'
 					];
 				break;
