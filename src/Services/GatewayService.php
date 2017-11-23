@@ -141,7 +141,7 @@ class GatewayService
 	public function paymentConfirmation($checkoutId, $transactionData)
 	{
 		$confirmationUrl = $this->oppwaCheckoutUrlTest . '/' . $checkoutId . '/payment';
-		$confirmationUrl .= '?' . self::getCredentialParameter($transactionData);
+		$confirmationUrl .= '?' . http_build_url(self::getCredentialParameter($transactionData));
 		$this->getLogger(__METHOD__)->error('Payreto:confirmationUrl', $confirmationUrl);
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
 
