@@ -183,10 +183,11 @@ class PaymentHelper
 	public function getOrderCount($customerId) 
 	{
 		$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
+		$orderRepository = $this->orderRepository;
 		$authHelper = pluginApp(AuthHelper::class);
         $orders = $authHelper->processUnguarded(
-            function () use ($this->orderRepository, $customerId) {
-                return $this->orderRepository->allOrdersByContact($customerId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
+            function () use ($orderRepository, $customerId) {
+                return $orderRepository->allOrdersByContact($customerId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
             }
         );
         $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
@@ -560,11 +561,11 @@ class PaymentHelper
 	 */
 	public function assignPlentyPaymentToPlentyOrder(Payment $payment, int $orderId)
 	{
+		$orderRepository = $this->orderRepository;
 		$authHelper = pluginApp(AuthHelper::class);
-
 		$order = $authHelper->processUnguarded(
-						function () use ($this->orderRepository, $orderId) {
-							return $this->orderRepository->findOrderById($orderId);
+						function () use ($orderRepository, $orderId) {
+							return $orderRepository->findOrderById($orderId);
 						}
 		);
 
