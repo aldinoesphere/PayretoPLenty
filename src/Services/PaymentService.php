@@ -193,7 +193,7 @@ class PaymentService
 			$this->getTransactionParameters($basket, $paymentMethod),
 			$this->getCustomerParameters($basket)
 		);
-		$totalsCount = $this->paymentHelper->getOrderCount(114);
+		$totalsCount = (array)$this->paymentHelper->getOrderCount(114);
 
 		$this->getLogger(__METHOD__)->error('Payreto:getOrderCount', $totalsCount['totalsCount']);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
