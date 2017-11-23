@@ -892,7 +892,6 @@ class PaymentController extends Controller
         ];
 
 		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
-		$this->getLogger(__METHOD__)->error('Payreto:orders', $order);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		$this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
 

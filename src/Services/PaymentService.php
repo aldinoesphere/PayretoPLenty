@@ -193,7 +193,7 @@ class PaymentService
 			$this->getTransactionParameters($basket, $paymentMethod),
 			$this->getCustomerParameters($basket)
 		);
-		
+
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
 		try
@@ -346,7 +346,7 @@ class PaymentService
 								'sex' => 'F',
 								'phone' => '+4915111111111',
 								'last_name' => 'Jones',
-								'birthDate' => '1980-01-01',
+								'birthdate' => '1980-01-01',
 								'first_name' => 'Jane'
 							],
 			'shipping' => 
