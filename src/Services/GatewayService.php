@@ -188,6 +188,7 @@ class GatewayService
 	{
 		$url = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
 		$checkoutParameters = $this->getCheckoutParameters($transactionData);
+		$this->getLogger(__METHOD__)->error('Payreto:checkoutParameters', $checkoutParameters);
 		$response = $this->getGatewayResponse($url, $checkoutParameters);
 
 		if (!$response)
