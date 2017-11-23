@@ -179,14 +179,14 @@ class PaymentHelper
 		return null;
 	}
 
-	public function getOrderCount($contactId) 
+	public function getOrderCount($customerId) 
 	{
-		$order = pluginApp(\Plenty\Modules\Order\Contracts\OrderRepositoryContract::class);
+		$order = pluginApp(\OrderRepositoryContract::class);
 		$authHelper = pluginApp(AuthHelper::class);
 
         $orders = $authHelper->processUnguarded(
-            function () use ($order, $contactId) {
-                return $order->allOrdersByContact($contactId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
+            function () use ($order, $customerId) {
+                return $order->allOrdersByContact($customerId, 1, 50, ['addresses', 'events', 'dates', 'relation', 'reference', 'location', 'payments', 'documents', 'comments']);
             }
         );
         $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
