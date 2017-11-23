@@ -296,8 +296,8 @@ class PaymentService
 						'paymentBrand' => $this->getPaymentBrand($basket),
 						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
 						'customParameters' => [
-												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount($this->paymentHelper->getCustomerId()),
-												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+												// 'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount($this->paymentHelper->getCustomerId()),
+												// 'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
 												'RISK_KUNDESEIT' => '2016-01-01',
 												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->checkCustomerLoginStatus()
 											]
