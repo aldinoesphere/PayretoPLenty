@@ -752,17 +752,17 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:orderId', $orderId);
 
 		$parameters = [
-			'authentication.userId' => $this->payretoSettings['userId'],
-			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $paymentSettings['entityId']
+			'login' => $this->payretoSettings['userId'],
+			'password' => $this->payretoSettings['password'],
+			'channel_id' => $paymentSettings['entityId']
 		];
 
 		if ($paymentKey == 'PAYRETO_ECP') {
 			$parameters = array_merge($parameters, [
 				'amount' => $orderData->order->amounts[0]->invoiceTotal,
 				'currency' => $orderData->order->amounts[0]->currency,
-				'paymentType' => 'CP',
-				'testMode' => $this->paymentService->getTestMode($paymentMethod)
+				'payment_type' => 'CP',
+				'test_mode' => $this->paymentService->getTestMode($paymentMethod)
 			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);

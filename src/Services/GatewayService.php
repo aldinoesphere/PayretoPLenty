@@ -180,14 +180,15 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters
+	 * @param array $transactionData
 	 * @throws \Exception
 	 * @return array
 	 */
-	public function backOfficePayment($checkoutId, $parameters)
+	public function backOfficePayment($checkoutId, $transactionData)
 	{
 		$url = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
-		$response = $this->getGatewayResponse($url, $parameters);
+		$checkoutParameters = $this->getCheckoutParameters($transactionData);
+		$response = $this->getGatewayResponse($url, $checkoutParameters);
 
 		if (!$response)
 		{
