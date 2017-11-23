@@ -190,8 +190,8 @@ class PaymentHelper
                 return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']);
             }
         );
-        $this->getLogger(__METHOD__)->error('Payreto:orders', $orders['totalsCount']);
-		return $orders['totalsCount']; 
+        $this->getLogger(__METHOD__)->error('Payreto:orders', $orders);
+		return $orders; 
 	}
 
 	public function getCustomerId() {
