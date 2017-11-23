@@ -142,7 +142,7 @@ class GatewayService
 	{
 		$confirmationUrl = $this->oppwaCheckoutUrlTest . '/' . $checkoutId . '/payment';
 		$confirmationUrl .= '?' . self::getCredentialParameter($transactionData);
-
+		$this->getLogger(__METHOD__)->error('Payreto:confirmationUrl', $confirmationUrl);
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
 
 		if (!$response)
@@ -188,7 +188,7 @@ class GatewayService
 	{
 		$url = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
 		$checkoutParameters = $this->getCheckoutParameters($transactionData);
-		$this->getLogger(__METHOD__)->error('Payreto:checkoutParameters', $checkoutParameters);
+		
 		$response = $this->getGatewayResponse($url, $checkoutParameters);
 
 		if (!$response)
