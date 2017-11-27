@@ -11,6 +11,7 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Plugin\Log\Loggable;
+use IO\Services\BasketService;
 use Plenty\Plugin\Templates\Twig;
 
 use Payreto\Services\GatewayService;
@@ -86,6 +87,12 @@ class PaymentController extends Controller
      * @var authHelper
      */
     private $authHelper;
+
+    /**
+     *
+     * @var basketService
+     */
+    private $basketService;
 
 	private $payretoSettings;
 
@@ -653,7 +660,8 @@ class PaymentController extends Controller
 					OrderRepositoryContract $orderContract,
 					PaymentService $paymentService,
                     AuthHelper $authHelper,
-                    SettingsController $settingsController
+                    SettingsController $settingsController,
+                    BasketService $basketService
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -666,6 +674,7 @@ class PaymentController extends Controller
 		$this->paymentService = $paymentService;
         $this->authHelper = $authHelper;
         $this->settingsController = $settingsController;
+        $this->basketService = $basketService;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -748,8 +757,6 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
-
-		$this->getLogger(__METHOD__)->error('Payreto:orderId', $orderId);
 
 		$parameters = [
 			'login' => $this->payretoSettings['userId'],
@@ -844,58 +851,59 @@ class PaymentController extends Controller
 
 	public function handleConfirmation(Twig $twig) 
 	{
-		$orderContract = $this->orderContract;
-		$basket = $this->getBasket();
-        $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
-		$basketItems = $this->basketItemRepository->all();
-		$checkoutId = $this->request->get('id');
-        $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId); 
-		$paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+		// $orderContract = $this->orderContract;
+		// $basket = $this->getBasket();
+  //       $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
+		// $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+		// $basketItems = $this->basketItemRepository->all();
+		// $checkoutId = $this->request->get('id');
+  //       $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId); 
+		// $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
 
-		$parameters = [
-			'authentication.userId' => $this->payretoSettings['userId'],
-			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $paymentSettings['entityId']
-		];
+		// $parameters = [
+		// 	'authentication.userId' => $this->payretoSettings['userId'],
+		// 	'authentication.password' => $this->payretoSettings['password'],
+		// 	'authentication.entityId' => $paymentSettings['entityId']
+		// ];
 
-		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
-        $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
+		// $paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
+  //       $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
 
-        $data = [
-        	'data' => [
-        		'order' => [
-        			'billingAddress' => $this->paymentService->getBillingAddress($basket),
-        			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
-        			'amounts' => 
-        			[
-        				[
-                            'currency' => $basket->currency,
-        					'netTotal' => $basket->basketAmountNet,
-							'grossTotal' => $basket->basketAmount,
-							'vatTotal' => '',
-							'invoiceTotal' => $basket->basketAmount
-        				]
-        			],
-        			'orderItems' => $this->getBasketOrderItems($basket)
-        		],
-                'valueNet' => $basket->itemSumNet,
-                'valueGross' => $basket->itemSum,
-                'shippingNet' => $basket->shippingAmountNet,
-                'shippingGross' => $basket->shippingAmount,
-        		'paymentMethodName' => $paymentMethod->name
-        	],
-            'itemURLs' => '',
-        	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
-        	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
-        	'checkoutId' => $paymentServerToServer['id']
-        ];
+  //       $data = [
+  //       	'data' => [
+  //       		'order' => [
+  //       			'billingAddress' => $this->paymentService->getBillingAddress($basket),
+  //       			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
+  //       			'amounts' => 
+  //       			[
+  //       				[
+  //                           'currency' => $basket->currency,
+  //       					'netTotal' => $basket->basketAmountNet,
+		// 					'grossTotal' => $basket->basketAmount,
+		// 					'vatTotal' => '',
+		// 					'invoiceTotal' => $basket->basketAmount
+  //       				]
+  //       			],
+  //       			'orderItems' => $this->getBasketOrderItems($basket)
+  //       		],
+  //               'valueNet' => $basket->itemSumNet,
+  //               'valueGross' => $basket->itemSum,
+  //               'shippingNet' => $basket->shippingAmountNet,
+  //               'shippingGross' => $basket->shippingAmount,
+  //       		'paymentMethodName' => $paymentMethod->name
+  //       	],
+  //           'itemURLs' => '',
+  //       	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
+  //       	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
+  //       	'checkoutId' => $paymentServerToServer['id']
+  //       ];
 
-		$this->getLogger(__METHOD__)->error('Payreto:data', $data);
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
-		$this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
+		// $this->getLogger(__METHOD__)->error('Payreto:data', $data);
+		// $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
+		// $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
 
-		return $twig->render('Payreto::Payment.PaymentConfirmation', $data);
+		$data = $this->basketService->getBasketItemsForTemplate('Payreto::Payment.PaymentConfirmation');
+        $this->getLogger(__METHOD__)->error('Payreto:data', $data);
 	}
 
 }
