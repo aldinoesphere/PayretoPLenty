@@ -78,8 +78,7 @@ class BasketHelper
                 'valueNet' => $baskets->itemSumNet,
                 'valueGross' => $baskets->itemSum,
                 'shippingNet' => $baskets->shippingAmountNet,
-                'shippingGross' => $baskets->shippingAmount,
-        		'paymentMethodName' => $paymentMethod->name
+                'shippingGross' => $baskets->shippingAmount
         	],
             'itemURLs' => ''
         ];
@@ -122,7 +121,7 @@ class BasketHelper
 					[
 						'priceOriginalGross' => $this->getOrderItemPrice($basketItem)->basePriceNet,
 						'priceGross' => $this->getOrderItemPrice($basketItem)->unitPrice,
-                        'currency' => $basket->currency
+                        'currency' => $basketItems->currency
 					]
 				]
 			];
