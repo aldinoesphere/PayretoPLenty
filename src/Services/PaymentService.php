@@ -118,8 +118,7 @@ class PaymentService
 		GatewayService $gatewayService,
 		OrderService $orderService,
 		OrderRepositoryContract $orderRepository,
-		SettingsController $settingsController,
-		BasketHelper $basketHelper
+		SettingsController $settingsController
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -132,7 +131,6 @@ class PaymentService
 		$this->orderService = $orderService;
 		$this->orderRepository = $orderRepository;
 		$this->settingsController = $settingsController;
-		$this->basketHelper = $basketHelper;
 	}
 
 	/**
@@ -348,8 +346,8 @@ class PaymentService
 
 	public function getCustomerParameters() 
 	{
-		$shippings = $this->basketHelper->getShippingAddress();
-		$billings = $this->basketHelper->getBillingAddress();
+		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
+		$billings = pluginApp(basketHelper::class)->getBillingAddress();
 		$customerParameters = [
 			'customer' => 
 							[
@@ -363,14 +361,14 @@ class PaymentService
 			'shipping' => 
 							[
 								'city' => $shippings->town,
-								'country' => $this->basketHelper->getBillingCountryCode(),
+								'country' => pluginApp(basketHelper::class)->getBillingCountryCode(),
 								'street1' => $shippings->address1,
 								'postcode' => $shippings->postalCode
 							],
 			'billing' =>
 							[
 								'city' => $billings->town,
-								'country_code' => $this->basketHelper->getBillingCountryCode(),
+								'country_code' => pluginApp(basketHelper::class)->getBillingCountryCode(),
 								'street' => $billings->address1,
 								'zip' => $billings->postalCode
 							]
