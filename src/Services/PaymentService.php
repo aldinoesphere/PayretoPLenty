@@ -346,33 +346,35 @@ class PaymentService
 
 	public function getCustomerParameters() 
 	{
-		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
-		$billings = pluginApp(basketHelper::class)->getBillingAddress();
-		$customerParameters = [
-			'customer' => 
-							[
-								'email' => 'aldino.said@esphere.id',
-								'sex' => 'F',
-								'phone' => '+491701234567',
-								'last_name' => 'Jones',
-								'birthdate' => '1980-01-01',
-								'first_name' => 'Jane'
-							],
-			'shipping' => 
-							[
-								'city' => $shippings->town,
-								'country' => pluginApp(basketHelper::class)->getBillingCountryCode(),
-								'street1' => $shippings->address1,
-								'postcode' => $shippings->postalCode
-							],
-			'billing' =>
-							[
-								'city' => $billings->town,
-								'country_code' => pluginApp(basketHelper::class)->getBillingCountryCode(),
-								'street' => $billings->address1,
-								'zip' => $billings->postalCode
-							]
-		];
+		// $shippings = pluginApp(basketHelper::class)->getShippingAddress();
+		// $billings = pluginApp(basketHelper::class)->getBillingAddress();
+		// $customerParameters = [
+		// 	'customer' => 
+		// 					[
+		// 						'email' => 'aldino.said@esphere.id',
+		// 						'sex' => 'F',
+		// 						'phone' => '+491701234567',
+		// 						'last_name' => 'Jones',
+		// 						'birthdate' => '1980-01-01',
+		// 						'first_name' => 'Jane'
+		// 					],
+		// 	'shipping' => 
+		// 					[
+		// 						'city' => $shippings->town,
+		// 						'country' => pluginApp(basketHelper::class)->getBillingCountryCode(),
+		// 						'street1' => $shippings->address1,
+		// 						'postcode' => $shippings->postalCode
+		// 					],
+		// 	'billing' =>
+		// 					[
+		// 						'city' => $billings->town,
+		// 						'country_code' => pluginApp(basketHelper::class)->getBillingCountryCode(),
+		// 						'street' => $billings->address1,
+		// 						'zip' => $billings->postalCode
+		// 					]
+		// ];
+
+		$customerParameters = [];
 
 		return $customerParameters;
 	}
