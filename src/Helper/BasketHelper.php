@@ -116,7 +116,7 @@ class BasketHelper
 				'quantity' => $basketItem->quantity,
                 'itemVariationId' => $basketItem->variationId,
 				'orderItemName' => $this->getOrderItemName($basketItem)->name1,
-                'itemImage' => $this->getItemImages($basketItem)->item[0]['urlPreview'],
+                'itemImage' => $this->getItemImages($basketItem)['item'][0]['urlPreview'],
 				'amounts' => 
 				[
 					[
