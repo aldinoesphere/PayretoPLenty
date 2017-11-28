@@ -874,8 +874,8 @@ class PaymentController extends Controller
 		// $this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
-
-        $this->getLogger(__METHOD__)->error('Payreto:data', $data);
+        $basketItems = $this->basketService->getBasketForTemplate();
+        $this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
 	}
 
 }
