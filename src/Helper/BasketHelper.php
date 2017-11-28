@@ -16,11 +16,6 @@ use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 class BasketHelper
 {
 	/**
-	 * @var OrderRepositoryContract
-	 */
-	private $orderRepository;
-
-	/**
 	 *
 	 * @var AddressRepositoryContract
 	 */
@@ -39,9 +34,8 @@ class BasketHelper
 
 	/**
 	 * BasketService constructor.
-	 * @param OrderRepositoryContract $orderRepository
 	 */
-	public function __construct(OrderRepositoryContract $orderRepository,
+	public function __construct(
 		AddressRepositoryContract $addressRepository,
 		CountryRepositoryContract $countryRepository,
 		BasketService $basketService)
@@ -88,10 +82,7 @@ class BasketHelper
                 'shippingGross' => $basket->shippingAmount,
         		'paymentMethodName' => $paymentMethod->name
         	],
-            'itemURLs' => '',
-        	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
-        	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
-        	'checkoutId' => $paymentServerToServer['id']
+            'itemURLs' => ''
         ];
 	}
 

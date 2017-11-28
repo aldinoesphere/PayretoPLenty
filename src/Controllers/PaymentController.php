@@ -823,6 +823,11 @@ class PaymentController extends Controller
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
         $paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
+        // $paymentConfirmationData = array_merge($paymentConfirmationData, [
+        //     'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
+        //     'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
+        //     'checkoutId' => $paymentServerToServer['id']
+        // ]);
         $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
         $getBasket = $this->basketService->getBasket();
         $this->getLogger(__METHOD__)->error('Payreto:getBasket', $getBasket);
