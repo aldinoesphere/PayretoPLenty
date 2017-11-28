@@ -40,7 +40,6 @@ class BasketHelper
 		CountryRepositoryContract $countryRepository,
 		BasketService $basketService)
 	{
-		$this->orderRepository = $orderRepository;
 		$this->basketService = $basketService;
 		$this->addressRepository = $addressRepository;
 		$this->countryRepository = $countryRepository;
