@@ -53,8 +53,7 @@ class BasketHelper
 	 */
 	public function paymentConfirmationData()
 	{
-		$basketService = pluginApp(BasketService::class);
-		$baskets = $basketService->getBasketItems();
+		$baskets = $this->getBasket();
 		$this->getLogger(__METHOD__)->error('Payreto:baskets', $baskets);
 		 $data = [
         	'data' => [
@@ -135,6 +134,7 @@ class BasketHelper
 	public function getOrderItemPrice($basketItem)
 	{
 		$this->getLogger(__METHOD__)->error('Payreto:basketItem', $basketItem);
+		$this->getLogger(__METHOD__)->error('Payreto:default', $basketItem->variation->data->calculatedPrices->default);
 		return $basketItem->variation->data->calculatedPrices->default;
 	}
 
