@@ -869,40 +869,12 @@ class PaymentController extends Controller
 		// $paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
   //       $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
 
-  //       $data = [
-  //       	'data' => [
-  //       		'order' => [
-  //       			'billingAddress' => $this->paymentService->getBillingAddress($basket),
-  //       			'deliveryAddress' => $this->paymentService->getShippingAddress($basket),
-  //       			'amounts' => 
-  //       			[
-  //       				[
-  //                           'currency' => $basket->currency,
-  //       					'netTotal' => $basket->basketAmountNet,
-		// 					'grossTotal' => $basket->basketAmount,
-		// 					'vatTotal' => '',
-		// 					'invoiceTotal' => $basket->basketAmount
-  //       				]
-  //       			],
-  //       			'orderItems' => $this->getBasketOrderItems($basket)
-  //       		],
-  //               'valueNet' => $basket->itemSumNet,
-  //               'valueGross' => $basket->itemSum,
-  //               'shippingNet' => $basket->shippingAmountNet,
-  //               'shippingGross' => $basket->shippingAmount,
-  //       		'paymentMethodName' => $paymentMethod->name
-  //       	],
-  //           'itemURLs' => '',
-  //       	'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
-  //       	'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
-  //       	'checkoutId' => $paymentServerToServer['id']
-  //       ];
+       
 
 		// $this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
 
-		$data = $this->basketService->getBasketItemsForTemplate('Payreto::Payment.PaymentConfirmation');
         $this->getLogger(__METHOD__)->error('Payreto:data', $data);
 	}
 
