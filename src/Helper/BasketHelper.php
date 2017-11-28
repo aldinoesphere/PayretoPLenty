@@ -1,6 +1,6 @@
 <?php
 
-namespace Payreto\Services;
+namespace Payreto\Helper;
 
 
 use IO\Services\BasketService;
@@ -11,7 +11,7 @@ use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 
 /**
 * Class BasketService
-* @package Payreto\Services
+* @package Payreto\Helper
 */
 class BasketHelper
 {
@@ -50,6 +50,12 @@ class BasketHelper
 		$this->basketService = $basketService;
 		$this->addressRepository = $addressRepository;
 		$this->countryRepository = $countryRepository;
+	}
+
+
+	public function getBasket()
+	{
+		return $this->basketService->getBasket();
 	}
 
 	/**

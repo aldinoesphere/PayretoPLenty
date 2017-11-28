@@ -11,11 +11,11 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
 use Plenty\Plugin\Log\Loggable;
-use IO\Services\BasketService;
 use Plenty\Plugin\Templates\Twig;
 
 use Payreto\Services\GatewayService;
 use Payreto\Helper\PaymentHelper;
+use Payreto\Helper\BasketHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Services\OrderService;
 use Payreto\Controllers\SettingsController;
@@ -90,9 +90,9 @@ class PaymentController extends Controller
 
     /**
      *
-     * @var basketService
+     * @var basketHelper
      */
-    private $basketService;
+    private $basketHelper;
 
 	private $payretoSettings;
 
@@ -661,7 +661,7 @@ class PaymentController extends Controller
 					PaymentService $paymentService,
                     AuthHelper $authHelper,
                     SettingsController $settingsController,
-                    BasketService $basketService
+                    BasketHelper $basketHelper
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -674,7 +674,7 @@ class PaymentController extends Controller
 		$this->paymentService = $paymentService;
         $this->authHelper = $authHelper;
         $this->settingsController = $settingsController;
-        $this->basketService = $basketService;
+        $this->basketService = $basketHelper;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -719,7 +719,7 @@ class PaymentController extends Controller
 	public function handlePayment(Twig $twig, $checkoutId)
 	{
 		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
-        $basket = $this->getBasket();
+        $basket = $this->basketHelper->getBasket();
         $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
         $paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
@@ -797,58 +797,6 @@ class PaymentController extends Controller
 		}
 	}
 
-	public function getBasket()
-	{
-		$Basket = pluginApp(AfterBasketChanged::class);
-		return $Basket->getBasket();
-	}
-
-	public function getBasketOrderItems($basket)
-	{
-		$basketOrderItems = [];
-		foreach ($basket->basketItems as $basketItem) {
-            $itemName = $this->paymentHelper->getVariationDescription($basketItem->variationId);
-            $itemImage = $this->getItemImages($basket);
-			$basketOrderItems[] = [
-				'quantity' => $basketItem->quantity,
-                'itemVariationId' => $basketItem->variationId,
-				'orderItemName' => $itemName[0]->name,
-                'itemImage' => $itemImage[$basketItem->variationId],
-				'amounts' => 
-				[
-					[
-						'priceOriginalGross' => $basketItem->price,
-						'priceGross' => $basketItem->price,
-                        'currency' => $basket->currency
-					]
-				]
-			];
-		}
-
-		return $basketOrderItems;
-	}
-
-	public function getItemImages($basket)
-	{
-		$imageRepository = pluginApp(\Plenty\Modules\Item\ItemImage\Contracts\ItemImageRepositoryContract::class);
-		$itemImages = [];
-		foreach ($basket->basketItems as $basketItem) {
-            $itemId = $basketItem->itemId;
-
-            $itemImage = $this->authHelper->processUnguarded(
-                function () use ($imageRepository, $itemId) {
-                    return $imageRepository->findByItemId($itemId);
-                }
-            );
-            $variationSalesPrice = $this->paymentHelper->getVariationSalesPrice($basketItem->variationId);
-            $this->getLogger(__METHOD__)->error('Payreto:variationSalesPrice', $variationSalesPrice);
-			$itemImages[$basketItem->variationId] = $itemImage[0]['urlPreview'];
-		}
-        
-
-		return $itemImages;
-	}
-
 	public function handleConfirmation(Twig $twig) 
 	{
 		// $orderContract = $this->orderContract;
@@ -874,8 +822,8 @@ class PaymentController extends Controller
 		// $this->getLogger(__METHOD__)->error('Payreto:data', $data);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 		// $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer);
-        $getBasketForTemplate = $this->basketService->getBasketForTemplate();
-        $this->getLogger(__METHOD__)->error('Payreto:getBasketForTemplate', $getBasketForTemplate);
+        $paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
+        $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
         $getBasket = $this->basketService->getBasket();
         $this->getLogger(__METHOD__)->error('Payreto:getBasket', $getBasket);
 	}
