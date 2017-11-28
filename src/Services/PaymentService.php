@@ -19,6 +19,7 @@ use Plenty\Plugin\Log\Loggable;
 
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
+use Payreto\Helper\BasketHelper;
 use Payreto\Services\Database\SettingsService;
 use Payreto\Services\GatewayService;
 use Payreto\Controllers\SettingsController;
@@ -95,6 +96,12 @@ class PaymentService
      */
     private $settingsController;
 
+    /**
+     *
+     * @var basketHelper
+     */
+    private $basketHelper;
+
 	/**
 	 * @var array
 	 */
@@ -111,7 +118,8 @@ class PaymentService
 		GatewayService $gatewayService,
 		OrderService $orderService,
 		OrderRepositoryContract $orderRepository,
-		SettingsController $settingsController
+		SettingsController $settingsController,
+		BasketHelper $basketHelper
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -123,7 +131,8 @@ class PaymentService
 		$this->gatewayService = $gatewayService;
 		$this->orderService = $orderService;
 		$this->orderRepository = $orderRepository;
-		 $this->settingsController = $settingsController;
+		$this->settingsController = $settingsController;
+		$this->basketHelper = $basketHelper;
 	}
 
 	/**
@@ -191,7 +200,7 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials($paymentMethod),
 			$this->getTransactionParameters($basket, $paymentMethod),
-			$this->getCustomerParameters($basket)
+			$this->getCustomerParameters()
 		);
 
 		$this->paymentHelper->mapStatus();
@@ -237,9 +246,9 @@ class PaymentService
 		$payretoSettings = $this->getPayretoSettings();
 		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
 		$credentials = [
-						'login' => $payretoSettings['userId'],
-						'password' => $payretoSettings['password'],
-						'channel_id' => $paymentSettings['entityId']
+						'login' 		=> $payretoSettings['userId'],
+						'password' 		=> $payretoSettings['password'],
+						'channel_id' 	=> $paymentSettings['entityId']
 					];
 
 		return $credentials;
@@ -337,10 +346,10 @@ class PaymentService
         return 'NEUKUNDE';
     }
 
-	public function getCustomerParameters($basket) 
+	public function getCustomerParameters() 
 	{
-		$shippings = $this->getShippingAddress($basket);
-		$billings = $this->getBillingAddress($basket);
+		$shippings = $this->basketHelper->getShippingAddress();
+		$billings = $this->basketHelper->getBillingAddress();
 		$customerParameters = [
 			'customer' => 
 							[
@@ -354,14 +363,14 @@ class PaymentService
 			'shipping' => 
 							[
 								'city' => $shippings->town,
-								'country' => 'DE',
+								'country' => $this->basketHelper->getBillingCountryCode(),
 								'street1' => $shippings->address1,
 								'postcode' => $shippings->postalCode
 							],
 			'billing' =>
 							[
 								'city' => $billings->town,
-								'country_code' => 'DE',
+								'country_code' => $this->basketHelper->getBillingCountryCode(),
 								'street' => $billings->address1,
 								'zip' => $billings->postalCode
 							]
@@ -373,7 +382,6 @@ class PaymentService
 	public function getChartParameters($basket) 
 	{
 		$chartParameters = [];
-		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basket->basketItems);
 		foreach ($basket->basketItems as $key => $item) {
 			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
 			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
