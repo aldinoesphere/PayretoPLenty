@@ -134,7 +134,7 @@ class BasketHelper
 	public function getOrderItemPrice($basketItem)
 	{
 		$this->getLogger(__METHOD__)->error('Payreto:basketItem', $basketItem);
-		$this->getLogger(__METHOD__)->error('Payreto:default', $basketItem->variation);
+		$this->getLogger(__METHOD__)->error('Payreto:default', $basketItem['variation']);
 		return $basketItem->variation->data->calculatedPrices->default;
 	}
 
