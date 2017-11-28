@@ -94,8 +94,8 @@ class BasketHelper
 
 		foreach ($baskets->totalVats as $vats) {
 			$itemVats[] = [
-				'vatRate' => $vats->vatValue,
-                'value' => $vats->vatAmount
+				'vatRate' => $vats['vatValue'],
+                'value' => $vats['vatAmount']
 			];
 		}
 
