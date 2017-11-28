@@ -7,6 +7,7 @@ use IO\Services\BasketService;
 use IO\Services\CustomerService;
 use Plenty\Modules\Account\Address\Contracts\AddressRepositoryContract;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
+use Plenty\Plugin\Log\Loggable;
 
 
 /**
@@ -15,6 +16,7 @@ use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 */
 class BasketHelper
 {
+	use Loggable;
 	/**
 	 *
 	 * @var AddressRepositoryContract
