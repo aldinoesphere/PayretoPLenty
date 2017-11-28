@@ -92,7 +92,7 @@ class BasketHelper
 		$basketService = pluginApp(BasketService::class);
 		$baskets = $basketService->getBasketForTemplate();
 
-		foreach ($baskets->totalVats as $vats) {
+		foreach ($baskets['totalVats'] as $vats) {
 			$itemVats[] = [
 				'vatRate' => $vats['vatValue'],
                 'value' => $vats['vatAmount']
@@ -113,9 +113,9 @@ class BasketHelper
 		$basketOrderItems = [];
 		foreach ($basketItems as $basketItem) {
 			$basketOrderItems[] = [
-				'quantity' => $basketItem->quantity,
-                'itemVariationId' => $basketItem->variationId,
-				'orderItemName' => $this->getOrderItemName($basketItem)->name1,
+				'quantity' => $basketItem['quantity'],
+                'itemVariationId' => $basketItem['variationId'],
+				'orderItemName' => $this->getOrderItemName($basketItem)['name1'],
                 'itemImage' => $this->getItemImages($basketItem)['item'][0]['urlPreview'],
 				'amounts' => 
 				[
