@@ -374,8 +374,6 @@ class PaymentService
 							]
 		];
 
-		$customerParameters = [];
-
 		return $customerParameters;
 	}
 
