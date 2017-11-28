@@ -66,19 +66,19 @@ class BasketHelper
         			'amounts' => 
         			[
         				[
-                            'currency' => $basket->currency,
-        					'netTotal' => $basket->basketAmountNet,
-							'grossTotal' => $basket->basketAmount,
-							'invoiceTotal' => $basket->basketAmount,
+                            'currency' => $baskets->currency,
+        					'netTotal' => $baskets->basketAmountNet,
+							'grossTotal' => $baskets->basketAmount,
+							'invoiceTotal' => $baskets->basketAmount,
 							'vats' => $this->getVats()
         				]
         			],
         			'orderItems' => $this->getBasketOrderItems()
         		],
-                'valueNet' => $basket->itemSumNet,
-                'valueGross' => $basket->itemSum,
-                'shippingNet' => $basket->shippingAmountNet,
-                'shippingGross' => $basket->shippingAmount,
+                'valueNet' => $baskets->itemSumNet,
+                'valueGross' => $baskets->itemSum,
+                'shippingNet' => $baskets->shippingAmountNet,
+                'shippingGross' => $baskets->shippingAmount,
         		'paymentMethodName' => $paymentMethod->name
         	],
             'itemURLs' => ''
