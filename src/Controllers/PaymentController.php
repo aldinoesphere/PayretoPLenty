@@ -830,8 +830,6 @@ class PaymentController extends Controller
             // 'paymentMethodName' => $paymentMethod->name
         // ]);
         $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
-        $getBasket = $this->basketService->getBasket();
-        $this->getLogger(__METHOD__)->error('Payreto:getBasket', $getBasket);
 	}
 
 }
