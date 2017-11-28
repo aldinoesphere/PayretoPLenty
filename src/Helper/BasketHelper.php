@@ -53,6 +53,7 @@ class BasketHelper
 	{
 		$basketService = pluginApp(BasketService::class);
 		$baskets = $basketService->getBasketItems();
+		$this->getLogger(__METHOD__)->error('Payreto:baskets', $baskets);
 		 $data = [
         	'data' => [
         		'order' => [
@@ -131,6 +132,7 @@ class BasketHelper
 
 	public function getOrderItemPrice($basketItem)
 	{
+		$this->getLogger(__METHOD__)->error('Payreto:basketItem', $basketItem);
 		return $basketItem->variation->data->calculatedPrices->default;
 	}
 
