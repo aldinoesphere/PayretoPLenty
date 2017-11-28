@@ -120,9 +120,9 @@ class BasketHelper
 				'amounts' => 
 				[
 					[
-						'priceOriginalGross' => $this->getOrderItemPrice($basketItem)->basePriceNet,
-						'priceGross' => $this->getOrderItemPrice($basketItem)->unitPrice,
-                        'currency' => $basketItems->currency
+						'priceOriginalGross' => $this->getOrderItemPrice($basketItem)['basePriceNet'],
+						'priceGross' => $this->getOrderItemPrice($basketItem)['unitPrice'],
+                        'currency' => $basketItems['currency']
 					]
 				]
 			];
@@ -133,19 +133,17 @@ class BasketHelper
 
 	public function getOrderItemPrice($basketItem)
 	{
-		$this->getLogger(__METHOD__)->error('Payreto:basketItem', $basketItem);
-		$this->getLogger(__METHOD__)->error('Payreto:default', $basketItem['variation']);
-		return $basketItem->variation->data->calculatedPrices->default;
+		return $basketItem['variation']['data']['calculatedPrices']['default'];
 	}
 
 	public function getOrderItemName($basketItem)
 	{
-		return $basketItem->variation->data->texts;
+		return $basketItem['variation']['data']['texts'];
 	}
 	
 	public function getItemImages($basketItem)
 	{
-		return $basketItem->variation->data->images;
+		return $basketItem['variation']['data']['images'];
 	}
 
 	/**
