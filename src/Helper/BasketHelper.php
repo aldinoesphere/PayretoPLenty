@@ -28,19 +28,12 @@ class BasketHelper
 	private $countryRepository;
 
 	/**
-	 * @var basketService
-	 */
-	private $basketService;
-
-	/**
 	 * BasketService constructor.
 	 */
 	public function __construct(
 		AddressRepositoryContract $addressRepository,
-		CountryRepositoryContract $countryRepository,
-		BasketService $basketService)
+		CountryRepositoryContract $countryRepository)
 	{
-		$this->basketService = $basketService;
 		$this->addressRepository = $addressRepository;
 		$this->countryRepository = $countryRepository;
 	}
@@ -48,7 +41,8 @@ class BasketHelper
 
 	public function getBasket()
 	{
-		return $this->basketService->getBasket();
+		$basketService = pluginApp(BasketService::class);
+		return $basketService->getBasket();
 	}
 
 	/**
@@ -57,7 +51,8 @@ class BasketHelper
 	 */
 	public function paymentConfirmationData()
 	{
-		$baskets = $this->basketService->getBasketItems();
+		$basketService = pluginApp(BasketService::class);
+		$baskets = $basketService->getBasketItems();
 		 $data = [
         	'data' => [
         		'order' => [
@@ -90,7 +85,8 @@ class BasketHelper
 	 */
 	public function getVats()
 	{
-		$baskets = $this->basketService->getBasketForTemplate();
+		$basketService = pluginApp(BasketService::class);
+		$baskets = $basketService->getBasketForTemplate();
 
 		foreach ($baskets->totalVats as $vats) {
 			$itemVats[] = [
@@ -108,7 +104,8 @@ class BasketHelper
 	 */
 	public function getBasketOrderItems()
 	{
-		$basketItems = $this->basketService->getBasketItemsForTemplate();
+		$basketService = pluginApp(BasketService::class);
+		$basketItems = $basketService->getBasketItemsForTemplate();
 		$basketOrderItems = [];
 		foreach ($basketItems as $basketItem) {
 			$basketOrderItems[] = [
@@ -153,7 +150,8 @@ class BasketHelper
 	 */
 	public function getBillingAddress()
 	{
-		$addressId = $this->basketService->getBasket()->customerInvoiceAddressId;
+		$basketService = pluginApp(BasketService::class);
+		$addressId = $basketService->getBasket()->customerInvoiceAddressId;
 		return $this->addressRepository->findAddressById($addressId);
 	}
 
@@ -165,7 +163,8 @@ class BasketHelper
 	 */
 	public function getBillingCountryCode($customerInvoiceAddressId = '')
 	{
-		$customerInvoiceAddressId = !empty($customerInvoiceAddressId) ? $customerInvoiceAddressId : $this->basketService->getBasket()->customerShippingAddressId;
+		$basketService = pluginApp(BasketService::class);
+		$customerInvoiceAddressId = !empty($customerInvoiceAddressId) ? $customerInvoiceAddressId : $basketService->getBasket()->customerShippingAddressId;
 		$billingAddress = $this->addressRepository->findAddressById($customerInvoiceAddressId);
 		return $this->countryRepository->findIsoCode($billingAddress->countryId, 'iso_code_3');
 	}
@@ -178,7 +177,8 @@ class BasketHelper
 	 */
 	public function getShippingAddress()
 	{
-		$addressId = $this->basketService->getBasket()->customerShippingAddressId;
+		$basketService = pluginApp(BasketService::class);
+		$addressId = $basketService->getBasket()->customerShippingAddressId;
 		if ($addressId != null && $addressId != - 99)
 		{
 			return $this->addressRepository->findAddressById($addressId);
