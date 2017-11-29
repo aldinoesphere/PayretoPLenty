@@ -91,8 +91,12 @@ class BasketHelper
 	{
 		$basketService = pluginApp(BasketService::class);
 		$baskets = $basketService->getBasketForTemplate();
+		$this->getLogger(__METHOD__)->error('Payreto:baskets', $baskets);
+
+		$itemVats = [];
 
 		foreach ($baskets['totalVats'] as $vats) {
+			$this->getLogger(__METHOD__)->error('Payreto:vats', $vats);
 			$itemVats[] = [
 				'vatRate' => $vats['vatValue'],
                 'value' => $vats['vatAmount']
