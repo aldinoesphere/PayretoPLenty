@@ -691,7 +691,7 @@ class PaymentController extends Controller
 		// $orderData = $this->orderService->placeOrder();
 		// $orderId = $orderData->order->id;
 
-		$validation = $this->validation($checkoutId, $orderData);
+		$validation = $this->validation($checkoutId);
 
 		#error_log
 		$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
