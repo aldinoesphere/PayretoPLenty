@@ -688,8 +688,8 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 		$this->getLogger(__METHOD__)->error('Payreto:return_url', $this->request->all());
 
-		$orderData = $this->orderService->placeOrder();
-		$orderId = $orderData->order->id;
+		// $orderData = $this->orderService->placeOrder();
+		// $orderId = $orderData->order->id;
 
 		$validation = $this->validation($checkoutId, $orderData);
 
@@ -707,7 +707,8 @@ class PaymentController extends Controller
             {
                 $this->basketItemRepository->removeBasketItem($basketItem->id);
             }
-			return $this->response->redirectTo('execute-payment/'.$orderId);
+			// return $this->response->redirectTo('execute-payment/'.$orderId);
+            return $this->response->redirectTo('checkout');
 		} else {
             return $this->response->redirectTo('checkout');
         }
@@ -746,11 +747,12 @@ class PaymentController extends Controller
 	/**
 	 * handle validation payment
 	 */
-	public function validation($checkoutId, $orderData)
+	public function validation($checkoutId)
 	{
 		$paymentData = [];
-		$orderId = $orderData->order->id;
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($orderData->order->properties[0]->value);
+		$basketHelper = pluginApp(basketHelper::class);
+        $basket = $basketHelper->getBasket();
+        $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$paymentKey = $paymentMethod->paymentKey;
 		
 		$this->getLogger(__METHOD__)->error('Payreto:Value', $orderData->order->properties[0]->value);
@@ -766,8 +768,8 @@ class PaymentController extends Controller
 
 		if ($paymentKey == 'PAYRETO_ECP') {
 			$parameters = array_merge($parameters, [
-				'amount' => $orderData->order->amounts[0]->invoiceTotal,
-				'currency' => $orderData->order->amounts[0]->currency,
+				'amount' => $basket->basketAmout,
+				'currency' => $basket->currency,
 				'payment_type' => 'CP',
 				'test_mode' => $this->paymentService->getTestMode($paymentMethod)
 			]);
@@ -784,13 +786,13 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
 		if (in_array($paymentConfirmation['result']['code'], $this->ackReturnCodes)) {
-			$paymentData['transaction_id'] = $paymentConfirmation['id'];
-			$paymentData['paymentKey'] = $paymentKey;
-			$paymentData['amount'] = $paymentConfirmation['amount'];
-			$paymentData['currency'] = $paymentConfirmation['currency'];
-			$paymentData['status'] = 2;
-			$paymentData['orderId'] = $orderId;
-			$this->paymentHelper->updatePlentyPayment($paymentData);
+			// $paymentData['transaction_id'] = $paymentConfirmation['id'];
+			// $paymentData['paymentKey'] = $paymentKey;
+			// $paymentData['amount'] = $paymentConfirmation['amount'];
+			// $paymentData['currency'] = $paymentConfirmation['currency'];
+			// $paymentData['status'] = 2;
+			// $paymentData['orderId'] = $orderId;
+			// $this->paymentHelper->updatePlentyPayment($paymentData);
 			return true;
 		} else {
 			return false;
