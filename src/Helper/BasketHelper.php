@@ -114,6 +114,7 @@ class BasketHelper
 	{
 		$basketService = pluginApp(BasketService::class);
 		$basketItems = $basketService->getBasketItemsForTemplate();
+		$baskets = $this->getBasket();
 		$basketOrderItems = [];
 		foreach ($basketItems as $basketItem) {
 			$basketOrderItems[] = [
@@ -126,7 +127,7 @@ class BasketHelper
 					[
 						'priceOriginalGross' => $this->getOrderItemPrice($basketItem)['basePriceNet'],
 						'priceGross' => $this->getOrderItemPrice($basketItem)['unitPrice'],
-                        'currency' => $basketItems['currency']
+                        'currency' => $baskets['currency']
 					]
 				]
 			];
