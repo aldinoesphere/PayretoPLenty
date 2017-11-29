@@ -122,7 +122,7 @@ class RefundEventProcedure
 							{
 								// assign the new debit payment to the order
 								$this->getLogger(__METHOD__)->error('Payreto:debitPayment', $debitPayment);
-								// $paymentHelper->assignPlentyPaymentToPlentyOrder($debitPayment, (int)$order->id);
+								$paymentHelper->assignPlentyPaymentToPlentyOrder($debitPayment, (int)$order->id);
 								$paymentHelper->updateRefundStatus(['statusId' => $debitPayment['status']], $orderId);
 							}
 						}

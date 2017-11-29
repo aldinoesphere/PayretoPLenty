@@ -247,7 +247,19 @@
 
                                     </div>
                                 {% endif %}
+                                {% if "basket.vat" in totalsConfigData %}
+                                    <div class="vatTotals">
+                                        {% for vat in orderData.order.amounts[0].vats %}
+                                            <dt>
+                                                {{ trans("Ceres::Template.basketVAT") }} {{ vat.vatRate }}%
+                                            </dt><!--
+                                            --><dd>
+                                                {{ vat.value | formatMonetary( basketTotalsCurrency ) }}
+                                            </dd>
+                                        {% endfor %}
 
+                                    </div>
+                                {% endif %}
                                 {% if "basket.order_total_gross" in totalsConfigData %}
                                     <div class="totalSum">
                                         <hr>
