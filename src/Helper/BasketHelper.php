@@ -91,7 +91,7 @@ class BasketHelper
 	{
 		$basketService = pluginApp(BasketService::class);
 		$baskets = $basketService->getBasketForTemplate();
-		$this->getLogger(__METHOD__)->error('Payreto:baskets', $baskets);
+		$this->getLogger(__METHOD__)->error('Payreto:baskets', $basketService->getBasketItemsForTemplate());
 
 		$itemVats = [];
 
