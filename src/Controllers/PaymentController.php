@@ -693,9 +693,6 @@ class PaymentController extends Controller
 
 		$validation = $this->validation($checkoutId);
 
-		#error_log
-		// $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
-
 		$basketItems = $this->basketItemRepository->all();
 
 		#error_log
@@ -755,7 +752,6 @@ class PaymentController extends Controller
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$paymentKey = $paymentMethod->paymentKey;
 		
-		$this->getLogger(__METHOD__)->error('Payreto:Value', $orderData->order->properties[0]->value);
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
