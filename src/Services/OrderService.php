@@ -27,6 +27,11 @@ class OrderService
 	private $orderRepository;
 
 	/**
+	 * @var orderStatus
+	 */
+	private $orderStatus;
+
+	/**
 	 * OrderService constructor.
 	 * @param OrderRepositoryContract $orderRepository
 	 */
@@ -54,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus(3)
+						->withStatus($this->orderStatus)
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
@@ -78,6 +83,23 @@ class OrderService
 		}
 
 		return LocalizedOrder::wrap($order, "de");
+	}
+
+	public function orderStatus($paymentType) 
+	{
+		switch ($paymentType) {
+			case 'PA':
+				return 4.5;
+				break;
+
+			case 'DB':
+				return 5;
+				break;
+			
+			default:
+				return 5;
+				break;
+		}
 	}
 
 }

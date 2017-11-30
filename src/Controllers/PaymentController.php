@@ -751,6 +751,7 @@ class PaymentController extends Controller
         $basket = $basketHelper->getBasket();
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$paymentKey = $paymentMethod->paymentKey;
+        $paymentType = $this->paymentService->getPaymentType($basket);
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
@@ -764,7 +765,7 @@ class PaymentController extends Controller
 
 		if ($paymentKey == 'PAYRETO_ECP') {
 			$parameters = array_merge($parameters, [
-				'amount' => $basket->basketAmout,
+				'amount' => $basket->basketAmount,
 				'currency' => $basket->currency,
 				'payment_type' => 'CP',
 				'test_mode' => $this->paymentService->getTestMode($paymentMethod)
@@ -782,13 +783,24 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
 		if (in_array($paymentConfirmation['result']['code'], $this->ackReturnCodes)) {
-			// $paymentData['transaction_id'] = $paymentConfirmation['id'];
-			// $paymentData['paymentKey'] = $paymentKey;
-			// $paymentData['amount'] = $paymentConfirmation['amount'];
-			// $paymentData['currency'] = $paymentConfirmation['currency'];
-			// $paymentData['status'] = 2;
-			// $paymentData['orderId'] = $orderId;
-			// $this->paymentHelper->updatePlentyPayment($paymentData);
+
+            $paymentData['transaction_id'] = $paymentConfirmation['id'];
+            $paymentData['paymentKey'] = $paymentKey;
+            $paymentData['amount'] = $paymentConfirmation['amount'];
+            $paymentData['currency'] = $paymentConfirmation['currency'];
+ 
+            if ($paymentType == 'PA') {
+                $paymentData['status'] = $this->paymentHelper->mapTransactionState(0);
+            } else {
+                $paymentData['status'] = $this->paymentHelper->mapTransactionState(2);
+            }
+
+            $orderData = $this->orderService->orderStatus($paymentType)->placeOrder();
+            $orderId = $orderData->order->id;
+			
+			$paymentData['orderId'] = $orderId;
+
+			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return true;
 		} else {
 			return false;
