@@ -59,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus($this->getOrderStatus())
+						->withStatus($this->getOrderStatus($paymentType))
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
