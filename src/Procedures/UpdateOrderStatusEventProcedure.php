@@ -65,8 +65,9 @@ class UpdateOrderStatusEventProcedure
 					]
 				);
 				$checkoutId = $payment->properties[0]->value;
-				if ($order->statusId == 4 && $payment->status == 1) {
+				if ($order->statusId == 5 && $payment->status == 1) {
 					$paymentResult = $gatewayService->backOfficePayment($checkoutId, $transactionData);
+					$this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
 
 					if ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 						$paymentData['transaction_id'] = $paymentResult['id'];
@@ -78,9 +79,6 @@ class UpdateOrderStatusEventProcedure
 
 			            $paymentHelper->updatePlentyPayment($paymentData);
 					}
-					$this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
-					$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
-					$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
 				}
 			}
 		}
