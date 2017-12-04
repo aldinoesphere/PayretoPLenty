@@ -8,7 +8,8 @@ use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Payment\Models\PaymentProperty;
 use Plenty\Plugin\Log\Loggable;
 
-// use Payreto\Services\PaymentService;
+use Payreto\Services\PaymentService;
+use Payreto\Services\GatewayService;
 // use Payreto\Helper\PaymentHelper;
 
 /**
@@ -29,6 +30,7 @@ class UpdateOrderStatusEventProcedure
 	public function run(
 					EventProceduresTriggered $eventTriggered,
 					PaymentRepositoryContract $paymentRepository
+					paymentService $paymentService
 	) {
 		/** @var Order $order */
 		$order = $eventTriggered->getOrder();
@@ -45,9 +47,27 @@ class UpdateOrderStatusEventProcedure
 			throw new \Exception('Update order status Skrill payment failed! The given order is invalid!');
 		}
 
+
+
 		/** @var Payment[] $payment */
 		$payments = $paymentRepository->getPaymentsByOrderId($orderId);
-		$this->getLogger(__METHOD__)->error('Payreto:payments', $payments);
-		
+		if (count($payments) > 0) {
+			foreach ($payments as $payment) {
+				$transactionData = array_merge(
+					$paymentService->getCredentials($payment->method),
+					[
+						'amount' => $payment->amount,
+						'currency' => $payments->currency,
+						'paymentType' => 'CP'
+					]
+				);
+				$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
+			}
+		}
+	}
+
+
+	public function getCredential() {
+
 	}
 }
