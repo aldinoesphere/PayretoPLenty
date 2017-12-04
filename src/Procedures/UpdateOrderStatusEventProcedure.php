@@ -58,16 +58,17 @@ class UpdateOrderStatusEventProcedure
 					$paymentService->getCredentials($payment->method),
 					[
 						'amount' => $payment->amount,
-						'currency' => $payments->currency,
+						'currency' => $payment->currency,
 						'paymentType' => 'CP'
 					]
 				);
 				$checkoutId = $payment->properties[0]->value;
-				$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
-				$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
+				if ($order->statusId == 4.5 && $payment->status == 1) {
+					// $GatewayService->backOfficePayment($checkoutId, $transactionData);
+					$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
+					$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
+				}
 			}
 		}
-
-		// $GatewayService->backOfficePayment($checkoutId, $transactionData);
 	}
 }
