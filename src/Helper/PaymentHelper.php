@@ -521,6 +521,9 @@ class PaymentHelper
 	 */
 	public function mapTransactionState(string $status, $isRefund = false)
 	{
+		$statusConstants = $this->paymentRepository->getStatusConstants();
+
+		$this->getLogger(__METHOD__)->error('Payreto:statusConstants', $statusConstants);
 		switch ($status)
 		{
 			case '0':
