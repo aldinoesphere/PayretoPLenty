@@ -85,19 +85,19 @@ class OrderService
 		return LocalizedOrder::wrap($order, "de");
 	}
 
-	public function orderStatus($paymentType) 
+	public function getOrderStatus($paymentType) 
 	{
 		switch ($paymentType) {
 			case 'PA':
-				return 4.5;
+				$this->orderStatus = 4.5;
 				break;
 
 			case 'DB':
-				return 5;
+				$this->orderStatus = 5;
 				break;
 			
 			default:
-				return 5;
+				$this->orderStatus = 5;
 				break;
 		}
 	}

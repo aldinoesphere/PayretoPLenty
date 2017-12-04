@@ -790,12 +790,12 @@ class PaymentController extends Controller
             $paymentData['currency'] = $paymentConfirmation['currency'];
  
             if ($paymentType == 'PA') {
-                $paymentData['status'] = $this->paymentHelper->mapTransactionState(0);
+                $paymentData['status'] = $this->paymentHelper->mapTransactionState('0');
             } else {
-                $paymentData['status'] = $this->paymentHelper->mapTransactionState(2);
+                $paymentData['status'] = $this->paymentHelper->mapTransactionState('2');
             }
 
-            $orderData = $this->orderService->orderStatus($paymentType)->placeOrder();
+            $orderData = $this->orderService->getOrderStatus($paymentType)->placeOrder();
             $orderId = $orderData->order->id;
 			
 			$paymentData['orderId'] = $orderId;
