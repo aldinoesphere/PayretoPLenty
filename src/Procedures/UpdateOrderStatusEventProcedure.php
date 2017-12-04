@@ -10,7 +10,7 @@ use Plenty\Plugin\Log\Loggable;
 
 use Payreto\Services\PaymentService;
 use Payreto\Services\GatewayService;
-// use Payreto\Helper\PaymentHelper;
+use Payreto\Helper\PaymentHelper;
 
 /**
 * Class UpdateOrderStatusEventProcedure
@@ -31,7 +31,8 @@ class UpdateOrderStatusEventProcedure
 					EventProceduresTriggered $eventTriggered,
 					PaymentRepositoryContract $paymentRepository,
 					paymentService $paymentService,
-					GatewayService $gatewayService
+					GatewayService $gatewayService,
+					PaymentHelper $paymentHelper
 	) {
 		/** @var Order $order */
 		$order = $eventTriggered->getOrder();
@@ -66,6 +67,17 @@ class UpdateOrderStatusEventProcedure
 				$checkoutId = $payment->properties[0]->value;
 				if ($order->statusId == 4 && $payment->status == 1) {
 					$paymentResult = $gatewayService->backOfficePayment($checkoutId, $transactionData);
+
+					if ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
+						$paymentData['transaction_id'] = $paymentConfirmation['id'];
+			            $paymentData['paymentKey'] = $paymentKey;
+			            $paymentData['amount'] = $paymentConfirmation['amount'];
+			            $paymentData['currency'] = $paymentConfirmation['currency'];
+			            $paymentData['status'] = $paymentHelper->mapTransactionState('2');
+			            $paymentData['orderId'] = $orderId;
+
+			            $paymentHelper->updatePlentyPayment($paymentData);
+					}
 					$this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
 					$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 					$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
