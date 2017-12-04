@@ -795,7 +795,7 @@ class PaymentController extends Controller
                 $paymentData['status'] = $this->paymentHelper->mapTransactionState('2');
             }
 
-            $orderData = $this->orderService->getOrderStatus($paymentType)->placeOrder();
+            $orderData = $this->orderService->placeOrder($paymentType);
             $orderId = $orderData->order->id;
 			
 			$paymentData['orderId'] = $orderId;
