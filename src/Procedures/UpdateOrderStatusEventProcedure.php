@@ -65,7 +65,7 @@ class UpdateOrderStatusEventProcedure
 					]
 				);
 				$checkoutId = $payment->properties[0]->value;
-				if ($order->statusId == 4.5 && $payment->status == 1) {
+				if ($order->statusId == 5 && $payment->status == 1) {
 					$paymentResult = $gatewayService->backOfficePayment($checkoutId, $transactionData);
 					$this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
 
