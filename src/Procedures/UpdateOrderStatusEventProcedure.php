@@ -56,11 +56,11 @@ class UpdateOrderStatusEventProcedure
 			foreach ($payments as $payment) {
 				$transactionData = array_merge(
 					$paymentService->getCredentials($payment->method),
-					$paymentService->getTestMode($payment->method),
 					[
 						'amount' => $payment->amount,
 						'currency' => $payment->currency,
-						'payment_type' => 'CP'
+						'payment_type' => 'CP',
+						'test_mode' => $paymentService->getServerMode($payment->method)
 					]
 				);
 				$checkoutId = $payment->properties[0]->value;
