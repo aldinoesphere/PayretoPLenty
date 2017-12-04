@@ -29,8 +29,9 @@ class UpdateOrderStatusEventProcedure
 	 */
 	public function run(
 					EventProceduresTriggered $eventTriggered,
-					PaymentRepositoryContract $paymentRepository
-					paymentService $paymentService
+					PaymentRepositoryContract $paymentRepository,
+					paymentService $paymentService,
+					GatewayService $gatewayService
 	) {
 		/** @var Order $order */
 		$order = $eventTriggered->getOrder();
@@ -61,13 +62,12 @@ class UpdateOrderStatusEventProcedure
 						'paymentType' => 'CP'
 					]
 				);
+				$checkoutId = $payment->properties[0]->value;
+				$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 				$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);	
 			}
 		}
-	}
 
-
-	public function getCredential() {
-
+		// $GatewayService->backOfficePayment($checkoutId, $transactionData);
 	}
 }
