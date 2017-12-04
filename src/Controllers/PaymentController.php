@@ -704,8 +704,15 @@ class PaymentController extends Controller
             {
                 $this->basketItemRepository->removeBasketItem($basketItem->id);
             }
-			// return $this->response->redirectTo('execute-payment/'.$orderId);
-            return $this->response->redirectTo('checkout');
+
+            if($orderData->order->id > 0)
+            {
+                return $this->response->redirectTo('confirmation/'.$orderData->order->id);
+            }
+            else
+            {
+                return $this->response->redirectTo('confirmation');
+            }
 		} else {
             return $this->response->redirectTo('checkout');
         }
@@ -801,7 +808,7 @@ class PaymentController extends Controller
 			$paymentData['orderId'] = $orderId;
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
-			return true;
+			return $orderData;
 		} else {
 			return false;
 		}
