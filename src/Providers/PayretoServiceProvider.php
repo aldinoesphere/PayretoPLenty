@@ -66,6 +66,17 @@ class PayretoServiceProvider extends ServiceProvider
 						'Payreto\Procedures\RefundEventProcedure@run'
 		);
 
+		// Register Payreto Refund Event Procedure
+		$eventProceduresService->registerProcedure(
+						'Payreto',
+						ProcedureEntry::PROCEDURE_GROUP_ORDER,
+						[
+						'de' => 'Bestellstatus aktualisieren',
+						'en' => 'Update Order Status'
+						],
+						'Payreto\Procedures\UpdateOrderStatusEventProcedure@run'
+		);
+
     	// Listen for the event that gets the payment method content
 		$eventDispatcher->listen(
 						GetPaymentMethodContent::class,
