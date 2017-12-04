@@ -964,10 +964,12 @@ class GatewayService
 	 * @throws \Exception
 	 * @return xml
 	 */
-	public function doRefund($transactionId, $parameters)
+	public function doRefund($transactionId, $transactionData)
 	{
 		$checkoutUrl = $this->oppwaPaymentUrlTest . '/' . $transactionId;
-		$response = $this->getGatewayResponse($checkoutUrl, $parameters);
+		$checkoutParameters = $this->getCheckoutParameters($transactionData);
+
+		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
 
 		if (!$response)
 		{

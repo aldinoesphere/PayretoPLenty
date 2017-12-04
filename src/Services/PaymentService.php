@@ -533,17 +533,16 @@ class PaymentService
 	{
 		try
 		{
-			$payretoSettings = $this->getPayretoSettings();
 			$transactionId = $payment->properties[0]->value;
-			$ccSettings = $this->getPaymentSettings('credit-card');
-			$parameters = [
-				'authentication.userId' => $payretoSettings['userId'],
-				'authentication.password' => $payretoSettings['password'],
-				'authentication.entityId' => $ccSettings['entityId'],
-				'amount' => $payment->amount,
-				'currency' => $payment->currency,
-				'paymentType' => 'RF'
-			];
+			$transactionData = array_merge(
+				$this->getCredentials($payment->method),
+				[
+					'amount' => $payment->amount,
+					'currency' => $payment->currency,
+					'payment_type' => 'RF',
+					'test_mode' => $this->getTestMode($payment->method)
+				]
+			);
 
 			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
 
