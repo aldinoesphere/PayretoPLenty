@@ -56,6 +56,7 @@ class UpdateOrderStatusEventProcedure
 			foreach ($payments as $payment) {
 				$transactionData = array_merge(
 					$paymentService->getCredentials($payment->method),
+					$paymentService->getTestMode($payment->method),
 					[
 						'amount' => $payment->amount,
 						'currency' => $payment->currency,
