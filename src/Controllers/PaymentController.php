@@ -705,9 +705,9 @@ class PaymentController extends Controller
                 $this->basketItemRepository->removeBasketItem($basketItem->id);
             }
 
-            if($orderData->order->id > 0)
+            if($validation->order->id > 0)
             {
-                return $this->response->redirectTo('confirmation/'.$orderData->order->id);
+                return $this->response->redirectTo('confirmation/' . $validation->order->id);
             }
             else
             {
