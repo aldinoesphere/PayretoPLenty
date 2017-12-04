@@ -70,7 +70,7 @@ class UpdateOrderStatusEventProcedure
 
 					if ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 						$paymentData['transaction_id'] = $paymentResult['id'];
-			            $paymentData['paymentKey'] = $paymentKey;
+			            $paymentData['paymentKey'] = $payment->paymentKey;
 			            $paymentData['amount'] = $paymentResult['amount'];
 			            $paymentData['currency'] = $paymentResult['currency'];
 			            $paymentData['status'] = $paymentHelper->mapTransactionState('2');
