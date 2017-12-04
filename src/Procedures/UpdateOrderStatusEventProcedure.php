@@ -28,9 +28,9 @@ class UpdateOrderStatusEventProcedure
 	 */
 	public function run(
 					EventProceduresTriggered $eventTriggered,
-					PaymentRepositoryContract $paymentRepository,
-					PaymentService $paymentService,
-					PaymentHelper $paymentHelper
+					PaymentRepositoryContract $paymentRepository
+					// PaymentService $paymentService,
+					// PaymentHelper $paymentHelper
 	) {
 		/** @var Order $order */
 		$order = $eventTriggered->getOrder();
