@@ -69,10 +69,10 @@ class UpdateOrderStatusEventProcedure
 					$paymentResult = $gatewayService->backOfficePayment($checkoutId, $transactionData);
 
 					if ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
-						$paymentData['transaction_id'] = $paymentConfirmation['id'];
+						$paymentData['transaction_id'] = $paymentResult['id'];
 			            $paymentData['paymentKey'] = $paymentKey;
-			            $paymentData['amount'] = $paymentConfirmation['amount'];
-			            $paymentData['currency'] = $paymentConfirmation['currency'];
+			            $paymentData['amount'] = $paymentResult['amount'];
+			            $paymentData['currency'] = $paymentResult['currency'];
 			            $paymentData['status'] = $paymentHelper->mapTransactionState('2');
 			            $paymentData['orderId'] = $orderId;
 
