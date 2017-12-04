@@ -59,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus($this->getOrderStatus($paymentType))
+						->withStatus($this->getOrderStatus())
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
@@ -89,15 +89,15 @@ class OrderService
 	{
 		switch ($paymentType) {
 			case 'PA':
-				$this->orderStatus = 4.5;
+				return 4.5;
 				break;
 
 			case 'DB':
-				$this->orderStatus = 5;
+				return 5;
 				break;
 			
 			default:
-				$this->orderStatus = 5;
+				return 5;
 				break;
 		}
 	}
