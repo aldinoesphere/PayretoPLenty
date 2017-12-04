@@ -546,7 +546,7 @@ class PaymentService
 
 			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
 
-			$response = $this->gatewayService->doRefund($transactionId, $parameters);
+			$response = $this->gatewayService->doRefund($transactionId, $transactionData);
 
 			$this->getLogger(__METHOD__)->error('Payreto:response', $response);
 
