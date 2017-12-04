@@ -60,7 +60,7 @@ class UpdateOrderStatusEventProcedure
 						'amount' => $payment->amount,
 						'currency' => $payment->currency,
 						'payment_type' => 'CP',
-						'test_mode' => $paymentService->getServerMode($payment->method)
+						'test_mode' => $paymentService->getTestMode($payment->method)
 					]
 				);
 				$checkoutId = $payment->properties[0]->value;
