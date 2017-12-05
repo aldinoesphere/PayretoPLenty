@@ -215,7 +215,7 @@ class PaymentService
 				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage);
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
 				];	
 			}
 
@@ -229,7 +229,7 @@ class PaymentService
 				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage);
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
 				];	
 			}
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
