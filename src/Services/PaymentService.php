@@ -307,7 +307,7 @@ class PaymentService
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 		$paymentParameters = [];
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM') {
 			$paymentParameters =array_merge( 
 					$this->getChartParameters($basket),
 					[
