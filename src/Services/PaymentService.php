@@ -226,7 +226,6 @@ class PaymentService
 
 			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse1', $this->gatewayService->getTransactionResult($checkoutResponse['result']['code']));
 
 			if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') {
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
