@@ -1475,295 +1475,147 @@ class GatewayService
         $returnMessage = '';
         switch ($errorIdentifier) {
             case 'ERROR_PARAMETER_CART':
-                if ($this->l('ERROR_PARAMETER_CART') == "ERROR_PARAMETER_CART") {
                     $returnMessage = "Please fill your shopping cart to make payment with Klarna.";
-                } else {
-                    $returnMessage = $this->l('ERROR_PARAMETER_CART');
-                }
                 break;
             case 'ERROR_ORDER_INVALID':
-                if ($this->l('ERROR_ORDER_INVALID') == "ERROR_ORDER_INVALID") {
                     $returnMessage = "Your cart or your information is not complete.
                     Please complete the information before make a payment.";
-                } else {
-                    $returnMessage = $this->l('ERROR_ORDER_INVALID');
-                }
                 break;
             case 'ERROR_MESSAGE_PCLASS_REQUIRED':
-                if ($this->l('ERROR_MESSAGE_PCLASS_REQUIRED') == "ERROR_MESSAGE_PCLASS_REQUIRED") {
                     $returnMessage = "Transaction cannot be processed because PCLASS parameter is missing,
                     please contact the shop admin for futher information.";
-                } else {
-                    $returnMessage = $this->l('ERROR_MESSAGE_PCLASS_REQUIRED');
-                }
                 break;
             case 'ERROR_GENERAL_NORESPONSE':
-                if ($this->l('ERROR_GENERAL_NORESPONSE') == "ERROR_GENERAL_NORESPONSE") {
                     $returnMessage = "Unfortunately, the confirmation of your payment failed.
                     Please contact your merchant for clarification.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_NORESPONSE');
-                }
                 break;
             case 'ERROR_GENERAL_FRAUD_DETECTION':
-                if ($this->l('ERROR_GENERAL_FRAUD_DETECTION') == "ERROR_GENERAL_FRAUD_DETECTION") {
                     $returnMessage = "Unfortunately, there was an error while processing your order.
                     In case a payment has been made, it will be automatically refunded.";
-                } else {
-                    $returnMessage =  $this->l('ERROR_GENERAL_FRAUD_DETECTION');
-                }
                 break;
             case 'ERROR_CC_ACCOUNT':
-                if ($this->l('ERROR_CC_ACCOUNT') == "ERROR_CC_ACCOUNT") {
                     $returnMessage = "The account holder entered does not match your name.
                     Please use an account that is registered on your name.";
-                } else {
-                    $returnMessage =  $this->l('ERROR_CC_ACCOUNT');
-                }
                 break;
             case 'ERROR_CC_INVALIDDATA':
-                if ($this->l('ERROR_CC_INVALIDDATA') == "ERROR_CC_INVALIDDATA") {
                     $returnMessage = "Unfortunately, the card/account data you entered was not correct.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_INVALIDDATA');
-                }
                 break;
             case 'ERROR_CC_BLACKLIST':
-                if ($this->l('ERROR_CC_BLACKLIST') == "ERROR_CC_BLACKLIST") {
                     $returnMessage = "Unfortunately, the credit card you entered can not be accepted.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_BLACKLIST');
-                }
                 break;
             case 'ERROR_CC_DECLINED_CARD':
-                if ($this->l('ERROR_CC_DECLINED_CARD') == "ERROR_CC_DECLINED_CARD") {
                     $returnMessage = "Unfortunately, the credit card you entered can not be accepted.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_DECLINED_CARD');
-                }
                 break;
             case 'ERROR_CC_EXPIRED':
-                if ($this->l('ERROR_CC_EXPIRED') == "ERROR_CC_EXPIRED") {
                     $returnMessage = "Unfortunately, the credit card you entered is expired.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_EXPIRED');
-                }
                 break;
             case 'ERROR_CC_INVALIDCVV':
-                if ($this->l('ERROR_CC_INVALIDCVV') == "ERROR_CC_INVALIDCVV") {
                     $returnMessage = "Unfortunately, the CVV/CVC you entered is not correct.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_INVALIDCVV');
-                }
                 break;
             case 'ERROR_CC_EXPIRY':
-                if ($this->l('ERROR_CC_EXPIRY') == "ERROR_CC_EXPIRY") {
                     $returnMessage = "Unfortunately, the expiration date you entered is not correct.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_EXPIRY');
-                }
                 break;
             case 'ERROR_CC_LIMIT_EXCEED':
-                if ($this->l('ERROR_CC_LIMIT_EXCEED') == "ERROR_CC_LIMIT_EXCEED") {
                     $returnMessage = "Unfortunately, the limit of your credit card is exceeded.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_LIMIT_EXCEED');
-                }
                 break;
             case 'ERROR_CC_3DAUTH':
-                if ($this->l('ERROR_CC_3DAUTH') == "ERROR_CC_3DAUTH") {
                     $returnMessage = "Unfortunately, the password you entered was not correct.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_3DAUTH');
-                }
                 break;
             case 'ERROR_CC_3DERROR':
-                if ($this->l('ERROR_CC_3DERROR') == "ERROR_CC_3DERROR") {
                     $returnMessage = "Unfortunately, there has been an error while processing your request.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_3DERROR');
-                }
                 break;
             case 'ERROR_CC_NOBRAND':
-                if ($this->l('ERROR_CC_NOBRAND') == "ERROR_CC_NOBRAND") {
                     $returnMessage = "Unfortunately, there has been an error while processing your request.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_NOBRAND');
-                }
                 break;
             case 'ERROR_GENERAL_LIMIT_AMOUNT':
-                if ($this->l('ERROR_GENERAL_LIMIT_AMOUNT') == "ERROR_GENERAL_LIMIT_AMOUNT") {
                     $returnMessage = "Unfortunately, your credit limit is exceeded.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_LIMIT_AMOUNT');
-                }
                 break;
             case 'ERROR_GENERAL_LIMIT_TRANSACTIONS':
-                if ($this->l('ERROR_GENERAL_LIMIT_TRANSACTIONS') == "ERROR_GENERAL_LIMIT_TRANSACTIONS") {
                     $returnMessage = "Unfortunately, your limit of transaction is exceeded.
                     Please try again later.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_LIMIT_TRANSACTIONS');
-                }
                 break;
             case 'ERROR_CC_DECLINED_AUTH':
-                if ($this->l('ERROR_CC_DECLINED_AUTH') == "ERROR_CC_DECLINED_AUTH") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_DECLINED_AUTH');
-                }
                 break;
             case 'ERROR_GENERAL_DECLINED_RISK':
-                if ($this->l('ERROR_GENERAL_DECLINED_RISK') == "ERROR_GENERAL_DECLINED_RISK") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_DECLINED_RISK');
-                }
                 break;
             case 'ERROR_CC_ADDRESS':
-                if ($this->l('ERROR_CC_ADDRESS') == "ERROR_CC_ADDRESS") {
                     $returnMessage = "We are sorry.
                     We could no accept your card as its origin does not match your address.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_ADDRESS');
-                }
                 break;
             case 'ERROR_GENERAL_CANCEL':
-                if ($this->l('ERROR_GENERAL_CANCEL') == "ERROR_GENERAL_CANCEL") {
                     $returnMessage = "You cancelled the payment prior to its execution.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_CANCEL');
-                }
                 break;
             case 'ERROR_CC_RECURRING':
-                if ($this->l('ERROR_CC_RECURRING') == "ERROR_CC_RECURRING") {
                     $returnMessage = "Recurring transactions have been deactivated for this credit card.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_RECURRING');
-                }
                 break;
             case 'ERROR_CC_REPEATED':
-                if ($this->l('ERROR_CC_REPEATED') == "ERROR_CC_REPEATED") {
                     $returnMessage = "Unfortunately, your transaction has been declined due to invalid data.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_CC_REPEATED');
-                }
                 break;
             case 'ERROR_GENERAL_ADDRESS':
-                if ($this->l('ERROR_GENERAL_ADDRESS') == "ERROR_GENERAL_ADDRESS") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please check the personal data you entered.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_ADDRESS');
-                }
                 break;
             case 'ERROR_GENERAL_BLACKLIST':
-                if ($this->l('ERROR_GENERAL_BLACKLIST') == "ERROR_GENERAL_BLACKLIST") {
                     $returnMessage = "The chosen payment method is not available at the moment.
                     Please choose a different card or payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_BLACKLIST');
-                }
                 break;
             case 'ERROR_GENERAL_GENERAL':
-                if ($this->l('ERROR_GENERAL_GENERAL') == "ERROR_GENERAL_GENERAL") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_GENERAL');
-                }
                 break;
             case 'ERROR_GENERAL_REDIRECT':
-                if ($this->l('ERROR_GENERAL_REDIRECT') == "ERROR_GENERAL_REDIRECT") {
                     $returnMessage = "Error before redirect.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_REDIRECT');
-                }
                 break;
             case 'ERROR_GENERAL_TIMEOUT':
-                if ($this->l('ERROR_GENERAL_TIMEOUT') == "ERROR_GENERAL_TIMEOUT") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GENERAL_TIMEOUT');
-                }
                 break;
             case 'ERROR_GIRO_NOSUPPORT':
-                if ($this->l('ERROR_GIRO_NOSUPPORT') == "ERROR_GIRO_NOSUPPORT") {
                     $returnMessage = "Giropay is not supported for this transaction.
                     Please choose a different payment method.";
-                } else {
-                    $returnMessage = $this->l('ERROR_GIRO_NOSUPPORT');
-                }
                 break;
             case 'ERROR_ADDRESS_PHONE':
-                if ($this->l('ERROR_ADDRESS_PHONE') == "ERROR_ADDRESS_PHONE") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please enter a valid telephone number.";
-                } else {
-                    $returnMessage = $this->l('ERROR_ADDRESS_PHONE');
-                }
                 break;
             case 'ERROR_UNKNOWN':
-                if ($this->l('ERROR_UNKNOWN') == "ERROR_UNKNOWN") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_UNKNOWN');
-                }
                 break;
             case 'ERROR_MC_UPDATE':
-                if ($this->l('ERROR_MC_UPDATE') == "ERROR_MC_UPDATE") {
                     $returnMessage = "We are sorry.
                             Your attempt to update your payment information was not successful.";
-                } else {
-                    $returnMessage = $this->l('ERROR_MC_UPDATE');
-                }
                 break;
             case 'ERROR_MC_ADD':
-                if ($this->l('ERROR_MC_ADD') == "ERROR_MC_ADD") {
                     $returnMessage = "We are sorry. Your attempt to save your payment information was not successful";
-                } else {
-                    $returnMessage = $this->l('ERROR_MC_ADD');
-                }
                 break;
             case 'ERROR_MC_DELETE':
-                if ($this->l('ERROR_MC_DELETE') == "ERROR_MC_DELETE") {
                     $returnMessage = "We are sorry. Your attempt to delete your payment information was not successful";
-                } else {
-                    $returnMessage = $this->l('ERROR_MC_DELETE');
-                }
                 break;
             case 'ERROR_MERCHANT_SSL_CERTIFICATE':
-                if ($this->l('ERROR_MERCHANT_SSL_CERTIFICATE') == "ERROR_MERCHANT_SSL_CERTIFICATE") {
                     $returnMessage = "SSL certificate problem, please contact the merchant.";
-                } else {
-                    $returnMessage = $this->l('ERROR_MERCHANT_SSL_CERTIFICATE');
-                }
                 break;
             default:
-                if ($this->l('ERROR_UNKNOWN') == "ERROR_UNKNOWN") {
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please try again.";
-                } else {
-                    $returnMessage = $this->l('ERROR_UNKNOWN');
-                }
                 break;
         }
         return $returnMessage;
