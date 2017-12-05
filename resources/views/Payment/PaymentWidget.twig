@@ -4,13 +4,13 @@
 
 {% block PartialHead %}
     <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+    <link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
 {% endblock %}
 
 {% block PageBody %}
 	
     <div class="page-content checkout container-max">
     	<div>
-    	{% include "Payreto::Payment.paymentStyle" %}
     		<script type="text/javascript"> 
 			    var wpwlOptions = {
 					style: "card",
