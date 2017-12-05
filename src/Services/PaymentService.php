@@ -214,11 +214,10 @@ class PaymentService
 			if ($this->gatewayService->getTransactionResult($paymentResponse['result']['code']) == 'ACK' ) {
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
 			} else {
-				// $returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
+				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					// 'content' => $this->gatewayService->getErrorMessage($returnMessage)
-					'content' => 'Error Before redirect'
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
 				];
 			}
 			
@@ -231,11 +230,10 @@ class PaymentService
 			if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') {
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
 			} else {
-				// $returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					// 'content' => $this->gatewayService->getErrorMessage($returnMessage)
-					'content' => 'Error Before redirect'
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
 				];	
 			}
 			
