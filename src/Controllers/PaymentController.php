@@ -169,7 +169,8 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            return $this->response->redirectTo('checkout');
+            $this->getLogger(__METHOD__)->alert('Payreto:error', $test);
+            // return $this->response->redirectTo('checkout');
         }
 	}
 
