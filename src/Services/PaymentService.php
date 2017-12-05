@@ -208,25 +208,26 @@ class PaymentService
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM')
 		{
 			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
-			try {
-				$paymentResponse = $this->gatewayService->getServerToServer($parameters);	
-			} catch (\Exception $e) {
-				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
+			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+			if ($this->gatewayService->getTransactionResult($paymentResponse['result']['code']) == 'ACK' ) {
+				$paymentPageUrl = $paymentResponse['redirect']['url'];
+			} else {
 				// $returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
 					// 'content' => $this->gatewayService->getErrorMessage($returnMessage)
 					'content' => 'Error Before redirect'
-				];	
+				];
 			}
-
+			
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-			$paymentPageUrl = $paymentResponse['redirect']['url'];
+			
 		} else {
-			try {
-				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
-			} catch (\Exception $e) {
-				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
+			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
+
+			if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') {
+				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			} else {
 				// $returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
@@ -234,8 +235,9 @@ class PaymentService
 					'content' => 'Error Before redirect'
 				];	
 			}
+			
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			
 		}
 
 		return [
