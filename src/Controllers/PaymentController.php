@@ -13,6 +13,8 @@ use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFact
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
 
+use IO\Api\ApiResponse;
+
 use Payreto\Services\GatewayService;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Helper\BasketHelper;
@@ -90,6 +92,12 @@ class PaymentController extends Controller
 
     /**
      *
+     * @var apiResponse
+     */
+    private $apiResponse;
+
+    /**
+     *
      * @var basketHelper
      */
     private $basketHelper;
@@ -116,7 +124,8 @@ class PaymentController extends Controller
 					PaymentService $paymentService,
                     AuthHelper $authHelper,
                     SettingsController $settingsController,
-                    BasketHelper $basketHelper
+                    BasketHelper $basketHelper,
+                    ApiResponse $apiResponse
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -169,7 +178,7 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            return $this->getLogger(__METHOD__)->alert('Payreto:error', $test);
+            return $this->apiResponse->create(ResponseCode::OK);
             // return $this->response->redirectTo('checkout');
         }
 	}
