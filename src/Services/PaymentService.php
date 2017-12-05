@@ -212,10 +212,11 @@ class PaymentService
 				$paymentResponse = $this->gatewayService->getServerToServer($parameters);	
 			} catch (\Exception $e) {
 				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
-				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
+				// $returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					// 'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					'content' => 'Error Before redirect'
 				];	
 			}
 
@@ -226,10 +227,11 @@ class PaymentService
 				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
 			} catch (\Exception $e) {
 				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
-				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+				// $returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					// 'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					'content' => 'Error Before redirect'
 				];	
 			}
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
