@@ -205,28 +205,35 @@ class PaymentService
 
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
-		try
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM')
 		{
-			if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
-			{
-				$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
-				$paymentResponse = $this->gatewayService->getServerToServer($parameters);
-				$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-				$paymentPageUrl = $paymentResponse['redirect']['url'];
-			} else {
-				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);
-				$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
-				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
+			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
+			try {
+				$paymentResponse = $this->gatewayService->getServerToServer($parameters);	
+			} catch (\Exception $e) {
+				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
+				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage($returnMessage);
+				];	
 			}
-			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-		}
-		catch (\Exception $e)
-		{
-			$this->getLogger(__METHOD__)->error('Payreto:getCheckoutId', $e);
-			return [
-				'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-				'content' => 'An error occurred while processing your transaction. Please contact our support.'
-			];
+
+			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
+			$paymentPageUrl = $paymentResponse['redirect']['url'];
+		} else {
+			try {
+				$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
+			} catch (\Exception $e) {
+				$this->getLogger(__METHOD__)->error('Payreto:Exception', $e);
+				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage($returnMessage);
+				];	
+			}
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
 		}
 
 		return [
