@@ -201,7 +201,7 @@ class PaymentService
 			$this->getCustomerParameters()
 		);
 
-		$this->paymentHelper->mapStatus();
+		// $this->paymentHelper->mapStatus();
 
 		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
 
@@ -209,6 +209,8 @@ class PaymentService
 		{
 			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
+			
 			if ($this->gatewayService->getTransactionResult($paymentResponse['result']['code']) == 'ACK' ) {
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
 			} else {
@@ -220,11 +222,10 @@ class PaymentService
 				];
 			}
 			
-			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
-			
 		} else {
-			
+
 			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
 
 			if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') {
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResponse['id'];
@@ -236,8 +237,6 @@ class PaymentService
 					'content' => 'Error Before redirect'
 				];	
 			}
-			
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
 			
 		}
 
