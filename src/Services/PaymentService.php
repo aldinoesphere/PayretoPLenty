@@ -203,7 +203,7 @@ class PaymentService
 
 		$this->paymentHelper->mapStatus();
 
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
+		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM')
 		{
@@ -223,6 +223,7 @@ class PaymentService
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 			
 		} else {
+			
 			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
 
 			if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') {
