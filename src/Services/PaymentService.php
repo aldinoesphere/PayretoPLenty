@@ -203,11 +203,11 @@ class PaymentService
 
 		// $this->paymentHelper->mapStatus();
 
-		$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
-
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM')
 		{
 			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
+
 			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 
@@ -224,6 +224,7 @@ class PaymentService
 			
 		} else {
 
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
 			$checkoutResponse = $this->gatewayService->getCheckoutResponse($parameters);	
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
 
