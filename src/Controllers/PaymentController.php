@@ -178,8 +178,8 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            return $this->apiResponse->create();
-            // return $this->response->redirectTo('checkout');
+            // return $this->apiResponse->create();
+            return $this->response->redirectTo('checkout');
         }
 	}
 
