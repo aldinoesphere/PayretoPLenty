@@ -211,6 +211,13 @@ class PaymentService
 			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 
+			if ((float)$basket->basketAmount < 200 ) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'The financing amount is outside the permitted amounts (200 - 3,000 EUR)'
+				];
+			}
+
 			if ($this->gatewayService->getTransactionResult($paymentResponse['result']['code']) == 'ACK' ) {
 				$paymentPageUrl = $paymentResponse['redirect']['url'];
 			} else {

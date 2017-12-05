@@ -169,8 +169,7 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            // return $this->response->redirectTo('checkout');
-            throw new \Exception('Payment Failed!');
+            return $this->response->redirectTo('checkout');
         }
 	}
 
