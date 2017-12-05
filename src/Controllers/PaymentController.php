@@ -179,7 +179,7 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            $this->apiResponse->error(400, 'test error');
+            return $this->apiResponse->error(400, 'test error');
             // $this->getLogger(__METHOD__)->alert('Payreto:error', $test);
             // return $this->response->redirectTo('checkout');
         }
