@@ -203,7 +203,7 @@ class PaymentService
 
 		// $this->paymentHelper->mapStatus();
 
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM')
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 		{
 			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
@@ -308,7 +308,7 @@ class PaymentService
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 		$paymentParameters = [];
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP' || $paymentMethod->paymentKey == 'PAYRETO_PPM') {
+		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
 			$paymentParameters =array_merge( 
 					$this->getChartParameters($basket),
 					[
