@@ -337,7 +337,7 @@ class PaymentService
      *
      * @return string|boolean
      */
-    protected function checkCustomerLoginStatus()
+    public function checkCustomerLoginStatus()
     {
     	$customerId = $this->paymentHelper->getCustomerId();
     	$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
