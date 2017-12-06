@@ -50,7 +50,7 @@ class MyPaymentInformationController extends Controller
 			return $this->response->redirectTo('login');
 		}
 
-		return $twig->render('Payreto::Information.MyPaymentInformation', []);
+		// return $twig->render('Payreto::Information.MyPaymentInformation', []);
 	}
 
 }
