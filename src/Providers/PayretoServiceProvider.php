@@ -90,6 +90,8 @@ class PayretoServiceProvider extends ServiceProvider
 								);
 								$this->getLogger(__METHOD__)->error('Payreto:Content', $content);
 
+								$this->getLogger(__METHOD__)->error('Payreto:event', $event);
+
 								$event->setValue(isset($content['content']) ? $content['content'] : null);
 								$event->setType(isset($content['type']) ? $content['type'] : '');
 							}
