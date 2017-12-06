@@ -40,10 +40,10 @@ class MyPaymentInformationController extends Controller
 	
 	public function show(Twig $twig)
 	{
-		if (!$paymentService->checkCustomerLoginStatus()) {
+		if (!$this->paymentService->checkCustomerLoginStatus()) {
 			return $this->response->redirectTo('login');
 		}
-		
+
 		return $twig->render('Payreto::Information.MyPaymentInformation', []);
 	}
 
