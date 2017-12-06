@@ -28,6 +28,11 @@ class MyPaymentInformationController extends Controller
 	use Loggable;
 
 	/**
+	 * @var paymentService
+	 */
+	private $paymentService;
+
+	/**
 	 * @var response
 	 */
 	private $response;
@@ -35,6 +40,7 @@ class MyPaymentInformationController extends Controller
 	public function __construct(PaymentService $paymentService,
 		Response $response
 	) {
+		$this->paymentService = $paymentService;
 		$this->response = $response;
 	}
 	
