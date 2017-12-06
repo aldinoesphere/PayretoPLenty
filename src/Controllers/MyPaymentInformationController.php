@@ -17,7 +17,7 @@ use IO\Api\ApiResource;
 use IO\Api\ApiResponse;
 use IO\Api\ResponseCode;
 
-use Payreto\Service\PaymentService;
+use Payreto\Services\PaymentService;
 
 /**
 * Class PaymentController
