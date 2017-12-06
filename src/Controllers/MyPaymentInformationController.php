@@ -42,7 +42,8 @@ class MyPaymentInformationController extends Controller
 	
 	public function show(Twig $twig)
 	{
-		return $twig->render('Payreto:Information.MyPaymentInformation', []);
+		echo 'test';
+		// return $twig->render('Payreto:Information.MyPaymentInformation', []);
 	}
 
 }
