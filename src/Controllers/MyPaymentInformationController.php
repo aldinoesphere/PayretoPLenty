@@ -27,7 +27,14 @@ class MyPaymentInformationController extends Controller
 {
 	use Loggable;
 
-	public function __construct(PaymentService $paymentService) {
+	/**
+	 * @var response
+	 */
+	private $response;
+
+	public function __construct(PaymentService $paymentService,
+		Response $response
+	) {
 		if (!$paymentService->checkCustomerLoginStatus()) {
 			return $this->response->redirectTo('login');
 		}
