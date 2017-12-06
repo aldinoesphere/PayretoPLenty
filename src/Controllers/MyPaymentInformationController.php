@@ -35,6 +35,8 @@ class MyPaymentInformationController extends Controller
 	public function __construct(PaymentService $paymentService,
 		Response $response
 	) {
+		$this->response = $response;
+		
 		if (!$paymentService->checkCustomerLoginStatus()) {
 			return $this->response->redirectTo('login');
 		}
