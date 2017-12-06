@@ -24,26 +24,10 @@ use IO\Api\ResponseCode;
 class MyPaymentInformationController extends Controller
 {
 	use Loggable;
-
-	/**
-	 * PaymentController constructor.
-	 *
-	 * @param Request $request
-	 * @param Response $response
-	 * @param BasketItemRepositoryContract $basketItemRepository
-	 * @param SessionStorageService $sessionStorage
-	 */
-	public function __construct(
-					
-	) {
-		
-	}
-
 	
 	public function show(Twig $twig)
 	{
-		echo 'test';
-		// return $twig->render('Payreto:Information.MyPaymentInformation', []);
+		return $twig->render('Payreto:Information.MyPaymentInformation', ['test' => 'Benar']);
 	}
 
 }
