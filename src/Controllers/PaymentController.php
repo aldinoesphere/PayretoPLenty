@@ -13,7 +13,9 @@ use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFact
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
 
+use IO\Api\ApiResource;
 use IO\Api\ApiResponse;
+use IO\Api\ResponseCode;
 
 use Payreto\Services\GatewayService;
 use Payreto\Helper\PaymentHelper;
@@ -178,8 +180,8 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            // return $this->apiResponse->create();
-            return $this->response->redirectTo('checkout');
+            return $this->apiResponse->create(ResponseCode::OK);
+            // return $this->response->redirectTo('checkout');
         }
 	}
 
