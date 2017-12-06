@@ -17,6 +17,8 @@ use IO\Api\ApiResource;
 use IO\Api\ApiResponse;
 use IO\Api\ResponseCode;
 
+use Payreto\Service\PaymentService;
+
 /**
 * Class PaymentController
 * @package Payreto\Controllers
@@ -24,6 +26,13 @@ use IO\Api\ResponseCode;
 class MyPaymentInformationController extends Controller
 {
 	use Loggable;
+
+	public function __construct(PaymentService $paymentService) {
+		if (!$paymentService->checkCustomerLoginStatus()) {
+			return $this->response->redirectTo('login');
+		}
+
+	}
 	
 	public function show(Twig $twig)
 	{
