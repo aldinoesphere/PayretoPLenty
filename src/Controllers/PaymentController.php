@@ -180,7 +180,7 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            return $this->apiResponse->info(ResponseCode::OK, 'test');
+            return $this->apiResponse->info(400, 'test');
             // return $this->response->redirectTo('checkout');
         }
 	}
