@@ -141,6 +141,7 @@ class PaymentController extends Controller
         $this->authHelper = $authHelper;
         $this->settingsController = $settingsController;
         $this->basketHelper = $basketHelper;
+        $this->apiResponse = $apiResponse;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
