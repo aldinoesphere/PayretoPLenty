@@ -24,7 +24,7 @@ class PayretoRouteServiceProvider extends RouteServiceProvider
 		$router->get('payreto/settings/{settingType}','Payreto\Controllers\SettingsController@loadConfiguration');
 
 		// Routes for display My Payment Information
-		$router->post('payreto/my-payment-information','Payreto\Controllers\MyPaymentInformationController@show');
+		$router->get('payreto/my-payment-information','Payreto\Controllers\MyPaymentInformationController@show');
 
 		// Routes for 
 		$router->post('payreto/settings/save','Payreto\Controllers\SettingsController@saveConfiguration');
