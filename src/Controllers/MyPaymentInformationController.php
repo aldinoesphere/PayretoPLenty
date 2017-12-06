@@ -37,9 +37,9 @@ class MyPaymentInformationController extends Controller
 	) {
 		$this->response = $response;
 		
-		if (!$paymentService->checkCustomerLoginStatus()) {
+		// if (!$paymentService->checkCustomerLoginStatus()) {
 			return $this->response->redirectTo('login');
-		}
+		// }
 
 	}
 	
