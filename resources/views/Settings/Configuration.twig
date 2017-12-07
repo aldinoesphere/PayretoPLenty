@@ -121,8 +121,6 @@ img {
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
-				<div class="clear"></div>
-				<div class="div-separator clear"></div>
 				<div>
 					<label for="Enabled">Recurring</label>
 					<select name="recurring" value="{{ setting.recurring }}">
@@ -130,6 +128,8 @@ img {
 						<option value="1" {{ (setting.recurring == '1') ? 'selected' : '' }}>Yes</option>
 					</select>
 				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
 				<div>
 					<label for="Password">Password *</label>
 					<input type="text" class="input-text" name="password" value="{{ setting.password }}" required />
