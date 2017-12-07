@@ -191,7 +191,7 @@ class SettingsController extends Controller
 					];
 				break;
 
-			case 'PAYRETO_PPM':
+			case 'PAYRETO_PPM_RC':
 				return [
 						'title' => 'Paypal (recurring)',
 						'paymentBrand' => 'PAYPAL',

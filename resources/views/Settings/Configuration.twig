@@ -100,7 +100,7 @@ img {
 </script>
 </head>
 <body>
-	<h3>{{ titleSetting }}</h3>
+	<h3>{{ optionSetting.title }}</h3>
 	{% if status == 'success' %}
 		<div class="message success" id="successMessage">
 			{{ trans('Your settings have been saved', [], 'messages', locale) }}
