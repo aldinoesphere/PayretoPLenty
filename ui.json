@@ -12,7 +12,7 @@
                         "label": "Credit Card (Recurring)",
                         "menu": "settings/orders/payreto",
                         "urlKey": "credit-card-recurring",
-                        "entryPoint": "../../../../../payreto/settings/credit-card-recurring"
+                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ACC_RC"
                     },
                     {
                         "label": "Credit Card",
@@ -24,7 +24,7 @@
                         "label": "Direct Debit (Recurring)",
                         "menu": "settings/orders/payreto",
                         "urlKey": "deirect-debit-recurring",
-                        "entryPoint": "../../../../../payreto/settings/direct-debit-recurring"
+                        "entryPoint": "../../../../../payreto/settings/PAYRETO_DDS_RC"
                     },
                     {
                         "label": "Direct Debit",
@@ -42,7 +42,7 @@
                         "label": "Paypal (Recurring)",
                         "menu": "settings/orders/payreto",
                         "urlKey": "deirect-debit-recurring",
-                        "entryPoint": "../../../../../payreto/settings/paypal-recurring"
+                        "entryPoint": "../../../../../payreto/settings/PAYRETO_PPM_RC"
                     },
                     {
                         "label": "Paypal",

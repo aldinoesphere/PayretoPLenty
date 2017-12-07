@@ -146,7 +146,7 @@ class SettingsController extends Controller
 				];
 				break;
 
-			case 'credit-card-recurring':
+			case 'PAYRETO_ACC_RC':
 				return [
 						'title' => 'Credit Card (recurring)',
 						'paymentBrand' => '',
@@ -164,7 +164,7 @@ class SettingsController extends Controller
 					];
 				break;
 
-			case 'direct-debit-recurring':
+			case 'PAYRETO_DDS_RC':
 				return [
 						'title' => 'Direct Debit (recurring)',
 						'paymentBrand' => 'DIRECTDEBIT_SEPA',
@@ -191,7 +191,7 @@ class SettingsController extends Controller
 					];
 				break;
 
-			case 'paypal-recurring':
+			case 'PAYRETO_PPM':
 				return [
 						'title' => 'Paypal (recurring)',
 						'paymentBrand' => 'PAYPAL',
@@ -271,6 +271,17 @@ class SettingsController extends Controller
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId')
 						);
+		} elseif($settingType == 'PAYRETO_ACC_RC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'language' => $this->request->get('language'),
+							'display' => $this->request->get('display'),
+							'multiChannel' => $this->request->get('multiChannel'),
+							'cardType' => implode(',', $newCardTypes),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount')
+						);
 		} elseif($settingType == 'PAYRETO_GRP' 
 			|| $settingType == 'PAYRETO_ADB' 
 			|| $settingType == 'PAYRETO_ECP' 
@@ -286,6 +297,16 @@ class SettingsController extends Controller
 							'display' => $this->request->get('display'),
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId')
+						);
+		} elseif($settingType == 'PAYRETO_DDS_RC'
+			|| $settingType == 'PAYRETO_PPM_RC'
+		) {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount')
 						);
 		} elseif($settingType == 'PAYRETO_PDR') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
