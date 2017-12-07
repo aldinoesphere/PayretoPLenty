@@ -56,9 +56,9 @@ class MyPaymentInformationController extends Controller
 		
 	}
 
-	public function addAccount() 
+	public function addAccount($paymentMethod) 
 	{
-		$paymentMethod = $this->request->all();
+		// $paymentMethod = $this->request->all();
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 	}
 
