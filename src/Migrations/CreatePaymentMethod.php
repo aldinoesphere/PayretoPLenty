@@ -33,6 +33,7 @@ class CreatePaymentMethod
 	}
 
 	public function run() {
+		$this->getLogger(__METHOD__)->error('Payreto:StartInstall', 'OK');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_ACC', 'Credit Card Payment Methods');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_ACC_RC', 'Credit Card Payment Methods Recurring');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_ECP', 'Easy Credit Payment Methods');
