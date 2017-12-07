@@ -13,7 +13,6 @@ use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFact
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
 
-use IO\Api\ApiResource;
 use IO\Api\ApiResponse;
 use IO\Api\ResponseCode;
 
@@ -37,21 +36,30 @@ class MyPaymentInformationController extends Controller
 	 */
 	private $response;
 
+	/**
+	 * @var request
+	 */
+	private $request;
+
 	public function __construct(PaymentService $paymentService,
-		Response $response
+		Response $response,
+		Request $request
 	) {
 		$this->paymentService = $paymentService;
 		$this->response = $response;
+		$this->request = $request;
 	}
 	
 	public function show(Twig $twig)
 	{
-		// if (!$this->paymentService->checkCustomerLoginStatus()) {
-			return $twig->render('Payreto::Information.MyPaymentInformation', []);
-		// } else {
-		// 	return $this->response->redirectTo('login');
-		// }
+		return $twig->render('Payreto::Information.MyPaymentInformation', []);
 		
+	}
+
+	public function addAccount() 
+	{
+		$paymentMethod = $this->request->all();
+		echo $paymentMethod;
 	}
 
 }
