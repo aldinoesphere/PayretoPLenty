@@ -219,7 +219,7 @@ img {
 				<div class="div-separator clear"></div>
 				<div>
 					<label for="Enabled">Enabled *</label>
-					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'readonly' : '' }}>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
 						{% if generalSetting.recurring == '0' %}
 							<option value="0" selected>No</option>
 						{% else %}
@@ -347,7 +347,7 @@ img {
 				<div class="div-separator clear"></div>
 				<div>
 					<label for="Enabled">Enabled *</label>
-					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'readonly' : '' }}>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
 						{% if generalSetting.recurring == '0' %}
 							<option value="0" selected>No</option>
 						{% else %}
