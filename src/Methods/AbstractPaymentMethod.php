@@ -72,18 +72,18 @@ class AbstractPaymentMethod extends PaymentMethodService
 		if (array_key_exists('display', $this->paymentService->settings) && $this->paymentService->settings['display'] == 1)
 		{
 			if ($this->generalSettings['recurring'] == 1) {
-				if ( $settingsType == 'PAYRETO_ACC' 
-					|| $settingsType == 'PAYRETO_DDS' 
-					|| $settingsType == 'PAYRETO_PPM' 
+				if ( $this->settingsType == 'PAYRETO_ACC' 
+					|| $this->settingsType == 'PAYRETO_DDS' 
+					|| $this->settingsType == 'PAYRETO_PPM' 
 				) {
 					return false;
 				} else {
 					return true;
 				}
 			} else {
-				if ($settingsType == 'PAYRETO_ACC_RC' 
-					|| $settingsType == 'PAYRETO_DDS_RC' 
-					|| $settingsType == 'PAYRETO_PPM_RC' 
+				if ($this->settingsType == 'PAYRETO_ACC_RC' 
+					|| $this->settingsType == 'PAYRETO_DDS_RC' 
+					|| $this->settingsType == 'PAYRETO_PPM_RC' 
 				) {
 					return false;
 				} else {
