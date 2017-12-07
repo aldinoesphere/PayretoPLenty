@@ -181,7 +181,7 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            return $this->apiResponse->create(['type' => 'errorCode', 'value' => 'test'], ResponseCode::OK);
+            return $this->apiResponse->error(ResponseCode::OK, 'test');
             // return $this->response->redirectTo('checkout');
         }
 	}
