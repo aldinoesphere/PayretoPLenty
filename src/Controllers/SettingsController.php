@@ -280,7 +280,8 @@ class SettingsController extends Controller
 							'cardType' => implode(',', $newCardTypes),
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId'),
-							'amount' => $this->request->get('amount')
+							'amount' => $this->request->get('amount'),
+							'entityIdMoto' => $this->request->get('entityIdMoto')
 						);
 		} elseif($settingType == 'PAYRETO_GRP' 
 			|| $settingType == 'PAYRETO_ADB' 
