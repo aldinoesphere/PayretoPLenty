@@ -41,7 +41,7 @@
                     {
                         "label": "Paypal (Recurring)",
                         "menu": "settings/orders/payreto",
-                        "urlKey": "deirect-debit-recurring",
+                        "urlKey": "paypal-recurring",
                         "entryPoint": "../../../../../payreto/settings/PAYRETO_PPM_RC" 
                     },
                     {
