@@ -112,6 +112,7 @@ class SettingsController extends Controller
 
 		try {
 			$configuration = $this->settingsService->getConfiguration($plentyId, $settingType);
+			$generalSetting = $this->settingsService->getConfiguration($plentyId, 'general-setting');
 		}
 		catch (\Exception $e)
 		{
@@ -130,6 +131,7 @@ class SettingsController extends Controller
 							'status' => $this->request->get('status'),
 							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
 							'plentyId' => $plentyId,
+							'generalSetting' => $generalSetting,
 							'settingType' => $settingType,
 							'optionSetting'	=> $this->getOptionSetting($settingType),
 							'setting' => $configuration
