@@ -31,6 +31,11 @@ class AbstractPaymentMethod extends PaymentMethodService
 	protected $paymentSettings;
 
 	/**
+	 * @var generalSettings
+	 */
+	protected $generalSettings;
+
+	/**
 	 * @var name
 	 */
 	protected $name = '';
@@ -53,6 +58,7 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		$this->checkout         = $checkout;
 		$this->paymentService   = $paymentService;
+		$this->generalSettings 	= $this->paymentService->getPayretoSettings();
 		$this->paymentSettings 	= $this->paymentService->getPaymentSettings($this->settingsType);
 	}
 
@@ -65,8 +71,28 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		if (array_key_exists('display', $this->paymentService->settings) && $this->paymentService->settings['display'] == 1)
 		{
-			return true;
+			if ($this->generalSettings['recurring'] == 1) {
+				if ( $settingsType == 'PAYRETO_ACC' 
+					|| $settingsType == 'PAYRETO_DDS' 
+					|| $settingsType == 'PAYRETO_PPM' 
+				) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if ($settingsType == 'PAYRETO_ACC_RC' 
+					|| $settingsType == 'PAYRETO_DDS_RC' 
+					|| $settingsType == 'PAYRETO_PPM_RC' 
+				) {
+					return false;
+				} else {
+					return true
+				}
+				
+			}
 		}
+		
 		return false;
 	}
 

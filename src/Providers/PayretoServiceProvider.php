@@ -48,9 +48,12 @@ class PayretoServiceProvider extends ServiceProvider
 		EventProceduresService $eventProceduresService
     ) {
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC', AccPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC_RC', AccRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ECP', EcpPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS', DdsPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS_RC', DdsRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM', PpmPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM_RC', PpmRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ADB', AdbPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PDR', PdrPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_GRP', GrpPaymentMethod::class);
