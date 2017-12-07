@@ -258,6 +258,7 @@ class SettingsController extends Controller
 		if ($settingType == 'general-setting') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'userId' => $this->request->get('userId'),
+							'recurring' => $this->request->get('recurring'),
 							'password' => $this->request->get('password'),
 							'merchantEmail' => $this->request->get('merchantEmail'),
 							'shopUrl' => $this->request->get('shopUrl')
