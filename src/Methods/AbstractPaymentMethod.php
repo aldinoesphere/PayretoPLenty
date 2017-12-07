@@ -87,7 +87,7 @@ class AbstractPaymentMethod extends PaymentMethodService
 				) {
 					return false;
 				} else {
-					return true
+					return true;
 				}
 				
 			}
