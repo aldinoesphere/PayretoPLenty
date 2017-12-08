@@ -34,7 +34,8 @@ class AccountService extends DatabaseBaseService
      */
     public function loadAccount($customerId, $settingType)
     {
-        $account = $this->query(Account::class)->where(['customerId', 'settingType'], ['=','='], [$customerId, $settingType])->get();
+        $database = pluginApp(DataBase::class);
+        $account = $database->query(Account::class)->where(['customerId', 'settingType'], ['=','='], [$customerId, $settingType])->get();
         return $account;
     }
 
@@ -46,7 +47,8 @@ class AccountService extends DatabaseBaseService
      */
     public function loadAccounts($customerId)
     {
-        $accounts = $this->query(Account::class)->where('customerId', '=', $customerId)->get();
+        $database = pluginApp(DataBase::class);
+        $accounts = $database->query(Account::class)->where('customerId', '=', $customerId)->get();
         return $accounts;
     }
 
@@ -63,6 +65,7 @@ class AccountService extends DatabaseBaseService
             foreach ($accounts as $account)
             {
                 $accountModel = pluginApp(Account::class);
+                $database = pluginApp(DataBase::class);
 
                 $accountModel->customerId = $account->customerId;
                 $accountModel->settingType = $account->settingType;
@@ -78,7 +81,7 @@ class AccountService extends DatabaseBaseService
                 $accountModel->paymentDefault = $account->paymentDefault;
                 $accountModel->updatedAt = date('Y-m-d H:i:s');
                     
-                $this->save($accountModel);
+                $database->save($accountModel);
             }
             return 1;
         }
