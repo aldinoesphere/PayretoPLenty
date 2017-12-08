@@ -34,9 +34,12 @@ class AccountService extends DatabaseBaseService
      */
     public function loadAccount($customerId, $settingType)
     {
-        // $database = pluginApp(DataBase::class);
-        // $account = $database->query(Account::class)->where(['customerId', 'settingType'], ['=','='], [$customerId, $settingType])->get();
-        // return $account;
+        $database = pluginApp(DataBase::class);
+        $account = $database->query(Account::class)
+                    ->where('customerId', '=', $customerId)
+                    ->where('settingType', '=', $settingType)
+                    ->get();
+        return $account;
     }
 
     /**
