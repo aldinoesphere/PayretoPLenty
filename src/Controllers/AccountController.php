@@ -72,7 +72,7 @@ class AccountController extends Controller
 	 */
 	public function saveAccounts(Request $request)
 	{
-		return $this->accountService->saveSettings($request->get('accounts'));
+		return $this->accountService->saveAccount($request->get('accounts'));
 	}
 
 	/**
@@ -83,7 +83,7 @@ class AccountController extends Controller
 	 */
 	public function loadAccounts($settingType)
 	{
-		return $this->accountService->loadSettings($settingType);
+		return $this->accountService->loadAccounts($settingType);
 	}
 
 	/**
@@ -95,7 +95,7 @@ class AccountController extends Controller
 	 */
 	public function loadAccount($plentyId, $settingType)
 	{
-		return $this->accountService->loadSetting($plentyId, $settingType);
+		return $this->accountService->loadAccount($plentyId, $settingType);
 	}
 
 	/**
