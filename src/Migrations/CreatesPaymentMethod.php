@@ -9,7 +9,7 @@ use Plenty\Plugin\Log\Loggable;
 /**
 * 
 */
-class CreatePaymentMethod
+class CreatesPaymentMethod
 {
 	use Loggable;
 	

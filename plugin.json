@@ -8,6 +8,6 @@
     "serviceProvider": "Payreto\\Providers\\PayretoServiceProvider",
     "runOnBuild"        : [
         "Payreto\\Migrations\\CreatePayretoTables",
-        "Payreto\\Migrations\\CreatePaymentMethod"
+        "Payreto\\Migrations\\CreatesPaymentMethod"
     ]
 }
