@@ -15,8 +15,11 @@ class PayretoRouteServiceProvider extends RouteServiceProvider
 			['namespace' => 'Payreto\Controllers', 'middleware' => 'oauth'],
 			function ($apiRouter) {
 				$apiRouter->post('payment/payreto/settings/', 'SettingsController@saveSettings');
+				$apiRouter->post('payment/payreto/account/', 'AccountController@saveSettings');
 				$apiRouter->get('payment/payreto/settings/{settingType}', 'SettingsController@loadSettings');
 				$apiRouter->get('payment/payreto/setting/{plentyId}/{settingType}', 'SettingsController@loadSetting');
+				$apiRouter->get('payment/payreto/account/{customerId}', 'AccountController@loadSettings');
+				$apiRouter->get('payment/payreto/account/{customerId}/{settingType}', 'AccountController@loadSetting');
 			}
 		);
 

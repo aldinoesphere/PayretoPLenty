@@ -4,6 +4,8 @@ namespace Payreto\Migrations;
 
 use Payreto\Models\Database\Settings;
 use Payreto\Services\Database\SettingsService;
+use Payreto\Models\Database\Account;
+use Payreto\Services\Database\AccountService;
 use Plenty\Modules\Plugin\DataBase\Contracts\Migrate;
 
 /**
@@ -12,7 +14,7 @@ use Plenty\Modules\Plugin\DataBase\Contracts\Migrate;
 * Class CreatePayretoTables
 * @package Payreto\Migrations
 */
-class CreatePayretoTables
+class CreatesPayretoTables
 {
 	/**
 	 * Run on plugin build
@@ -35,6 +37,19 @@ class CreatePayretoTables
 		}
 
 		$migrate->createTable(Settings::class);
+
+		/**
+		 * Create the account table
+		 */
+		try {
+			$migrate->deleteTable(Account::class);
+		}
+		catch (\Exception $e)
+		{
+			//Table does not exist
+		}
+
+		$migrate->createTable(Account::class);
 
 		// Set default payment method name in all supported languages.
 		// $service = pluginApp(SettingsService::class);
