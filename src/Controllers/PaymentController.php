@@ -23,6 +23,7 @@ use Payreto\Helper\BasketHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Services\OrderService;
 use Payreto\Controllers\SettingsController;
+use Payreto\Controllers\AccountController;
 /**
 * Class PaymentController
 * @package Payreto\Controllers
@@ -100,6 +101,12 @@ class PaymentController extends Controller
 
     /**
      *
+     * @var accountController
+     */
+    private $accountController;
+
+    /**
+     *
      * @var basketHelper
      */
     private $basketHelper;
@@ -127,7 +134,8 @@ class PaymentController extends Controller
                     AuthHelper $authHelper,
                     SettingsController $settingsController,
                     BasketHelper $basketHelper,
-                    ApiResponse $apiResponse
+                    ApiResponse $apiResponse,
+                    AccountController $accountController
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -142,6 +150,7 @@ class PaymentController extends Controller
         $this->settingsController = $settingsController;
         $this->basketHelper = $basketHelper;
         $this->apiResponse = $apiResponse;
+        $this->accountController = $accountController;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
