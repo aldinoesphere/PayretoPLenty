@@ -70,18 +70,18 @@ class AccountService extends DatabaseBaseService
                 $accountModel = pluginApp(Account::class);
                 $database = pluginApp(DataBase::class);
 
-                $accountModel->customerId = $account->customerId;
-                $accountModel->settingType = $account->settingType;
-                $accountModel->paymentGroup = $account->paymentGroup;
-                $accountModel->brand = $account->brand;
-                $accountModel->holder = $account->holder;
-                $accountModel->last4digits = $account->last4digits;
-                $accountModel->expMonth = $account->expMonth;
-                $accountModel->expYear = $account->expYear;
-                $accountModel->serverMode = $account->serverMode;
-                $accountModel->channelId = $account->channelId;
-                $accountModel->refId = $account->refId;
-                $accountModel->paymentDefault = $account->paymentDefault;
+                $accountModel->customerId = $account['customerId'];
+                $accountModel->settingType = $account['settingType'];
+                $accountModel->paymentGroup = $account['paymentGroup'];
+                $accountModel->brand = $account['brand'];
+                $accountModel->holder = $account['holder'];
+                $accountModel->last4digits = $account['last4digits'];
+                $accountModel->expMonth = $account['expMonth'];
+                $accountModel->expYear = $account['expYear'];
+                $accountModel->serverMode = $account['serverMode'];
+                $accountModel->channelId = $account['channelId'];
+                $accountModel->refId = $account['refId'];
+                $accountModel->paymentDefault = $account['paymentDefault'];
                 $accountModel->updatedAt = date('Y-m-d H:i:s');
                     
                 $database->save($accountModel);
