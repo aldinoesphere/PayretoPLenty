@@ -79,7 +79,7 @@ class PaymentHelper
 			'brand' => $paymentResult['paymentBrand'] ,
 			'holder' => $paymentResult['card']['holder'] ,
 			'email' => $paymentResult['customer']['email'] ,
-			'last4digits' => $paymentResult['card']['last4Digits'] ,
+			'last4digits' => $paymentResult['card']['last4Digits'],
 			'expMonth' => $paymentResult['card']['expiryMonth'] ,
 			'expYear' => $paymentResult['card']['expiryYear'] ,
 			'serverMode' => $paymentResult['server'] ,
