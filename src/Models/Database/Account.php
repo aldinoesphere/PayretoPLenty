@@ -17,6 +17,7 @@ class Account extends Model
 {
     public $id = 0;
     public $customerId = 0;
+    public $settingType = '';
     public $paymentGroup = '';
     public $brand = '';
     public $holder = '';
