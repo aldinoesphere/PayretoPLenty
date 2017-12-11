@@ -427,8 +427,39 @@ class PaymentService
 			'test_mode' => $this->getTestMode($paymentMethod)
 		];
 
+		if ($this->recurring) {
+			$recurringParameter = $this->getRecurringPrameter($paymentMethod, $transactionParameters);
+			$transactionParameters = array_merge($transactionParameters, $recurringParameter);
+		}
+
 		return $transactionParameters;
 	}
+
+
+	private function getRecurringPrameter($paymentMethod, $transaction)
+    {
+        $recurringParameter = $this->getPaymentReference();
+        $recurringParameter['payment_registration'] = 'true';
+        if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
+            $recurringParameter['3D']['amount'] = $transaction['amount'];
+            $recurringParameter['3D']['currency'] = $transaction['currency'];
+        }
+
+        return $recurringParameter;
+    }
+
+
+     public function getPaymentReference()
+    {
+        // $registeredPayments = $this->getRegisteredPayment();
+
+        $paymentReference = array();
+        // foreach ($registeredPayments as $key => $value) {
+        //     $paymentReference['registrations'][$key ] = $value['ref_id'];
+        // }
+
+        return $paymentReference;
+    }
 
 	/**
 	 * get payment type

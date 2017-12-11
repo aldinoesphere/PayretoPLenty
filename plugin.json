@@ -7,7 +7,7 @@
     "type": "payment",
     "serviceProvider": "Payreto\\Providers\\PayretoServiceProvider",
     "runOnBuild"        : [
-        "Payreto\\Migrations\\CreatePayretoTables",
+        "Payreto\\Migrations\\CreatesTestPayretoTables",
         "Payreto\\Migrations\\CreatesPaymentMethod"
     ]
 }

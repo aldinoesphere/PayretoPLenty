@@ -14,7 +14,7 @@ use Plenty\Modules\Plugin\DataBase\Contracts\Migrate;
 * Class CreatePayretoTables
 * @package Payreto\Migrations
 */
-class CreatesPayretoTables
+class CreatesTestPayretoTables
 {
 	/**
 	 * Run on plugin build
