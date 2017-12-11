@@ -65,27 +65,25 @@ class AccountService extends DatabaseBaseService
     {
         if ($accounts)
         {
-            foreach ($accounts as $account)
-            {
-                $accountModel = pluginApp(Account::class);
-                $database = pluginApp(DataBase::class);
+            
+            $accountModel = pluginApp(Account::class);
+            $database = pluginApp(DataBase::class);
 
-                $accountModel->customerId = $account['customerId'];
-                $accountModel->settingType = $account['settingType'];
-                $accountModel->paymentGroup = $account['paymentGroup'];
-                $accountModel->brand = $account['brand'];
-                $accountModel->holder = $account['holder'];
-                $accountModel->last4digits = $account['last4digits'];
-                $accountModel->expMonth = $account['expMonth'];
-                $accountModel->expYear = $account['expYear'];
-                $accountModel->serverMode = $account['serverMode'];
-                $accountModel->channelId = $account['channelId'];
-                $accountModel->refId = $account['refId'];
-                $accountModel->paymentDefault = $account['paymentDefault'];
-                $accountModel->updatedAt = date('Y-m-d H:i:s');
-                    
-                $database->save($accountModel);
-            }
+            $accountModel->customerId = $accounts['customerId'];
+            $accountModel->settingType = $accounts['settingType'];
+            $accountModel->paymentGroup = $accounts['paymentGroup'];
+            $accountModel->brand = $accounts['brand'];
+            $accountModel->holder = $accounts['holder'];
+            $accountModel->last4digits = $accounts['last4digits'];
+            $accountModel->expMonth = $accounts['expMonth'];
+            $accountModel->expYear = $accounts['expYear'];
+            $accountModel->serverMode = $accounts['serverMode'];
+            $accountModel->channelId = $accounts['channelId'];
+            $accountModel->refId = $accounts['refId'];
+            $accountModel->paymentDefault = $accounts['paymentDefault'];
+            $accountModel->updatedAt = date('Y-m-d H:i:s');
+                
+            $database->save($accountModel);
             return 1;
         }
     }
