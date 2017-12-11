@@ -170,6 +170,12 @@ class PaymentService
 		return $this->settings;
 	}
 
+	public function getRecurringSetting()
+	{
+		$this->loadCurrentSettings();
+		return $this->settings['recurring'];
+	}
+
 	/**
 	 * this function will execute after we are doing a payment and show payment success or not.
 	 *
@@ -427,7 +433,7 @@ class PaymentService
 			'test_mode' => $this->getTestMode($paymentMethod)
 		];
 
-		if ($this->recurring) {
+		if ($this->getRecurringSetting()) {
 			$recurringParameter = $this->getRecurringPrameter($paymentMethod, $transactionParameters);
 			$transactionParameters = array_merge($transactionParameters, $recurringParameter);
 		}
