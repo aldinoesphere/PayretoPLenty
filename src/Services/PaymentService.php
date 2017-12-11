@@ -433,7 +433,7 @@ class PaymentService
 		];
 		$transactionParameters['payment_type'] = $this->getPaymentType($basket);
 
-		if ($paymentMethod->paymentKey = 'PAYRETO_PPM_RC') {
+		if ($paymentMethod->paymentKey == 'PAYRETO_PPM_RC') {
 			unset($transactionParameters['payment_type']);
 		}
 
