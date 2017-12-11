@@ -70,10 +70,10 @@ class AccountController extends Controller
 	 *
 	 * @param Request $request
 	 */
-	public function saveAccounts(Request $request)
+	public function saveAccounts($accountData)
 	{
-		$this->getLogger(__METHOD__)->error('Payreto:request', $request);
-		return $this->accountService->saveAccount($request->get('accounts'));
+		$this->getLogger(__METHOD__)->error('Payreto:accountData', $accountData);
+		return $this->accountService->saveAccount($accountData);
 	}
 
 	/**
@@ -108,7 +108,7 @@ class AccountController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountData', $accountData);
 
-		$result = $this->accountService->saveConfiguration($accountData);
+		$result = $this->saveAccounts($accountData['accounts']);
 
 		if ($result == 1)
 		{
