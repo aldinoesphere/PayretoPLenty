@@ -72,6 +72,7 @@ class AccountController extends Controller
 	 */
 	public function saveAccounts(Request $request)
 	{
+		$this->getLogger(__METHOD__)->error('Payreto:request', $request);
 		return $this->accountService->saveAccount($request->get('accounts'));
 	}
 
