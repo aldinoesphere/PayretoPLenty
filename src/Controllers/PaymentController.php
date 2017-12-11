@@ -256,7 +256,6 @@ class PaymentController extends Controller
 		} else {
             $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
             $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
-            $paymentConfirmation = array_merge($paymentConfirmation, ['paymentKey' => $paymentKey], $paymentSettings);
 		}
 
 		
@@ -277,6 +276,7 @@ class PaymentController extends Controller
 			$paymentData['orderId'] = $orderId;
 
 			if ($this->paymentService->getRecurringSetting()) {
+				$paymentConfirmation = array_merge($paymentConfirmation, ['paymentKey' => $paymentKey], $paymentSettings);
 				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
 				$this->accountController->saveAccount($accountData);
 			}
