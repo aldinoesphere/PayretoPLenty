@@ -104,24 +104,10 @@ class AccountController extends Controller
 	 */
 	public function saveAccount($accountData)
 	{
-		$accountSettings['accounts'] = [
-			'customerId' => '' ,
-			'paymentGroup' => '' ,
-			'brand' => '' ,
-			'holder' => '' ,
-			'email' => '' ,
-			'last4digits' => '' ,
-			'expMonth' => '' ,
-			'expYear' => '' ,
-			'serverMode' => '' ,
-			'channelId' => '' ,
-			'refId' => '' ,
-			'paymentDefault' => '' 
-		];
 
-		$this->getLogger(__METHOD__)->error('Payreto:accountSettings', $accountSettings);
+		$this->getLogger(__METHOD__)->error('Payreto:accountData', $accountData);
 
-		$result = $this->accountService->saveConfiguration($accountSettings);
+		$result = $this->accountService->saveConfiguration($accountData);
 
 		if ($result == 1)
 		{
@@ -131,7 +117,7 @@ class AccountController extends Controller
 		{
 			$status = 'failed';
 		}
-		$this->getLogger(__METHOD__)->error('Payreto:saveConfiguration', $result);
+		$this->getLogger(__METHOD__)->error('Payreto:saveAccount', $result);
 
 		return $status;
 	}

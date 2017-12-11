@@ -70,6 +70,27 @@ class PaymentHelper
 		$this->orderRepository 					= $orderRepository;
 	}
 
+
+	public function setAccountData($paymentResult)
+	{
+		$accountData['accounts'] = [
+			'customerId' => $this->getCustomerId() ,
+			'paymentGroup' => $paymentResult['paymentKey'] ,
+			'brand' => $paymentResult['brand'] ,
+			'holder' => $paymentResult['card']['holder'] ,
+			'email' => $paymentResult['customer']['email'] ,
+			'last4digits' => $paymentResult['card']['last4digits'] ,
+			'expMonth' => $paymentResult['card']['expiryMonth'] ,
+			'expYear' => $paymentResult['card']['expiryYear'] ,
+			'serverMode' => $paymentResult['server'] ,
+			'channelId' => $paymentResult['entityId'] ,
+			'refId' => $paymentResult['registrationId'] ,
+			'paymentDefault' => 0 
+		];
+
+		return $accountData;
+	}
+
 	/**
 	 * Create a debit payment when create a note (make refund).
 	 *
@@ -199,7 +220,8 @@ class PaymentHelper
 	 	return $orders->getTotalCount();
 	}
 
-	public function getCustomerId() {
+	public function getCustomerId() 
+	{
 		$customerService = pluginApp(\IO\Services\CustomerService::class);
 		return $customerService->getContactId();
 	}

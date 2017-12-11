@@ -429,9 +429,13 @@ class PaymentService
 			'transaction_id' => $basket->id,
 			'amount' => $basket->basketAmount,
 			'currency' => $basket->currency,
-			'payment_type' => $this->getPaymentType($basket),
 			'test_mode' => $this->getTestMode($paymentMethod)
 		];
+		$transactionParameters['payment_type'] = $this->getPaymentType($basket);
+
+		if ($paymentMethod->paymentKey = 'PAYRETO_PPM_RC') {
+			unset($transactionParameters['payment_type']);
+		}
 
 		if ($this->getRecurringSetting()) {
 			$recurringParameter = $this->getRecurringPrameter($paymentMethod, $transactionParameters);
@@ -535,28 +539,6 @@ class PaymentService
 		{
 			return $this->getBillingAddress($basket);
 		}
-	}
-
-	/**
-	 * get address by given parameter
-	 *
-	 * @param Address $address
-	 * @return array
-	 */
-	private function getAddress(Address $address)
-	{
-		return [
-			'email' => $address->email,
-			'firstName' => $address->firstName,
-			'lastName' => $address->lastName,
-			'address' => $address->street . ' ' . $address->houseNumber,
-			'postalCode' => $address->postalCode,
-			'city' => $address->town,
-			'country' => $this->countryRepository->findIsoCode($address->countryId, 'iso_code_3'),
-			'birthday' => $address->birthday,
-			'companyName' => $address->companyName,
-			'phone' => $address->phone
-		];
 	}
 
 	/**

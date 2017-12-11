@@ -250,6 +250,7 @@ class PaymentController extends Controller
 		} else {
             $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
             $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
+            $paymentConfirmation = array_merge($paymentConfirmation, ['paymentKey' => $paymentKey], $paymentSettings);
 		}
 
 		
@@ -263,22 +264,34 @@ class PaymentController extends Controller
             $paymentData['paymentKey'] = $paymentKey;
             $paymentData['amount'] = $paymentConfirmation['amount'];
             $paymentData['currency'] = $paymentConfirmation['currency'];
- 
-            if ($paymentType == 'PA') {
-                $paymentData['status'] = $this->paymentHelper->mapTransactionState('0');
-            } else {
-                $paymentData['status'] = $this->paymentHelper->mapTransactionState('2');
-            }
-
+            $paymentData['status'] = $this->getPaymentStatus($paymentType);
             $orderData = $this->orderService->placeOrder($paymentType);
             $orderId = $orderData->order->id;
 			
 			$paymentData['orderId'] = $orderId;
 
+			if ($this->paymentService->getRecurringSetting()) {
+				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
+				$this->accountController->saveAccount($accountData);
+			}
+
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
 		} else {
 			return false;
+		}
+	}
+
+	public function getPaymentStatus($paymentType) 
+	{
+		switch ($paymentType) {
+			case 'PA':
+				return $this->paymentHelper->mapTransactionState('0');
+				break;
+			
+			default:
+				return $this->paymentHelper->mapTransactionState('2');
+				break;
 		}
 	}
 
