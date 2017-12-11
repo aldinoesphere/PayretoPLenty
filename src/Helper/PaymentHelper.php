@@ -76,10 +76,10 @@ class PaymentHelper
 		$accountData['accounts'] = [
 			'customerId' => $this->getCustomerId() ,
 			'paymentGroup' => $paymentResult['paymentKey'] ,
-			'brand' => $paymentResult['brand'] ,
+			'brand' => $paymentResult['paymentBrand'] ,
 			'holder' => $paymentResult['card']['holder'] ,
 			'email' => $paymentResult['customer']['email'] ,
-			'last4digits' => $paymentResult['card']['last4digits'] ,
+			'last4digits' => $paymentResult['card']['last4Digits'] ,
 			'expMonth' => $paymentResult['card']['expiryMonth'] ,
 			'expYear' => $paymentResult['card']['expiryYear'] ,
 			'serverMode' => $paymentResult['server'] ,
