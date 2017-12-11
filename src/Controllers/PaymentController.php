@@ -276,7 +276,12 @@ class PaymentController extends Controller
 			$paymentData['orderId'] = $orderId;
 
 			if ($this->paymentService->getRecurringSetting()) {
-				$paymentConfirmation = array_merge($paymentConfirmation, ['paymentKey' => $paymentKey], $paymentSettings);
+				$paymentConfirmation = array_merge($paymentConfirmation, [
+					'paymentKey' => $paymentKey, 
+					'entityId' => $paymentSettings['entityId'], 
+					'server' => $paymentSettings['server']
+					]
+				);
 				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
 				$this->accountController->saveAccount($accountData);
 			}
