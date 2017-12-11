@@ -65,12 +65,10 @@ class AccountService extends DatabaseBaseService
     {
         if ($accounts)
         {
-            
             $accountModel = pluginApp(Account::class);
             $database = pluginApp(DataBase::class);
 
             $accountModel->customerId = $accounts['customerId'];
-            $accountModel->settingType = $accounts['settingType'];
             $accountModel->paymentGroup = $accounts['paymentGroup'];
             $accountModel->brand = $accounts['brand'];
             $accountModel->holder = $accounts['holder'];
@@ -82,6 +80,8 @@ class AccountService extends DatabaseBaseService
             $accountModel->refId = $accounts['refId'];
             $accountModel->paymentDefault = $accounts['paymentDefault'];
             $accountModel->updatedAt = date('Y-m-d H:i:s');
+            $this->getLogger(__METHOD__)->error('Payreto:accountModel', $accountModel);
+            $this->getLogger(__METHOD__)->error('Payreto:accounts', $accounts);
                 
             $database->save($accountModel);
             return 1;
