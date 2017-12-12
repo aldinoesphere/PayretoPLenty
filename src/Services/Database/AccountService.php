@@ -37,7 +37,7 @@ class AccountService extends DatabaseBaseService
         $database = pluginApp(DataBase::class);
         $account = $database->query(Account::class)
                     ->where('customerId', '=', $customerId)
-                    ->where('settingType', '=', $settingType)
+                    ->where('paymentGroup', '=', $settingType)
                     ->get();
         return $account;
     }
