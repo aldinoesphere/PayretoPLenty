@@ -73,7 +73,7 @@ class PaymentHelper
 
 	public function setAccountData($paymentResult)
 	{
-		$accountData['accounts'] = [
+		$accountData = [
 			'customerId' => $this->getCustomerId() ,
 			'paymentGroup' => $paymentResult['paymentKey'] ,
 			'brand' => $paymentResult['paymentBrand'] ,
