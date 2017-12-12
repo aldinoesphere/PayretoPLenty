@@ -108,7 +108,7 @@ class AccountController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountData', $accountData);
 
-		$result = $this->saveAccounts($accountData['accounts']);
+		$result = $this->saveAccounts($accountData);
 
 		if ($result == 1)
 		{
