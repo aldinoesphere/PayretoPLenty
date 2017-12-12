@@ -82,9 +82,9 @@ class AccountController extends Controller
 	 * @param string $settingType
 	 * @return array
 	 */
-	public function loadAccounts($settingType)
+	public function loadAccounts($customerId)
 	{
-		return $this->accountService->loadAccounts($settingType);
+		return $this->accountService->loadAccounts($customerId);
 	}
 
 	/**
@@ -94,9 +94,9 @@ class AccountController extends Controller
 	 * @param string $settingType
 	 * @return null|mixed
 	 */
-	public function loadAccount($plentyId, $settingType)
+	public function loadAccount($customerId, $settingType)
 	{
-		return $this->accountService->loadAccount($plentyId, $settingType);
+		return $this->accountService->loadAccount($customerId, $settingType);
 	}
 
 	/**
