@@ -88,21 +88,23 @@ class PaymentHelper
 			'paymentDefault' => 0 
 		];
 
-		if ($paymentResult['paymentKey'] == 'PAYRETO_ACC_RC') 
-		{
-			$accountData['last4digits'] = $paymentResult['card']['holder'];
-			$accountData['last4digits'] = $paymentResult['card']['last4Digits'];
-			$accountData['expMonth'] = $paymentResult['card']['expiryMonth'];
-			$accountData['expYear'] = $paymentResult['card']['expiryYear'];
-		} elseif ($paymentResult['paymentKey'] == 'PAYRETO_DDS_RC') 
-		{
-			$accountData['last4digits'] = $paymentResult['bankAccount']['holder'];
-			$accountData['last4digits'] = substr($paymentResult['bankAccount']['iban'], -4);
-		}
 
-		if ($paymentResult['paymentKey'] == 'PAYRETO_PPM_RC')
-		{
-			$accountData['email'] = $paymentResult['card']['last4Digits'];
+		switch ($paymentResult['paymentKey']) {
+			case 'PAYRETO_ACC_RC':
+				$accountData['last4digits'] = $paymentResult['card']['holder'];
+				$accountData['last4digits'] = $paymentResult['card']['last4Digits'];
+				$accountData['expMonth'] = $paymentResult['card']['expiryMonth'];
+				$accountData['expYear'] = $paymentResult['card']['expiryYear'];
+				break;
+
+			case 'PAYRETO_DDS_RC':
+				$accountData['holder'] = $paymentResult['bankAccount']['holder'];
+				$accountData['last4digits'] = substr($paymentResult['bankAccount']['iban'], -4);
+				break;
+
+			case 'PAYRETO_PPM_RC':
+				$accountData['email'] = $paymentResult['card']['last4Digits'];
+				break;
 		}
 
 		return $accountData;
