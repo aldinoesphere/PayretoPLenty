@@ -471,11 +471,13 @@ class PaymentService
      public function getPaymentReference($paymentMethod)
     {
         $registeredPayments = $this->accountController->loadAccount($this->paymentHelper->getCustomerId(), $paymentMethod->paymentKey);
-        $this->getLogger(__METHOD__)->error('Payreto:registeredPayments', $registeredPayments[0]);
+        $this->getLogger(__METHOD__)->error('Payreto:registeredPayments', $registeredPayments);
 
         $paymentReference = array();
-        foreach ($registeredPayments[0] as $key => $value) {
-            $paymentReference['registrations'][$key ] = $value['ref_id'];
+        $i = 0;
+        foreach ($registeredPayments as $value) {
+            $paymentReference['registrations'][$i ] = $value['ref_id'];
+            $i++;
         }
 
         return $paymentReference;
