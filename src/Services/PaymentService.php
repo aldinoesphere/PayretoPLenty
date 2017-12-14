@@ -476,7 +476,8 @@ class PaymentService
         $paymentReference = array();
         $i = 0;
         foreach ($registeredPayments as $value) {
-            $paymentReference['registrations'][$i ] = $value['ref_id'];
+        	$this->getLogger(__METHOD__)->error('Payreto:value', $value);
+            // $paymentReference['registrations'][$i ] = $value['ref_id'];
             $i++;
         }
 
