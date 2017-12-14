@@ -91,7 +91,7 @@ class PaymentHelper
 
 		switch ($paymentResult['paymentKey']) {
 			case 'PAYRETO_ACC_RC':
-				$accountData['last4digits'] = $paymentResult['card']['holder'];
+				$accountData['holder'] = $paymentResult['card']['holder'];
 				$accountData['last4digits'] = $paymentResult['card']['last4Digits'];
 				$accountData['expMonth'] = $paymentResult['card']['expiryMonth'];
 				$accountData['expYear'] = $paymentResult['card']['expiryYear'];
@@ -103,7 +103,9 @@ class PaymentHelper
 				break;
 
 			case 'PAYRETO_PPM_RC':
-				$accountData['email'] = $paymentResult['card']['last4Digits'];
+				$accountData['email'] = $paymentResult['virtualAccount']['accountId'];
+				$accountData['holder'] = $paymentResult['virtualAccount']['holder'];
+				$accountData['refId'] = $paymentResult['id'];
 				break;
 		}
 
