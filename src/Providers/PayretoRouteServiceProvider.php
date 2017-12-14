@@ -18,8 +18,6 @@ class PayretoRouteServiceProvider extends RouteServiceProvider
 				$apiRouter->post('payment/payreto/account/', 'AccountController@saveAccounts');
 				$apiRouter->get('payment/payreto/settings/{settingType}', 'SettingsController@loadSettings');
 				$apiRouter->get('payment/payreto/setting/{plentyId}/{settingType}', 'SettingsController@loadSetting');
-				$apiRouter->get('payment/payreto/account/{customerId}', 'AccountController@loadSettings');
-				$apiRouter->get('payment/payreto/account/{customerId}/{settingType}', 'AccountController@loadSetting');
 			}
 		);
 
@@ -37,6 +35,9 @@ class PayretoRouteServiceProvider extends RouteServiceProvider
 
 		// Routes for Payreto payment widget
 		$router->get('payment/payreto/confirmation/{id?}', 'Payreto\Controllers\PaymentController@handleConfirmation');
+
+		// Routes for Payreto payment widget
+		$router->get('payment/payreto/account/{customerId}', 'Payreto\Controllers\AccountController@loadAccounts');
 
 		// Routes for Payreto order confirmation
 		$router->get('payment/payreto/order-confirmation/{id?}', 'Payreto\Controllers\PaymentController@orderConfirmation');
