@@ -23,6 +23,7 @@ use Payreto\Helper\BasketHelper;
 use Payreto\Services\Database\SettingsService;
 use Payreto\Services\GatewayService;
 use Payreto\Controllers\SettingsController;
+use Payreto\Controllers\AccountController;
 /**
 * 
 */
@@ -102,6 +103,12 @@ class PaymentService
      */
     private $basketHelper;
 
+    /**
+     *
+     * @var accountController
+     */
+    private $accountController;
+
 	/**
 	 * @var array
 	 */
@@ -118,7 +125,8 @@ class PaymentService
 		GatewayService $gatewayService,
 		OrderService $orderService,
 		OrderRepositoryContract $orderRepository,
-		SettingsController $settingsController
+		SettingsController $settingsController,
+		AccountController $accountController
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -131,6 +139,7 @@ class PaymentService
 		$this->orderService = $orderService;
 		$this->orderRepository = $orderRepository;
 		$this->settingsController = $settingsController;
+		$this->accountController = $accountController;
 	}
 
 	/**
@@ -448,7 +457,7 @@ class PaymentService
 
 	private function getRecurringPrameter($paymentMethod, $transaction)
     {
-        $recurringParameter = $this->getPaymentReference();
+        $recurringParameter = $this->getPaymentReference($paymentMethod);
         $recurringParameter['payment_registration'] = 'true';
         if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
             $recurringParameter['3D']['amount'] = $transaction['amount'];
@@ -459,14 +468,14 @@ class PaymentService
     }
 
 
-     public function getPaymentReference()
+     public function getPaymentReference($paymentMethod)
     {
-        // $registeredPayments = $this->getRegisteredPayment();
+        $registeredPayments = $this->accountController->loadAccount($this->paymentHelper->getCustomerId(), $paymentMethod->paymentKey);
 
         $paymentReference = array();
-        // foreach ($registeredPayments as $key => $value) {
-        //     $paymentReference['registrations'][$key ] = $value['ref_id'];
-        // }
+        foreach ($registeredPayments as $key => $value) {
+            $paymentReference['registrations'][$key ] = $value['ref_id'];
+        }
 
         return $paymentReference;
     }
