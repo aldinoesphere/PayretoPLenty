@@ -203,15 +203,8 @@ class PaymentController extends Controller
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         $paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutId);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
-		switch ($paymentMethod) {
-			case 'PAYRETO_PPM_RC':
-				$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/validation/';
-				break;
-			
-			default:
-				$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
-				break;
-		}
+		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
+		
 		$this->getLogger(__METHOD__)->error('Payreto:paymentSettings', $paymentSettings);
         $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
