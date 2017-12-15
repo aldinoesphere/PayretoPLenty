@@ -470,7 +470,7 @@ class PaymentService
 
     public function getPaymentReference($paymentMethod)
     {
-        $registeredPayments = $this->getRegisteredPayment($paymentMethod);
+        $registeredPayments = $this->getRegisteredPayment($paymentMethod); 
 
         $paymentReference = array();
         $i = 0;
