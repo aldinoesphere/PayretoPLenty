@@ -80,6 +80,7 @@ class AccountService extends DatabaseBaseService
             $accountModel->customerId = $accounts['customerId'];
             $accountModel->paymentGroup = $accounts['paymentGroup'];
             $accountModel->brand = $accounts['brand'];
+            $accountModel->email = $accounts['email'];
             $accountModel->holder = $accounts['holder'];
             $accountModel->last4digits = $accounts['last4digits'];
             $accountModel->expMonth = $accounts['expMonth'];
@@ -95,6 +96,20 @@ class AccountService extends DatabaseBaseService
             $database->save($accountModel);
             return 1;
         }
+    }
+
+    public function deleteAccount($id)
+    {
+        $database = pluginApp(DataBase::class);
+
+        $query = $database->query(ToDo::class)
+            ->where('id', '=', $id)
+            ->get();
+
+        $account = $query[0];
+        $database->delete($account);
+
+        return $account;
     }
 
 }

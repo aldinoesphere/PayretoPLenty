@@ -99,6 +99,11 @@ class AccountController extends Controller
 		return $this->accountService->loadAccount($customerId, $settingType);
 	}
 
+	public function deleteAccount($id) 
+	{
+		return $this->accountService->deleteAccount($id);
+	}
+
 	/**
 	 * Save Payreto backend configuration
 	 *
