@@ -158,7 +158,7 @@ class PaymentController extends Controller
 	/**
 	 * handle return_url from payment gateway
 	 */
-	public function handleReturn($checkoutId)
+	public function handleReturn($checkoutId = 0)
 	{
 		#error_log
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
