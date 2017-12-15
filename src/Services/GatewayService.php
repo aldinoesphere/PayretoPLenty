@@ -771,7 +771,7 @@ class GatewayService
         return http_build_query($parameters);
     }
 
-    public static function getRecurringPaymentResult($referenceId, $transactionData)
+    public function getRecurringPaymentResult($referenceId, $transactionData)
     {
 
         $registerUrl = self::getRegisterUrl($transactionData['server_mode'], $referenceId);
