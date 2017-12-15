@@ -201,6 +201,8 @@ class PaymentController extends Controller
 		$basketHelper = pluginApp(basketHelper::class);
         $basket = $basketHelper->getBasket();
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+        $paymentKey = $paymentMethod->paymentKey;
+        $paymentType = $this->paymentService->getPaymentType($basket);
 
         $paymentData = $this->paymentService->getCredentials($paymentMethod);
         $paymentData['amount'] = $basket->basketAmount;
