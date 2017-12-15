@@ -17,6 +17,9 @@ class GatewayService
 	protected $oppwaCheckoutUrlTest = 'https://test.oppwa.com/v1/checkouts';
 	protected $oppwaPaymentUrlTest = 'https://test.oppwa.com/v1/payments';
 
+    protected static $registerUrlLive = 'https://oppwa.com/v1/registrations/';
+    protected static $registerUrlTest = 'https://test.oppwa.com/v1/registrations/';
+
 	protected $oppwaCheckoutUrl = 'https://oppwa.com/v1/checkouts';
 	protected $oppwaPaymentUrl = 'https://oppwa.com/v1/payments';
 
@@ -631,6 +634,15 @@ class GatewayService
 		}
 	}
 
+    private static function getRegisterUrl($serverMode, $referenceId)
+    {
+        if ($serverMode=="LIVE") {
+            return $this->$registerUrlLive. $referenceId . '/payments';
+        } else {
+            return $this->$registerUrlTest. $referenceId . '/payments';
+        }
+    }
+
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
@@ -746,17 +758,35 @@ class GatewayService
 		return $response;
 	}
 
-	/**
-	 * get currenty payment status from gateway
-	 *
-	 * @param $parameters
-	 * @throws \Exception
-	 * @return array
-	 */
-	public function getPaymentStatus($parameters)
-	{
-		
-	}
+    private static function getRecurringPaymentParameter($transactionData)
+    {
+        $parameters = array();
+        $parameters = $this->getCredentialParameter($transactionData);
+        $parameters['amount'] = $transactionData['amount'];
+        $parameters['currency'] = $transactionData['currency'];
+        $parameters['paymentType'] = $transactionData['paymentType'];
+        $parameters['merchantTransactionId'] = $transactionData['transactionId'];
+        $parameters['recurringType'] = $transactionData['paymentRecurring'];
+
+        return http_build_query($parameters);
+    }
+
+    public static function getRecurringPaymentResult($referenceId, $transactionData)
+    {
+
+        $registerUrl = self::getRegisterUrl($transactionData['server_mode'], $referenceId);
+        $postData = $this->getRecurringPaymentParameter($transactionData);
+        $resultJson = $this->getGatewayResponse($registerUrl, $postData);
+
+        if (!$resultJson)
+        {
+            throw new \Exception('Sid is not valid : ' . $resultJson);
+        }
+
+        $resultJson = json_decode($resultJson, true);
+
+        return $resultJson;
+    }
 
 	public static function getCredentialParameter($transactionData) 
 	{

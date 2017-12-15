@@ -188,7 +188,6 @@ class PaymentController extends Controller
             }
 		} else {
             return $this->apiResponse->error(ResponseCode::OK, 'test');
-            // return $this->response->redirectTo('checkout');
         }
 	}
 
@@ -197,7 +196,6 @@ class PaymentController extends Controller
 	 */
 	public function handlePayment(Twig $twig, $checkoutId)
 	{
-		$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
         $basket = $this->basketHelper->getBasket();
         $this->getLogger(__METHOD__)->error('Payreto:basket', $basket); 
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
@@ -205,6 +203,15 @@ class PaymentController extends Controller
         $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
         $paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutId);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
+		switch ($paymentMethod) {
+			case 'PAYRETO_PPM_RC':
+				$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/validation/';
+				break;
+			
+			default:
+				$paymentPageUrl = $this->paymentHelper->getDomain() . '/payment/payreto/return/' . $checkoutId . '/';
+				break;
+		}
 		$this->getLogger(__METHOD__)->error('Payreto:paymentSettings', $paymentSettings);
         $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod); 
 
@@ -257,14 +264,31 @@ class PaymentController extends Controller
             $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
             $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
 		}
-
 		
 		$this->sessionStorage->getPlugin()->setValue('PayretoTransactionId', $paymentConfirmation['id']);
 
 		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
-		if ($this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']) == 'ACK') {
+		if ($this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']) == 'ACK') 
+		{
 
+			if ($this->paymentService->getRecurringSetting()) {
+
+				$paymentConfirmation = array_merge($paymentConfirmation, [
+					'paymentKey' => $paymentKey, 
+					'entityId' => $paymentSettings['entityId'],
+					'server' => $paymentSettings['server']
+					]
+				);
+				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
+				$this->accountController->saveAccount($accountData);
+
+				if ($paymentKey == 'PAYRETO_PPM_RC') 
+				{
+					$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
+				}
+			}
+				
             $paymentData['transaction_id'] = $paymentConfirmation['id'];
             $paymentData['paymentKey'] = $paymentKey;
             $paymentData['amount'] = $paymentConfirmation['amount'];
@@ -274,17 +298,6 @@ class PaymentController extends Controller
             $orderId = $orderData->order->id;
 			
 			$paymentData['orderId'] = $orderId;
-
-			if ($this->paymentService->getRecurringSetting()) {
-				$paymentConfirmation = array_merge($paymentConfirmation, [
-					'paymentKey' => $paymentKey, 
-					'entityId' => $paymentSettings['entityId'], 
-					'server' => $paymentSettings['server']
-					]
-				);
-				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
-				$this->accountController->saveAccount($accountData);
-			}
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
@@ -304,6 +317,40 @@ class PaymentController extends Controller
 				return $this->paymentHelper->mapTransactionState('2');
 				break;
 		}
+	}
+
+
+	public function payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket)
+	{
+		$registrationId = $paymentConfirmation['id'];
+        $paymentData = $this->paymentService->getCredentials($paymentMethod);
+        $paymentData['amount'] = $basket->basketAmount;
+        $paymentData['currency'] = $basket->currency;
+        $paymentData['transaction_id'] = $paymentConfirmation['merchantTransactionId'];
+        $paymentData['payment_recurring'] = 'INITIAL';
+        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
+        $paymentData['payment_type'] = 'DB';
+
+        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
+        $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
+
+        if ($debitResponse['is_valid']) {
+            $returnCode = $debitResponse['response']['result']['code'];
+            $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
+
+            if ($transactionResult == 'ACK') {
+                return $debitResponse['response'];
+            } else {
+                if ($transactionResult == 'NOK') {
+                    $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
+                } else {
+                    $returnMessage = 'ERROR_UNKNOWN';
+                }
+            }
+        } else {
+            $returnMessage = $debitResponse['response'];
+        }
+        return false;
 	}
 
 	public function handleConfirmation(Twig $twig) 
