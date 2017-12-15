@@ -329,7 +329,7 @@ class PaymentController extends Controller
         $paymentData['transaction_id'] = $paymentConfirmation['merchantTransactionId'];
         $paymentData['payment_recurring'] = 'INITIAL';
         $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
-        $paymentData['payment_type'] = 'DB';
+        $paymentData['paymentType'] = 'DB';
 
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
         $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
