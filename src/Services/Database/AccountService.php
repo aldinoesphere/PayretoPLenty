@@ -102,7 +102,7 @@ class AccountService extends DatabaseBaseService
     {
         $database = pluginApp(DataBase::class);
 
-        $query = $database->query(ToDo::class)
+        $query = $database->query(Account::class)
             ->where('id', '=', $id)
             ->get();
 
