@@ -103,8 +103,8 @@ class PaymentHelper
 				break;
 
 			case 'PAYRETO_PPM_RC':
-				$accountData['email'] = $paymentResult['virtualAccount']['accountId'];
 				$accountData['holder'] = $paymentResult['virtualAccount']['holder'];
+				$accountData['email'] = $paymentResult['virtualAccount']['accountId'];
 				$accountData['refId'] = $paymentResult['id'];
 				break;
 		}
