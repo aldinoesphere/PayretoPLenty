@@ -40,7 +40,7 @@
 		        </script>
 			    <div id="wpwl-registrations">
 			    <div class="wpwl-container wpwl-container-registration wpwl-clearfix" style="display: block;">
-			        <form class="wpwl-form wpwl-form-registrations wpwl-form-has-inputs wpwl-clearfix" action="{{ paymentPageUrl }}" method="POST" lang="en" accept-charset="UTF-8" data-action="submit-registration">
+			        <form class="wpwl-form wpwl-form-registrations wpwl-form-has-inputs wpwl-clearfix" action="{{ paymentPageUrl }}" method="GET" lang="en" accept-charset="UTF-8" data-action="submit-registration">
 			            {% for value in paymentRegistered %}
 			                {% if value.payment_default == 1 %}
 			                    <div class="regid{{ value.refId }} wpwl-group wpwl-group-registration wpwl-clearfix wpwl-selected ">
