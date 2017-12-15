@@ -163,8 +163,13 @@ class PaymentController extends Controller
 		#error_log
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 		$this->getLogger(__METHOD__)->error('Payreto:return_url', $this->request->all());
+		$registrationId = $this->request->get('registrationId');
 
-		$validation = $this->validation($checkoutId);
+		if ($registrationId) {
+			$validation = $this->debitRecurringPaypal($registrationId);
+		} else {
+			$validation = $this->validation($checkoutId);
+		}
 
 		$basketItems = $this->basketItemRepository->all();
 
@@ -189,6 +194,48 @@ class PaymentController extends Controller
 		} else {
             return $this->apiResponse->error(ResponseCode::OK, 'test');
         }
+	}
+
+	public function debitRecurringPaypal($registrationId) 
+	{
+		$basketHelper = pluginApp(basketHelper::class);
+        $basket = $basketHelper->getBasket();
+        $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+
+        $paymentData = $this->paymentService->getCredentials($paymentMethod);
+        $paymentData['amount'] = $basket->basketAmount;
+        $paymentData['currency'] = $basket->currency;
+        $paymentData['payment_recurring'] = 'REPEATED';
+        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
+        $paymentData['paymentType'] = 'DB';
+
+        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
+        $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
+
+        $returnCode = $debitResponse['result']['code'];
+        $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
+
+        if ($transactionResult == 'ACK') {
+        	$paymentData['transaction_id'] = $debitResponse['id'];
+            $paymentData['paymentKey'] = $paymentKey;
+            $paymentData['amount'] = $debitResponse['amount'];
+            $paymentData['currency'] = $debitResponse['currency'];
+            $paymentData['status'] = $this->getPaymentStatus($paymentType);
+            $orderData = $this->orderService->placeOrder($paymentType);
+            $orderId = $orderData->order->id;
+			
+			$paymentData['orderId'] = $orderId;
+
+			$this->paymentHelper->updatePlentyPayment($paymentData);
+            return $debitResponse;
+        } else {
+            if ($transactionResult == 'NOK') {
+                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
+            } else {
+                $returnMessage = 'ERROR_UNKNOWN';
+            }
+        }
+        return false;
 	}
 
 	/**
