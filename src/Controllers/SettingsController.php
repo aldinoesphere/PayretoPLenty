@@ -197,7 +197,7 @@ class SettingsController extends Controller
 				return [
 						'title' => 'Paypal (recurring)',
 						'paymentBrand' => 'PAYPAL',
-						'paymentTemplate' => 'PaymentWidget',
+						'paymentTemplate' => 'PaymentPaypalSavedWidget',
 						'paymentType' => 'DB'
 					];
 				break;

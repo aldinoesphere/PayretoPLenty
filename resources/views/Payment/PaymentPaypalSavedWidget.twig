@@ -1,0 +1,81 @@
+
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+	
+    <div class="page-content checkout container-max">
+    	<div>
+    		<link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
+    		<script type="text/javascript"> 
+			    var wpwlOptions = {
+					style: "card",
+			        onReady: function(){
+						var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>Cancel</a>";
+						var ttTestMode = "<div class='testmode'>THIS IS A TEST. NO REAL MONEY WILL BE TRANSFERED</div>";
+						var headerWidget = "<h2 style='text-align: center'>Use alternative payment data</h2>";
+			            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+			            {% if frameTestMode == 'TEST' %}
+				            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
+			            {% endif %}
+					},
+					registrations: {
+			        	hideInitialPaymentForms: false,
+			        	requireCvv: false
+			    	}
+			    }
+			</script>
+			{% if paymentRegistered %}
+				<script>
+		            jQuery(document).ready(function() {
+		                jQuery( "input[type=radio][name=registrationId]" ).on( "click", function() {
+		                jQuery(".wpwl-group-registration").removeClass("wpwl-selected");
+		                    jQuery(".regid"+this.value).addClass("wpwl-selected");
+		                });
+		            });
+		        </script>
+			    <div id="wpwl-registrations">
+			    <div class="wpwl-container wpwl-container-registration wpwl-clearfix" style="display: block;">
+			        <form class="wpwl-form wpwl-form-registrations wpwl-form-has-inputs wpwl-clearfix" action="{{ paymentPageUrl }}" method="POST" lang="en" accept-charset="UTF-8" data-action="submit-registration">
+			            {% for value in paymentRegistered %}
+			                {% if value.payment_default == 1 %}
+			                    <div class="regid{{ value.refId }} wpwl-group wpwl-group-registration wpwl-clearfix wpwl-selected ">
+			                {% else %}
+			                    <div class="{{ value.refId }} wpwl-group wpwl-group-registration wpwl-clearfix ">
+			                {% endif %}
+			                    <label class="wpwl-registration">
+			                        <div class="wpwl-wrapper-registration  wpwl-wrapper-registration-registrationId">
+			                            {% if value.payment_default == 1 %}
+			                                <input type="radio" name="registrationId" value="{{ value.refId }}" checked="checked" data-action="change-registration">
+			                            {% else %}
+			                                <input type="radio" name="registrationId" value="{{ value.refId }}" data-action="change-registration">
+			                            {% endif %}
+			                        </div>
+			                        <div class="wpwl-wrapper-registration wpwl-wrapper-registration-details">
+			                            <div class="wpwl-wrapper-registration wpwl-wrapper-registration-email">{{ value.email }}</div>
+			                            <div class="wpwl-wrapper-registration wpwl-wrapper-registration-holder">{{ value.holder }}</div>
+			                        </div>
+			                        <div class="wpwl-wrapper-registration wpwl-wrapper-registration-cvv"></div>
+			                    </label>
+			               </div>
+			            {% endfor %}
+			            <div class="wpwl-group wpwl-group-submit wpwl-clearfix">
+			                <div class="wpwl-wrapper wpwl-wrapper-submit">
+			                    <button type="submit" name="pay" class="wpwl-button wpwl-button-pay">Pay Now</button>
+			                </div>
+			            </div>
+			        </form>
+			        <iframe name="registrations-target" class="wpwl-target" src="about:blank" frameborder="0"></iframe>
+			        </div>
+			    </div>
+			{% endif %}
+    		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+	    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
+		</div>
+    </div>
+
+{% endblock %}

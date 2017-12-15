@@ -219,6 +219,7 @@ class PaymentController extends Controller
 			'paymentBrand' => $paymentBrand,
 			'checkoutId' => $checkoutId,
 			'paymentPageUrl' => $paymentPageUrl,
+			'paymentRegistered' => $this->paymentService->getRegisteredPayment($paymentMethod),
             'cancelUrl' => '/checkout',
             'paymentWidgetUrl' => $paymentWidgetUrl,
             'frameTestMode' => $paymentSettings['server']
