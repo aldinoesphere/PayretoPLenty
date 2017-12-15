@@ -637,9 +637,9 @@ class GatewayService
     private static function getRegisterUrl($serverMode, $referenceId)
     {
         if ($serverMode=="LIVE") {
-            return $this->$registerUrlLive. $referenceId . '/payments';
+            return self::$registerUrlLive. $referenceId . '/payments';
         } else {
-            return $this->$registerUrlTest. $referenceId . '/payments';
+            return self::$registerUrlTest. $referenceId . '/payments';
         }
     }
 
