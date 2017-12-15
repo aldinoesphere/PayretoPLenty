@@ -761,7 +761,7 @@ class GatewayService
     private static function getRecurringPaymentParameter($transactionData)
     {
         $parameters = array();
-        $parameters = $this->getCredentialParameter($transactionData);
+        $parameters = self::getCredentialParameter($transactionData);
         $parameters['amount'] = $transactionData['amount'];
         $parameters['currency'] = $transactionData['currency'];
         $parameters['paymentType'] = $transactionData['paymentType'];
@@ -775,7 +775,7 @@ class GatewayService
     {
 
         $registerUrl = self::getRegisterUrl($transactionData['server_mode'], $referenceId);
-        $postData = $this->getRecurringPaymentParameter($transactionData);
+        $postData = self::getRecurringPaymentParameter($transactionData);
         $resultJson = $this->getGatewayResponse($registerUrl, $postData);
 
         if (!$resultJson)
