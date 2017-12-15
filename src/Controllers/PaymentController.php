@@ -334,21 +334,17 @@ class PaymentController extends Controller
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
         $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
 
-        if ($debitResponse['is_valid']) {
-            $returnCode = $debitResponse['response']['result']['code'];
-            $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
+        $returnCode = $debitResponse['result']['code'];
+        $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
 
-            if ($transactionResult == 'ACK') {
-                return $debitResponse['response'];
-            } else {
-                if ($transactionResult == 'NOK') {
-                    $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
-                } else {
-                    $returnMessage = 'ERROR_UNKNOWN';
-                }
-            }
+        if ($transactionResult == 'ACK') {
+            return $debitResponse;
         } else {
-            $returnMessage = $debitResponse['response'];
+            if ($transactionResult == 'NOK') {
+                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
+            } else {
+                $returnMessage = 'ERROR_UNKNOWN';
+            }
         }
         return false;
 	}
