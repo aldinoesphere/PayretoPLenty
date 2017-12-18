@@ -5,20 +5,22 @@
                 <ul>
                     {% for value in creditCards %}
                         <li class="item">
-                            <label for="addressSelectItem1326" class="item-inner">
+                            <label class="item-inner">
                                 <span class="item-content small">
                                     <strong>Ending in:{{ value.last4digits }}</strong> <span></span> 
                                     <span>Expires on:{{ value.expMonth }}/{{ value.expYear }}</span>
                                 </span>
                                 <div class="item-controls">
-                                    <button class="btn btn-medium btn-primary">
-                                            Edit
+                                    <span class="item-edit">
+                                        <button class="btn btn-medium btn-primary">
                                             <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
-                                    </button>
-                                    <a class="btn btn-medium btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
-                                                Delete
-                                                <i aria-hidden="true" class="fa fa-times"></i>
-                                    </a>
+                                        </button>
+                                    </span>
+                                    <span class="item-remove">
+                                        <a class="btn btn-medium btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
+                                            <i aria-hidden="true" class="fa fa-times"></i>
+                                        </a>
+                                    </span>
                                 </div>
                             </label>
                         </li>
