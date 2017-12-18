@@ -21,10 +21,8 @@
                             <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
                             <label for="addressSelectItem1326" class="item-inner">
                                 <span class="item-content small">
-                                    <!----> <strong> {{ value.last4digits }}</strong> <span></span> 
-                                    <span>Beuthener Strase 25 32</span> 
-                                    <span>90471 Nurnberg</span> 
-                                    <span>Germany</span>
+                                    <strong>Ending in:{{ value.last4digits }}</strong> <span></span> 
+                                    <span>Expires on:{{ value.expMonth }}/{{ value.expYear }}</span>
                                 </span>
                                 <div class="item-controls">
                                     <span class="item-edit">
@@ -34,10 +32,10 @@
                                         </button>
                                     </span>
                                     <span class="item-remove">
-                                        <button class="btn btn-medium btn-remove-address">
+                                        <a class="btn btn-medium btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
                                                     Delete
                                                     <i aria-hidden="true" class="fa fa-times"></i>
-                                        </button>
+                                        </a>
                                     </span>
                                 </div>
                             </label>
