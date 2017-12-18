@@ -255,7 +255,7 @@ class PaymentResultController extends Controller
 			}
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
-			return $orderData;
+			// return $orderData;
 		} else {
 			return false;
 		}

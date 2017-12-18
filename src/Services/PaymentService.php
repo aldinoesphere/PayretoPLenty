@@ -290,7 +290,7 @@ class PaymentService
 	 * @param class PaymentMethod
 	 * @return array|null
 	 */
-	public function getTestMode(PaymentMethod $paymentMethod) 
+	public function getTestMode($paymentMethod) 
 	{
 
 		if ($this->getServerMode($paymentMethod) == "LIVE") {
@@ -313,13 +313,13 @@ class PaymentService
 	 * @param class PaymentMethod
 	 * @return array|null
 	 */
-	public function getServerMode(PaymentMethod $paymentMethod) 
+	public function getServerMode($paymentMethod) 
 	{
 		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
 		return $paymentSettings['server'];
 	}
 
-	public function getPaymentKey(PaymentMethod $paymentMethod) 
+	public function getPaymentKey($paymentMethod) 
 	{
 		return $paymentKey = is_array($paymentMethod) && !empty($paymentMethod->paymentKey) ? $paymentMethod->paymentKey : $paymentMethod;
 	}
