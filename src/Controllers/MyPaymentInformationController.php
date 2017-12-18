@@ -28,11 +28,6 @@ class MyPaymentInformationController extends Controller
 	use Loggable;
 
 	/**
-	 * @var paymentService
-	 */
-	private $paymentService;
-
-	/**
 	 * @var response
 	 */
 	private $response;
@@ -58,7 +53,6 @@ class MyPaymentInformationController extends Controller
 		PaymentHelper $paymentHelper,
 		AccountController $accountController
 	) {
-		$this->paymentService = $paymentService;
 		$this->response = $response;
 		$this->request = $request;
 		$this->paymentHelper = $paymentHelper;
