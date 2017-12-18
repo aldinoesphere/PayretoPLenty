@@ -107,9 +107,9 @@ class AccountService extends DatabaseBaseService
             ->get();
 
         $account = $query[0];
-        $database->delete($account);
+        $delete = $database->delete($account);
 
-        return $account;
+        return $delete;
     }
 
 }
