@@ -16,7 +16,8 @@ use Plenty\Plugin\Templates\Twig;
 use IO\Api\ApiResponse;
 use IO\Api\ResponseCode;
 
-use Payreto\Services\PaymentService;
+use Payreto\Helper\PaymentHelper;
+use Payreto\Controllers\AccountController;
 
 /**
 * Class PaymentController
@@ -41,24 +42,45 @@ class MyPaymentInformationController extends Controller
 	 */
 	private $request;
 
+	/**
+	 * @var paymentHelper
+	 */
+	private $paymentHelper;
+
+	/**
+	 * @var accountController
+	 */
+	private $accountController;
+
 	public function __construct(PaymentService $paymentService,
 		Response $response,
-		Request $request
+		Request $request,
+		PaymentHelper $paymentHelper,
+		AccountController $accountController
 	) {
 		$this->paymentService = $paymentService;
 		$this->response = $response;
 		$this->request = $request;
+		$this->paymentHelper = $paymentHelper;
+		$this->accountController = $accountController;
 	}
 	
 	public function show(Twig $twig)
 	{
-		return $twig->render('Payreto::Information.MyPaymentInformation', []);
+		$customerId = $this->paymentHelper->getCustomerId();
+		$accounts = $this->accountController->loadAccounts($customerId);
+		$accountArray = [];
+
+		foreach ($accounts as $account) {
+			$accountArray[$account->paymentGroup][] = $accounts;
+		}
+
+		return $twig->render('Payreto::Information.MyPaymentInformation', $accountArray);
 		
 	}
 
 	public function addAccount($paymentMethod) 
 	{
-		// $paymentMethod = $this->request->all();
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 	}
 
