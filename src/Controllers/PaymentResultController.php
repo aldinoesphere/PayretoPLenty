@@ -250,7 +250,7 @@ class PaymentResultController extends Controller
 
 			if ($paymentKey == 'PAYRETO_PPM_RC') 
 			{
-				$paymentConfirmation = $this->payAndSavePaypal('', $paymentConfirmation, $basket);
+				$paymentConfirmation = $this->payAndSavePaypal('', $paymentConfirmation, '');
 			}
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
