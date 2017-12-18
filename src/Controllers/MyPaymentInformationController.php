@@ -19,6 +19,7 @@ use IO\Api\ResponseCode;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Controllers\AccountController;
 use Payreto\Services\PaymentService;
+use Payreto\Services\GatewayService;
 
 /**
 * Class PaymentController
@@ -53,16 +54,24 @@ class MyPaymentInformationController extends Controller
 	 */
 	private $paymentService;
 
+	/**
+	 *
+	 * @var gatewayService
+	 */
+	private $gatewayService;
+
 	public function __construct(
 		Response $response,
 		Request $request,
 		PaymentHelper $paymentHelper,
 		AccountController $accountController,
-		PaymentService $paymentService
+		PaymentService $paymentService,
+		GatewayService $gatewayService
 	) {
 		$this->response = $response;
 		$this->request = $request;
 		$this->paymentHelper = $paymentHelper;
+		$this->gatewayService = $gatewayService;
 		$this->accountController = $accountController;
 		$this->paymentService = $paymentService;
 	}
@@ -83,7 +92,7 @@ class MyPaymentInformationController extends Controller
 		
 	}
 
-	public function addAccount($paymentMethod) 
+	public function addAccount(Twig $twig, $paymentMethod) 
 	{
 		switch ($paymentMethod) {
 			case 'credit-card':
