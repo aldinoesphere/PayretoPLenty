@@ -272,9 +272,12 @@ class PaymentService
 	 *
 	 * @return array
 	 */
-	public function getCredentials(PaymentMethod $paymentMethod) {
+	public function getCredentials($paymentMethod = false, $paymentKey = false) {
 		$payretoSettings = $this->getPayretoSettings();
-		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+		if ($paymentMethod) {
+			$paymentKey = $paymentMethod->paymentKey;
+		}
+		$paymentSettings = $this->getPaymentSettings($paymentKey);
 		$credentials = [
 						'login' 		=> $payretoSettings['userId'],
 						'password' 		=> $payretoSettings['password'],
@@ -467,6 +470,66 @@ class PaymentService
         return $recurringParameter;
     }
 
+    public function getRecurringPaymentParameters($paymentKey)
+    {
+    	$payretoSettings = $this->getPayretoSettings();
+    	$paymentSettings = $this->getPaymentSettings($paymentKey);
+
+        $transactionData = array_merge(
+            $this->getCredentials(false, $paymentKey),
+            $this->getCustomerParameter()
+        );
+
+        $transactionData['amount'] = $this->getRegisterAmount($paymentKey);
+        $transactionData['currency'] = 'EUR';
+        $transactionData['3D']['amount'] = $this->get3dAmount($paymentKey);
+        $transactionData['3D']['currency'] = $this->get3dCurrency($paymentKey, 'EUR');
+        $transactionData['test_mode'] = $paymentSettings['server'];
+        if ($paymentKey <> 'PAYRETO_PPM_RC') {
+        	$transactionData['payment_type'] = $this->getPaymentType(false, $paymentKey);
+        }
+        $transactionData['payment_recurring'] = 'INITIAL';
+        $transactionData['payment_registration'] = 'true';
+        $transactionData['transaction_id'] = $this->getTransactionIdbyReference();
+
+        return $transactionData;
+    }
+
+    protected function getRegisterAmount($paymentKey)
+    {
+    	$paymentSettings = $this->getPaymentSettings($paymentKey);
+
+    	return $paymentSettings['amount'];
+    }
+
+    protected function get3dAmount($paymentKey)
+    {
+        if ($paymentKey == 'PAYRETO_ACC_RC') {
+            return $this->getRegisterAmount($paymentKey);
+        }
+    }
+
+    protected function get3dCurrency($paymentKey, $currency)
+    {
+        if ($paymentKey == 'PAYRETO_ACC_RC') {
+            return $currency;
+        }
+    }
+
+    protected function getTransactionIdbyReference()
+    {
+        return (int)$this->paymentHelper->getCustomerId();
+    }
+
+    protected function isRedirectPayment($selected_payment)
+    {
+        if ($selected_payment == 'PAYPALSAVED') {
+            return  true;
+        }
+
+        return false;
+    }
+
 
     public function getPaymentReference($paymentMethod)
     {
@@ -495,11 +558,15 @@ class PaymentService
 	 * @param Basket $basket
 	 * @return Address
 	 */
-	public function getPaymentType(Basket $basket)
+	public function getPaymentType($basket = false, $paymentKey = false)
 	{
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
-        $paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
-        $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+		if ($basket) {
+			$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+			$paymentKey = $paymentMethod->paymentKey;
+		}
+		
+        $paymentSettings = $this->getPaymentSettings($paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentKey);
         return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
 	}
 

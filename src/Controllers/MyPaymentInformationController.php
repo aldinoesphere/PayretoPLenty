@@ -77,6 +77,22 @@ class MyPaymentInformationController extends Controller
 
 	public function addAccount($paymentMethod) 
 	{
+		switch ($paymentMethod) {
+			case 'credit-card':
+				$paymentKey = 'PAYRETO_ACC_RC';
+				break;
+
+			case 'direct-debit':
+				$paymentKey = 'PAYRETO_DDS_RC';
+				break;
+
+			case 'paypal':
+				$paymentKey = 'PAYRETO_PPM_RC';
+				break;
+		}
+
+		
+
 		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 	}
 

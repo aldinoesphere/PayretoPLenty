@@ -1,0 +1,57 @@
+
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+	{% if redirect %}
+	    <style>
+	        body {
+	            display: none;
+	            background: white;
+	        }
+	    </style>
+	    <script type="text/javascript">
+	        var wpwlOptions = {
+	            onReady: function(){
+	                jQuery(".wpwl-form").submit();
+	            }
+	        }
+	    </script>
+	     
+	    <input type="submit" value="Submit" style="display:none" />
+
+	    <script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+	    <form action="{{ paymentResponseUrl }}" class="paymentWidgets">{{ paymentBrand }}</form>  
+	{% else %}
+		<div class="page-content checkout container-max">
+	    	<div>
+	    		<link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
+	    		<script type="text/javascript"> 
+				    var wpwlOptions = {
+						style: "card",
+				        onReady: function(){
+							var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>Cancel</a>";
+							var ttTestMode = "<div class='testmode'>THIS IS A TEST. NO REAL MONEY WILL BE TRANSFERED</div>";
+							var headerWidget = "<h2 style='text-align: center'>Use alternative payment data</h2>";
+				            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+				            {% if frameTestMode == 'TEST' %}
+					            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
+				            {% endif %}
+						},
+						registrations: {
+				        	hideInitialPaymentForms: false,
+				        	requireCvv: false
+				    	}
+				    }
+				</script>
+	    		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+		    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
+			</div>
+	    </div>
+	{% endif %}
+
+{% endblock %}
