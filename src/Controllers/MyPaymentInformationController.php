@@ -69,6 +69,8 @@ class MyPaymentInformationController extends Controller
 			$accountArray[$account->paymentGroup][] = $accounts;
 		}
 
+		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
+
 		return $twig->render('Payreto::Information.MyPaymentInformation', $accountArray);
 		
 	}
