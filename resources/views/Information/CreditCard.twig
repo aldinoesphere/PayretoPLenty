@@ -16,12 +16,13 @@
             </div>
             <div aria-labelledby="addressMultiSelect" class="dropdown-menu">
                 <ul>
+                    {% debug creditCards %}
                     {% for value in creditCards %}
                         <li class="item">
                             <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
                             <label for="addressSelectItem1326" class="item-inner">
                                 <span class="item-content small">
-                                    <!----> <strong> {{ value }}</strong> <span></span> 
+                                    <!----> <strong> {{ dump(value) }}</strong> <span></span> 
                                     <span>Beuthener Strase 25 32</span> 
                                     <span>90471 Nurnberg</span> 
                                     <span>Germany</span>
