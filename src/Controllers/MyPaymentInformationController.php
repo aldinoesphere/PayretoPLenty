@@ -20,6 +20,7 @@ use Payreto\Helper\PaymentHelper;
 use Payreto\Controllers\AccountController;
 use Payreto\Services\PaymentService;
 use Payreto\Services\GatewayService;
+use Payreto\Controllers\SettingsController;
 
 /**
 * Class PaymentController
@@ -55,6 +56,11 @@ class MyPaymentInformationController extends Controller
 	private $paymentService;
 
 	/**
+	 * @var settingsController
+	 */
+	private $settingsController;
+
+	/**
 	 *
 	 * @var gatewayService
 	 */
@@ -66,7 +72,8 @@ class MyPaymentInformationController extends Controller
 		PaymentHelper $paymentHelper,
 		AccountController $accountController,
 		PaymentService $paymentService,
-		GatewayService $gatewayService
+		GatewayService $gatewayService,
+		SettingsController $settingsController
 	) {
 		$this->response = $response;
 		$this->request = $request;
@@ -74,6 +81,7 @@ class MyPaymentInformationController extends Controller
 		$this->gatewayService = $gatewayService;
 		$this->accountController = $accountController;
 		$this->paymentService = $paymentService;
+		$this->settingsController = $settingsController;
 	}
 	
 	public function show(Twig $twig)
@@ -107,6 +115,10 @@ class MyPaymentInformationController extends Controller
 				$paymentKey = 'PAYRETO_PPM_RC';
 				break;
 		}
+
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentKey);
+		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
