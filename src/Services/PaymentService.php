@@ -213,7 +213,7 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials($paymentMethod),
 			$this->getTransactionParameters($basket, $paymentMethod),
-			$this->getCustomerParameters()
+			$this->getCustomerParameterss()
 		);
 
 		// $this->paymentHelper->mapStatus();
@@ -477,7 +477,7 @@ class PaymentService
 
         $transactionData = array_merge(
             $this->getCredentials(false, $paymentKey),
-            $this->getCustomerParameter()
+            $this->getCustomerParameters()
         );
 
         $transactionData['amount'] = $this->getRegisterAmount($paymentKey);
