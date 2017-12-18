@@ -227,7 +227,6 @@ class PaymentResultController extends Controller
 	{
 		$paymentData = [];
 		$paymentKey = '';
-        $paymentType = $this->paymentService->getPaymentType($basket);
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
