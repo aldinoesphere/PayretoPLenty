@@ -52,7 +52,7 @@ class MyPaymentInformationController extends Controller
 	 */
 	private $accountController;
 
-	public function __construct(PaymentService $paymentService,
+	public function __construct(
 		Response $response,
 		Request $request,
 		PaymentHelper $paymentHelper,
