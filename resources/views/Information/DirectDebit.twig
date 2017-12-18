@@ -1,92 +1,41 @@
 <div class="shipping-addresses-select">
     <div>
         <div class="cmp cmp-address-list m-b-3">
-            <div class="dropdown items">
-                <div id="addressMultiSelect13" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="component-loading dropdown-toggle card">
-                    <div class="item-inner"><span class="item-content"><div><!----> <strong> plugin sales</strong> <span>Beuthener Strase 25 32</span> <span>90471 Nurnberg</span> <span>Germany</span></div>
-                    <!---->
-                    <!---->
-                    </span>
-                </div>
-            </div>
-            <div class="add-item">
-                <button href="#" class="btn btn-primary btn-medium">
-                    New Account
-                    <i aria-hidden="true" class="fa fa-plus-square"></i></button>
-            </div>
-            <div aria-labelledby="addressMultiSelect" class="dropdown-menu">
+            <div>
                 <ul>
-                    <li class="item">
-                        <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
-                        <label for="addressSelectItem1326" class="item-inner"><span class="item-content small"><!----> <strong> plugin sales</strong> <span></span> <span>Beuthener Strase 25 32</span> <span>90471 Nurnberg</span> <span>Germany</span></span>
-                            <div class="item-controls"><span class="item-edit"><button class="btn btn-primary btn-medium">
-                                            Edit
-                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i></button></span> <span class="item-remove"><button class="btn btn-medium btn-remove-address">
-                                            Delete
-                                            <i aria-hidden="true" class="fa fa-times"></i></button></span></div>
-                        </label>
-                    </li>
-                    <li class="item">
-                        <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
-                        <label for="addressSelectItem1326" class="item-inner"><span class="item-content small"><!----> <strong> plugin sales</strong> <span></span> <span>Beuthener Strase 25 32</span> <span>90471 Nurnberg</span> <span>Germany</span></span>
-                            <div class="item-controls"><span class="item-edit"><button class="btn btn-primary btn-medium">
-                                            Edit
-                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i></button></span> <span class="item-remove"><button class="btn btn-medium btn-remove-address">
-                                            Delete
-                                            <i aria-hidden="true" class="fa fa-times"></i></button></span></div>
-                        </label>
-                    </li>
-                    <li class="item">
-                        <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
-                        <label for="addressSelectItem1326" class="item-inner"><span class="item-content small"><!----> <strong> plugin sales</strong> <span></span> <span>Beuthener Strase 25 32</span> <span>90471 Nurnberg</span> <span>Germany</span></span>
-                            <div class="item-controls"><span class="item-edit"><button class="btn btn-primary btn-medium">
-                                            Edit
-                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i></button></span> <span class="item-remove"><button class="btn btn-medium btn-remove-address">
-                                            Delete
-                                            <i aria-hidden="true" class="fa fa-times"></i></button></span></div>
-                        </label>
-                    </li>
-                    <li class="item">
-                        <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
-                        <label for="addressSelectItem1326" class="item-inner"><span class="item-content small"><!----> <strong> plugin sales</strong> <span></span> <span>Beuthener Strase 25 32</span> <span>90471 Nurnberg</span> <span>Germany</span></span>
-                            <div class="item-controls"><span class="item-edit"><button class="btn btn-primary btn-medium">
-                                            Edit
-                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i></button></span> <span class="item-remove"><button class="btn btn-medium btn-remove-address">
-                                            Delete
-                                            <i aria-hidden="true" class="fa fa-times"></i></button></span></div>
-                        </label>
-                    </li>
+                    {% for value in directDebit %}
+                        <li class="item">
+                            <input type="radio" name="shippingAddress13" id="addressSelectItem1326" value="26">
+                            <label for="addressSelectItem1326" class="item-inner">
+                                <span class="item-content small">
+                                    <strong>Account:****{{ value.last4digits }}</strong> <span></span>
+                                </span>
+                                <div class="item-controls">
+                                    <span class="item-edit">
+                                        <button class="btn btn-primary">
+                                                Edit
+                                                <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+                                        </button>
+                                    </span>
+                                    <span class="item-remove">
+                                        <a class="btn btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
+                                                    Delete
+                                                    <i aria-hidden="true" class="fa fa-times"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </label>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
-    <div>
-        <div tabindex="-1" role="dialog" class="modal fade">
-            <div role="document" class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
-                        <h4 class="modal-title"></h4></div>
-                    <div class="modal-body">
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <label>Really delete address?</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-3 offset-sm-6">
-                                    <button type="button" class="btn btn-primary btn-block">Cancel</button>
-                                </div>
-                                <div class="col-sm-3">
-                                    <button type="button" class="btn btn-primary btn-block">Delete</button>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="add-item"> 
+        <a href="/add-account/credit-card" class="btn btn-primary btn-medium">
+            New Account
+            <i aria-hidden="true" class="fa fa-plus-square"></i></a>
     </div>
+</div>
 </div>
 </div>
