@@ -487,7 +487,7 @@ class PaymentService
         $transactionData['currency'] = 'EUR';
         $transactionData['3D']['amount'] = $this->get3dAmount($paymentKey);
         $transactionData['3D']['currency'] = $this->get3dCurrency($paymentKey, 'EUR');
-        $transactionData['test_mode'] = $paymentSettings['server'];
+        $transactionData['test_mode'] = $this->getTestMode($paymentKey);
         if ($paymentKey <> 'PAYRETO_PPM_RC') {
         	$transactionData['payment_type'] = $this->getPaymentType(false, $paymentKey);
         }
