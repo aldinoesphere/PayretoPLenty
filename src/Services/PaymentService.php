@@ -521,9 +521,9 @@ class PaymentService
         return (int)$this->paymentHelper->getCustomerId();
     }
 
-    protected function isRedirectPayment($selected_payment)
+    protected function isRedirectPayment($paymentKey)
     {
-        if ($selected_payment == 'PAYPALSAVED') {
+        if ($paymentKey == 'PAYRETO_PPM_RC') {
             return  true;
         }
 

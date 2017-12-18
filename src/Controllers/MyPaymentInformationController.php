@@ -18,6 +18,7 @@ use IO\Api\ResponseCode;
 
 use Payreto\Helper\PaymentHelper;
 use Payreto\Controllers\AccountController;
+use Payreto\Services\PaymentService;
 
 /**
 * Class PaymentController
@@ -47,16 +48,23 @@ class MyPaymentInformationController extends Controller
 	 */
 	private $accountController;
 
+	/**
+	 * @var paymentService
+	 */
+	private $paymentService;
+
 	public function __construct(
 		Response $response,
 		Request $request,
 		PaymentHelper $paymentHelper,
-		AccountController $accountController
+		AccountController $accountController,
+		PaymentService $paymentService
 	) {
 		$this->response = $response;
 		$this->request = $request;
 		$this->paymentHelper = $paymentHelper;
 		$this->accountController = $accountController;
+		$this->paymentService = $paymentService;
 	}
 	
 	public function show(Twig $twig)
@@ -91,9 +99,9 @@ class MyPaymentInformationController extends Controller
 				break;
 		}
 
-		
+		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
+		$this->getLogger(__METHOD__)->error('Payreto:recurringTranscationParameters', $recurringTranscationParameters);
 	}
 
 }
