@@ -11,18 +11,14 @@
                                     <span>Expires on:{{ value.expMonth }}/{{ value.expYear }}</span>
                                 </span>
                                 <div class="item-controls">
-                                    <span class="item-edit">
-                                        <button class="btn btn-primary">
-                                                Edit
-                                                <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
-                                        </button>
-                                    </span>
-                                    <span class="item-remove">
-                                        <a class="btn btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
-                                                    Delete
-                                                    <i aria-hidden="true" class="fa fa-times"></i>
-                                        </a>
-                                    </span>
+                                    <button class="btn btn-medium btn-primary">
+                                            Edit
+                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+                                    </button>
+                                    <a class="btn btn-medium btn-remove-address" href="/payment/payreto/account/delete/{{ value.id }}">
+                                                Delete
+                                                <i aria-hidden="true" class="fa fa-times"></i>
+                                    </a>
                                 </div>
                             </label>
                         </li>
