@@ -66,7 +66,7 @@ class MyPaymentInformationController extends Controller
 		$accountArray = [];
 
 		foreach ($accounts as $account) {
-			$accountArray[$account->paymentGroup][] = $accounts;
+			$accountArray[$account->paymentGroup][] = $account;
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
@@ -77,15 +77,7 @@ class MyPaymentInformationController extends Controller
 
 	public function addAccount($paymentMethod) 
 	{
-		$customerId = $this->paymentHelper->getCustomerId();
-		$accounts = $this->accountController->loadAccounts($customerId);
-		$accountArray = [];
-
-		foreach ($accounts as $account) {
-			$accountArray[$account->paymentGroup][] = $accounts;
-		}
-		
-		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 	}
 
 }
