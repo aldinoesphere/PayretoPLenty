@@ -213,7 +213,7 @@ class PaymentService
 		$parameters = array_merge(
 			$this->getCredentials($paymentMethod),
 			$this->getTransactionParameters($basket, $paymentMethod),
-			$this->getCustomerParameterss()
+			$this->getCustomerParameters()
 		);
 
 		// $this->paymentHelper->mapStatus();
