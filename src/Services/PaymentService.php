@@ -272,7 +272,7 @@ class PaymentService
 	 *
 	 * @return array
 	 */
-	public function getCredentials(PaymentMethod $paymentMethod) {
+	public function getCredentials($paymentMethod) {
 		$payretoSettings = $this->getPayretoSettings();
 		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
 		$credentials = [
