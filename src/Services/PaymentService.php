@@ -321,7 +321,7 @@ class PaymentService
 
 	public function getPaymentKey($paymentMethod) 
 	{
-		return $paymentKey = is_array($paymentMethod) && !empty($paymentMethod->paymentKey) ? $paymentMethod->paymentKey : $paymentMethod;
+		return $paymentKey = !empty($paymentMethod->paymentKey) ? $paymentMethod->paymentKey : $paymentMethod;
 	}
 
 	/**
