@@ -77,7 +77,15 @@ class MyPaymentInformationController extends Controller
 
 	public function addAccount($paymentMethod) 
 	{
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
+		$customerId = $this->paymentHelper->getCustomerId();
+		$accounts = $this->accountController->loadAccounts($customerId);
+		$accountArray = [];
+
+		foreach ($accounts as $account) {
+			$accountArray[$account->paymentGroup][] = $accounts;
+		}
+		
+		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
 	}
 
 }
