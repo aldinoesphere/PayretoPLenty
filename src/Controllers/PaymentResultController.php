@@ -226,7 +226,7 @@ class PaymentResultController extends Controller
 	public function validationRegister($checkoutId)
 	{
 		$paymentData = [];
-		$paymentKey = $paymentMethod->paymentKey;
+		$paymentKey = '';
         $paymentType = $this->paymentService->getPaymentType($basket);
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
@@ -251,7 +251,7 @@ class PaymentResultController extends Controller
 
 			if ($paymentKey == 'PAYRETO_PPM_RC') 
 			{
-				$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
+				$paymentConfirmation = $this->payAndSavePaypal('', $paymentConfirmation, $basket);
 			}
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);

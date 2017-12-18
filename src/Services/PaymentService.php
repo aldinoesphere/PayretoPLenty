@@ -479,7 +479,7 @@ class PaymentService
     	$paymentSettings = $this->getPaymentSettings($paymentKey);
 
         $transactionData = array_merge(
-            $this->getCredentials(false, $paymentKey),
+            $this->getCredentials($paymentKey),
             $this->getCustomerParameters()
         );
 
