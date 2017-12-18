@@ -16,21 +16,21 @@
         	<div class="col-xs-12"><hr></div>
         </div>
         <br>
-		<div class="row item-liner">
+		<div class="row item-inner">
     		<div class="col-sm-12">
 	    		<h4>Credit Card</h4>
 	    		{% include "Payreto::Information.CreditCard" with { creditCards: PAYRETO_ACC_RC } %}
 	    	</div>
 		</div>
 		<br>
-		<div class="row item-liner">
+		<div class="row item-inner">
     		<div class="col-sm-12">
 	    		<h4>Direct Debit</h4>
 	    		{% include "Payreto::Information.DirectDebit" with { directDebit: PAYRETO_DDS_RC } %}
 			</div>
 		</div>
 		<br>
-		<div class="row item-liner">
+		<div class="row item-inner">
     		<div class="col-sm-12">
 	    		<h4>Paypal</h4>
 	    		{% include "Payreto::Information.Paypal" with { paypal: PAYRETO_PPM_RC } %}
