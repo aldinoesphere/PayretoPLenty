@@ -101,7 +101,30 @@ class MyPaymentInformationController extends Controller
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$this->getLogger(__METHOD__)->error('Payreto:recurringTranscationParameters', $recurringTranscationParameters);
+		$checkoutResponse = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+
+		if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') 
+		{
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $checkoutResponse['id'];
+			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutResponse['id']);
+
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
+
+			$data = [
+				'paymentBrand' => $paymentBrand,
+				'checkoutId' => $checkoutResponse['id'],
+				'paymentPageUrl' => $paymentPageUrl,
+	            'cancelUrl' => '/my-payment-information',
+	            'paymentWidgetUrl' => $paymentWidgetUrl,
+	            'frameTestMode' => $paymentSettings['server']
+			];
+			$this->getLogger(__METHOD__)->error('Payreto:data', $data);
+			return $twig->render('Payreto::Payment.PaymentRegister', $data);
+		} else {
+			$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+		}
 	}
 
 }

@@ -41,6 +41,8 @@ class PayretoRouteServiceProvider extends RouteServiceProvider
 
 		$router->get('payment/payreto/account/delete/{id}', 'Payreto\Controllers\AccountController@deleteAccount');
 
+		$router->get('payment/payreto/pay-register/{id}', 'Payreto\Controllers\PaymentResultController@handleReturnRegister');
+
 		// Routes for Payreto order confirmation
 		$router->get('payment/payreto/order-confirmation/{id?}', 'Payreto\Controllers\PaymentController@orderConfirmation');
 

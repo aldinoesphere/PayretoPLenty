@@ -272,12 +272,9 @@ class PaymentService
 	 *
 	 * @return array
 	 */
-	public function getCredentials($paymentMethod = false, $paymentKey = false) {
+	public function getCredentials(PaymentMethod $paymentMethod) {
 		$payretoSettings = $this->getPayretoSettings();
-		if ($paymentMethod) {
-			$paymentKey = $paymentMethod->paymentKey;
-		}
-		$paymentSettings = $this->getPaymentSettings($paymentKey);
+		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
 		$credentials = [
 						'login' 		=> $payretoSettings['userId'],
 						'password' 		=> $payretoSettings['password'],
@@ -299,8 +296,10 @@ class PaymentService
 		if ($this->getServerMode($paymentMethod) == "LIVE") {
             return false;
         }
+
+        
         $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
-        if ($paymentMethod->paymentKey == 'PAYRETO_GRP') {
+        if ( $this->getPaymentKey($paymentMethod) == 'PAYRETO_GRP') {
             return 'INTERNAL';
         } else {
             return "EXTERNAL";
@@ -316,9 +315,13 @@ class PaymentService
 	 */
 	public function getServerMode(PaymentMethod $paymentMethod) 
 	{
-
-		$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
+		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
 		return $paymentSettings['server'];
+	}
+
+	public function getPaymentKey(PaymentMethod $paymentMethod) 
+	{
+		return $paymentKey = is_array($paymentMethod) && !empty($paymentMethod->paymentKey) ? $paymentMethod->paymentKey : $paymentMethod;
 	}
 
 	/**
