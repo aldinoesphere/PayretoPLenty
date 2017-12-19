@@ -194,7 +194,7 @@ class PaymentResultController extends Controller
 
 		if ($paymentKey == 'PAYRETO_PPM_RC') 
 		{
-			$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
+			$this->doPaypalRegister($paymentKey, $transactionData, $resultJson);
 		} elseif ($paymentSettings['transactionMode'] == 'PA') {
 			$this->captureRegister($paymentKey, $transactionData, $resultJson);
 		} else {
@@ -266,70 +266,20 @@ class PaymentResultController extends Controller
 	}
 
 
-	public function payAndSavePaypalRegister($paymentKey, $resultJson, $basket)
+	public function doPaypalRegister($paymentKey, $transactionData, $resultJson)
 	{
-		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 		$registrationId = $resultJson['id'];
-        $paymentData = $this->paymentService->getCredentials($paymentKey);
-        $paymentData['amount'] = $basket->basketAmount;
-        $paymentData['currency'] = $basket->currency;
-        $paymentData['transaction_id'] = $resultJson['merchantTransactionId'];
-        $paymentData['payment_recurring'] = 'INITIAL';
-        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentKey);
-        $paymentData['paymentType'] = 'DB';
 
-        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
+        $transactionData['paymentType'] = 'DB';
+
+        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
 
         $returnCode = $debitResponse['result']['code'];
         $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
 
         if ($transactionResult == 'ACK') {
-            return $debitResponse;
-        } else {
-            if ($transactionResult == 'NOK') {
-                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
-            } else {
-                $returnMessage = 'ERROR_UNKNOWN';
-            }
-        }
-        return false;
-	}
-
-	public function debitRecurringPaypal($registrationId) 
-	{
-		$basketHelper = pluginApp(basketHelper::class);
-        $basket = $basketHelper->getBasket();
-        $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
-        $paymentKey = $paymentMethod->paymentKey;
-        $paymentType = $this->paymentService->getPaymentType($basket);
-
-        $paymentData = $this->paymentService->getCredentials($paymentMethod);
-        $paymentData['amount'] = $basket->basketAmount;
-        $paymentData['currency'] = $basket->currency;
-        $paymentData['payment_recurring'] = 'REPEATED';
-        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
-        $paymentData['paymentType'] = 'DB';
-
-        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
-        $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
-
-        $returnCode = $debitResponse['result']['code'];
-        $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
-
-        if ($transactionResult == 'ACK') {
-        	$paymentData['transaction_id'] = $debitResponse['id'];
-            $paymentData['paymentKey'] = $paymentKey;
-            $paymentData['amount'] = $debitResponse['amount'];
-            $paymentData['currency'] = $debitResponse['currency'];
-            $paymentData['status'] = $this->getPaymentStatus($paymentType);
-            $orderData = $this->orderService->placeOrder($paymentType);
-            $orderId = $orderData->order->id;
-			
-			$paymentData['orderId'] = $orderId;
-
-			$this->paymentHelper->updatePlentyPayment($paymentData);
-            return $debitResponse;
+            $this->saveAccount($resultJson, $paymentKey);
         } else {
             if ($transactionResult == 'NOK') {
                 $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
