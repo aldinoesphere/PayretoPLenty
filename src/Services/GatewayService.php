@@ -595,7 +595,7 @@ class GatewayService
 			$curlResponse['response'] = self::getCurlErrorIdentifier($curlErrorNo);
             $curlResponse['is_valid'] = false;
 		} else {
-            $jsonResponse = json_encode($responseBody, true);
+            $jsonResponse = json_encode($responseData, true);
             if (isset($jsonResponse)) {
                 $curlResponse['response'] = $jsonResponse;
             } else {
