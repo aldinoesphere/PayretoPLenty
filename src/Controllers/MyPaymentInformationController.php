@@ -149,7 +149,7 @@ class MyPaymentInformationController extends Controller
 					break;
 				
 				default:
-					$template = 'PaymentRegister';
+					$template = 'PaymentWidget';
 					break;
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);

@@ -173,11 +173,7 @@ class PaymentResultController extends Controller
 			return false;
 		}
 
-		if ($validation) {
-            return $this->response->redirectTo('/my-payment-information?status=success');
-		} else {
-            return $this->response->redirectTo('/my-payment-information?status=failed');
-        }
+        return $this->response->redirectTo('/my-payment-information?status=success');
 	}
 
 	/**
@@ -206,6 +202,8 @@ class PaymentResultController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
 
 		$this->refundPayment($referenceId, $transactionData);
+
+
 	}
 
 	private function getRegisterParameter($paymentKey)
