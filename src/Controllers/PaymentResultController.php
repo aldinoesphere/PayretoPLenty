@@ -199,11 +199,11 @@ class PaymentResultController extends Controller
 				$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
 			} elseif ($paymentSettings['transactionMode'] == 'PA') {
 				$this->captureRegister($paymentKey, $transactionData, $resultJson);
-				return true;
 			} else {
 				$this->saveAccount($resultJson, $paymentKey);
-				return true;
 			}
+
+			$this->refundPayment($resultJson['id'], $transactionData);
 
 		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
 			return false;
@@ -376,5 +376,11 @@ class PaymentResultController extends Controller
 
         return $twig->render('Payreto::Payment.PaymentConfirmation' , $paymentConfirmationData);
 	}
+
+	private function refundPayment($transactionData, $referenceId)
+    {
+        $transactionData['payment_type'] = "RF";
+        $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+    }
 
 }
