@@ -138,13 +138,21 @@ class MyPaymentInformationController extends Controller
 				'paymentBrand' => $paymentBrand,
 				'checkoutId' => $checkoutResponse['id'],
 				'paymentPageUrl' => $paymentPageUrl,
-				'redirect' => $isRedirect,
 	            'cancelUrl' => '/my-payment-information',
 	            'paymentWidgetUrl' => $paymentWidgetUrl,
 	            'frameTestMode' => $paymentSettings['server']
 			];
 			$this->getLogger(__METHOD__)->error('Payreto:data', $data);
-			return $twig->render('Payreto::Payment.PaymentRegister', $data);
+			switch ($isRedirect) {
+				case true:
+					$template = 'PaymentRedirect';
+					break;
+				
+				default:
+					$template = 'PaymentRegister';
+					break;
+			}
+			return $twig->render('Payreto::Payment.' . $template, $data);
 		} else {
 			$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
 		}
