@@ -244,14 +244,15 @@ class PaymentResultController extends Controller
         $registrationId = $resultJson['registrationId'];
 
         $transactionData['payment_type'] = "CP";
-        $paymentResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
-        $this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
+        $captureResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $this->getLogger(__METHOD__)->error('Payreto:captureResult', $captureResult);
 
-        if ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
+        if ($this->gatewayService->getTransactionResult($captureResult['result']['code']) == 'ACK') {
 			$this->saveAccount($resultJson, $paymentKey);
-		} elseif ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
+		} elseif ($this->gatewayService->getTransactionResult($captureResult['result']['code']) == 'NOK') {
 			
 		}
+		return $captureResult;
 	}
 
 	public function getPaymentStatus($paymentType) 
@@ -278,18 +279,18 @@ class PaymentResultController extends Controller
         $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
 
         $returnCode = $debitResponse['result']['code'];
-        $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
+        $paypalResult = $this->gatewayService->getTransactionResult($returnCode);
 
-        if ($transactionResult == 'ACK') {
+        if ($paypalResult == 'ACK') {
             $this->saveAccount($resultJson, $paymentKey);
         } else {
-            if ($transactionResult == 'NOK') {
+            if ($paypalResult == 'NOK') {
                 $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
             } else {
                 $returnMessage = 'ERROR_UNKNOWN';
             }
         }
-        return false;
+        return $paypalResult;
 	}
 
 	private function refundPayment($referenceId, $transactionData)
