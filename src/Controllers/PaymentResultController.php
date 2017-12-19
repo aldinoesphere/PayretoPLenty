@@ -347,39 +347,10 @@ class PaymentResultController extends Controller
         return false;
 	}
 
-	public function handleConfirmation(Twig $twig) 
-	{
-        $basketHelper = pluginApp(basketHelper::class);
-        $basket = $basketHelper->getBasket();
-		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
-		$checkoutId = $this->request->get('id');
-        $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId); 
-		$paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
-
-		$transactionData = [
-			'authentication.userId' => $this->payretoSettings['userId'],
-			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $paymentSettings['entityId']
-		];
-
-		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $transactionData);
-        $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
-        
-        $paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
-        $paymentConfirmationData = array_merge($paymentConfirmationData, [
-            'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
-            'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
-            'checkoutId' => $paymentServerToServer['id'],
-            'paymentMethodName' => $paymentMethod->name
-        ]);
-        $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
-
-        return $twig->render('Payreto::Payment.PaymentConfirmation' , $paymentConfirmationData);
-	}
-
 	private function refundPayment($transactionData, $referenceId)
     {
         $transactionData['payment_type'] = "RF";
+        $this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
         $resultJson = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
     }
