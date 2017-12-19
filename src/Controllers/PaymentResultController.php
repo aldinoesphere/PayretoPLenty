@@ -195,7 +195,7 @@ class PaymentResultController extends Controller
 		{
 			if ($paymentKey == 'PAYRETO_PPM_RC') 
 			{
-				$resultJson = $this->payAndSavePaypal('', $resultJson, '');
+				$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
 			} elseif ($paymentSettings['transactionMode'] == 'PA') {
 				$this->captureRegister($paymentKey, $transactionData, $resultJson);
 			} else {
@@ -232,10 +232,10 @@ class PaymentResultController extends Controller
         $transactionData['payment_type'] = "CP";
 
         $paymentResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
 
         if ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 			$this->saveAccount($resultJson, $paymentKey);
-
 		} elseif ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
 			
 		}
@@ -255,8 +255,9 @@ class PaymentResultController extends Controller
 	}
 
 
-	public function payAndSavePaypal($paymentMethod, $resultJson, $basket)
+	public function payAndSavePaypalRegister($paymentMethod, $resultJson, $basket)
 	{
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 		$registrationId = $resultJson['id'];
         $paymentData = $this->paymentService->getCredentials($paymentMethod);
         $paymentData['amount'] = $basket->basketAmount;

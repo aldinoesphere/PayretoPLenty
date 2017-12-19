@@ -119,6 +119,7 @@ class MyPaymentInformationController extends Controller
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
         $optionSetting = $this->settingsController->getOptionSetting($paymentKey);
 		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
+		$isRedirect = $this->paymentService->isRedirectPayment($paymentKey);
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
@@ -137,6 +138,7 @@ class MyPaymentInformationController extends Controller
 				'paymentBrand' => $paymentBrand,
 				'checkoutId' => $checkoutResponse['id'],
 				'paymentPageUrl' => $paymentPageUrl,
+				'redirect' => $isRedirect,
 	            'cancelUrl' => '/my-payment-information',
 	            'paymentWidgetUrl' => $paymentWidgetUrl,
 	            'frameTestMode' => $paymentSettings['server']
