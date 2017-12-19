@@ -519,7 +519,7 @@ class PaymentService
         return (int)$this->paymentHelper->getCustomerId();
     }
 
-    protected function isRedirectPayment($paymentKey)
+    public function isRedirectPayment($paymentKey)
     {
         if ($paymentKey == 'PAYRETO_PPM_RC') {
             return  true;

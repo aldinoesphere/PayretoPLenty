@@ -255,16 +255,16 @@ class PaymentResultController extends Controller
 	}
 
 
-	public function payAndSavePaypalRegister($paymentMethod, $resultJson, $basket)
+	public function payAndSavePaypalRegister($paymentKey, $resultJson, $basket)
 	{
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 		$registrationId = $resultJson['id'];
-        $paymentData = $this->paymentService->getCredentials($paymentMethod);
+        $paymentData = $this->paymentService->getCredentials($paymentKey);
         $paymentData['amount'] = $basket->basketAmount;
         $paymentData['currency'] = $basket->currency;
         $paymentData['transaction_id'] = $resultJson['merchantTransactionId'];
         $paymentData['payment_recurring'] = 'INITIAL';
-        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
+        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentKey);
         $paymentData['paymentType'] = 'DB';
 
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
