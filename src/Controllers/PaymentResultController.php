@@ -255,36 +255,23 @@ class PaymentResultController extends Controller
 		return $captureResult;
 	}
 
-	public function getPaymentStatus($paymentType) 
-	{
-		switch ($paymentType) {
-			case 'PA':
-				return $this->paymentHelper->mapTransactionState('0');
-				break;
-			
-			default:
-				return $this->paymentHelper->mapTransactionState('2');
-				break;
-		}
-	}
-
-
 	public function doPaypalRegister($paymentKey, $transactionData, $resultJson)
 	{
 		$registrationId = $resultJson['id'];
 
         $transactionData['paymentType'] = 'DB';
 
-        $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $transactionData);
-        $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
+        $paypalResult = $this->gatewayService->getRecurringPaymentResult($registrationId, $transactionData);
+        $this->getLogger(__METHOD__)->error('Payreto:paypalResult', $paypalResult);
 
-        $returnCode = $debitResponse['result']['code'];
-        $paypalResult = $this->gatewayService->getTransactionResult($returnCode);
+        $returnCode = $paypalResult['result']['code'];
+        $resultPaypal = $this->gatewayService->getTransactionResult($returnCode);
+        $this->getLogger(__METHOD__)->error('Payreto:resultPaypal', $resultPaypal);
 
-        if ($paypalResult == 'ACK') {
+        if ($resultPaypal == 'ACK') {
             $this->saveAccount($resultJson, $paymentKey);
         } else {
-            if ($paypalResult == 'NOK') {
+            if ($resultPaypal == 'NOK') {
                 $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
             } else {
                 $returnMessage = 'ERROR_UNKNOWN';
