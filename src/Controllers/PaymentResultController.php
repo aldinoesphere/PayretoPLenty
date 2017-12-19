@@ -192,24 +192,18 @@ class PaymentResultController extends Controller
 
 		$transactionData = $this->getRegisterParameter($paymentKey);
 
-		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
+		if ($paymentKey == 'PAYRETO_PPM_RC') 
 		{
-			if ($paymentKey == 'PAYRETO_PPM_RC') 
-			{
-				$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
-			} elseif ($paymentSettings['transactionMode'] == 'PA') {
-				$this->captureRegister($paymentKey, $transactionData, $resultJson);
-			} else {
-				$this->saveAccount($resultJson, $paymentKey);
-			}
-
-			$this->refundPayment($resultJson['id'], $transactionData);
-
-		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
-			return false;
+			$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
+		} elseif ($paymentSettings['transactionMode'] == 'PA') {
+			$this->captureRegister($paymentKey, $transactionData, $resultJson);
 		} else {
-			return false;
+			$this->saveAccount($resultJson, $paymentKey);
 		}
+
+		$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
+
+		$this->refundPayment($resultJson['id'], $transactionData);
 	}
 
 	private function getRegisterParameter($paymentKey)
