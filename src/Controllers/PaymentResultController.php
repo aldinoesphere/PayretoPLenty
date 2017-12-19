@@ -340,7 +340,7 @@ class PaymentResultController extends Controller
         return false;
 	}
 
-	private function refundPayment($transactionData, $referenceId)
+	private function refundPayment($referenceId, $transactionData)
     {
         $transactionData['payment_type'] = "RF";
         $this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
