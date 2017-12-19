@@ -321,7 +321,9 @@ class PaymentController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
-		if ($this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']) == 'ACK') 
+		$paymentResult = $paymentConfirmation['result']['code'];
+
+		if ($this->gatewayService->getTransactionResult($paymentResult) == 'ACK') 
 		{
 
 			if ($this->paymentService->getRecurringSetting()) {
@@ -353,8 +355,8 @@ class PaymentController extends Controller
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
-		} elseif ($this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']) == 'NOK') {
-			$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+		} elseif ($this->gatewayService->getTransactionResult($paymentResult) == 'NOK') {
+			$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResult);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		} else {
 			return false;
