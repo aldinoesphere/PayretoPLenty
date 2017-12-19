@@ -199,7 +199,7 @@ class PaymentResultController extends Controller
 			} elseif ($paymentSettings['transactionMode'] == 'PA') {
 				$this->captureRegister($paymentKey, $transactionData, $resultJson);
 			} else {
-				$this->saveAccount($resultJson, $paymentKey, $paymentSettings);
+				$this->saveAccount($resultJson, $paymentKey);
 			}
 
 		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
@@ -230,12 +230,12 @@ class PaymentResultController extends Controller
 
         $transactionData['payment_type'] = "CP";
 
-        $paymentResult = $gatewayService->backOfficePayment($referenceId, $transactionData);
+        $paymentResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
 
-        if ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
+        if ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 			$this->saveAccount($resultJson, $paymentKey);
 
-		} elseif ($gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
+		} elseif ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
 			
 		}
 	}
