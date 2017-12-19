@@ -278,7 +278,8 @@ img {
 			{% elseif settingType == 'PAYRETO_ECP' 
 				or  settingType == 'PAYRETO_GRP' 
 				or settingType == 'PAYRETO_ADB' 
-				or settingType == 'PAYRETO_PPM' %}
+				or settingType == 'PAYRETO_PPM'
+				or settingType == 'PAYRETO_PPM_RC' %}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">
@@ -301,6 +302,14 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
+				{% if settingType == 'PAYRETO_PPM_RC' %}
+					<div class="clear"></div>
+					<div class="div-separator clear"></div>
+					<div>
+						<label for="Shop Url">Amount for Registration</label>
+						<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
+					</div>
+				{% endif %}
 			{% elseif settingType == 'PAYRETO_DDS' %}
 				<div>
 					<label for="Enabled">Server</label>
@@ -333,9 +342,7 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
-			{% elseif settingType == 'PAYRETO_DDS_RC' 
-				or settingType == 'PAYRETO_PPM_RC'
-			%}
+			{% elseif settingType == 'PAYRETO_DDS_RC'%}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">

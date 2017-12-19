@@ -302,9 +302,7 @@ class SettingsController extends Controller
 							'transactionMode' => $this->request->get('transactionMode'),
 							'entityId' => $this->request->get('entityId')
 						);
-		} elseif($settingType == 'PAYRETO_DDS_RC'
-			|| $settingType == 'PAYRETO_PPM_RC'
-		) {
+		} elseif($settingType == 'PAYRETO_DDS_RC') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
 							'display' => $this->request->get('display'),
@@ -319,6 +317,13 @@ class SettingsController extends Controller
 							'transactionMode' => $this->request->get('transactionMode'),
 							'minimumAge' => $this->request->get('minimumAge'),
 							'entityId' => $this->request->get('entityId')
+						);
+		} elseif ($settingType == 'PAYRETO_PPM_RC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount')
 						);
 		}
 
