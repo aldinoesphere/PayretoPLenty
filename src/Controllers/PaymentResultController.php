@@ -200,10 +200,11 @@ class PaymentResultController extends Controller
 				$this->captureRegister($paymentKey, $transactionData, $resultJson);
 			} else {
 				$this->saveAccount($resultJson, $paymentKey);
+				return true;
 			}
 
 		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
-			
+			return false;
 		} else {
 			return false;
 		}
