@@ -185,6 +185,7 @@ class PaymentController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:basketItems', $basketItems);
 
 		if ($validation) {
+
             #Reset all basket.
             foreach ($basketItems as $basketItem)
             {
@@ -200,7 +201,6 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            $this->notification->error('Test Error');
 			return $this->response->redirectTo('checkout');
         }
 	}
@@ -353,6 +353,9 @@ class PaymentController extends Controller
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
+		} elseif ($this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']) == 'NOK') {
+			$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		} else {
 			return false;
 		}
