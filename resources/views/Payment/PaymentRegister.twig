@@ -9,23 +9,23 @@
 {% block PageBody %}
 	{% if redirect %}
 	    <style>
-	        body {
-	            display: none;
-	            background: white;
-	        }
-	    </style>
-	    <script type="text/javascript">
-	        var wpwlOptions = {
-	            onReady: function(){
-	                jQuery(".wpwl-form").submit();
-	            }
-	        }
-	    </script>
-	     
-	    <input type="submit" value="Submit" style="display:none" />
+			body {
+				display:none;
+				background: white;
+			}
+		</style>
 
-	    <script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
-	    <form action="{{ paymentResponseUrl }}" class="paymentWidgets">{{ paymentBrand }}</form>  
+		<script type="text/javascript">
+			var wpwlOptions = {
+				onReady: function(){
+					jQuery(".wpwl-form").submit();
+				}
+			}
+		</script>
+
+		<input type="submit" value="Submit" style="display:none" />
+		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+		<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}">{{ paymentBrand }}</form> 
 	{% else %}
 		<div class="page-content checkout container-max">
 	    	<div>
