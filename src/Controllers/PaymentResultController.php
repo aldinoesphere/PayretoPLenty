@@ -172,7 +172,7 @@ class PaymentResultController extends Controller
 		if ($validation) {
             return $this->response->redirectTo('/my-payment-information?status=success');
 		} else {
-            return $this->apiResponse->error('/my-payment-information?status=failed');
+            return $this->response->redirectTo('/my-payment-information?status=failed');
         }
 	}
 
