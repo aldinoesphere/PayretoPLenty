@@ -160,13 +160,17 @@ class PaymentResultController extends Controller
 	 */
 	public function handleReturnRegister($checkoutId = 0, $paymentKey = '')
 	{
-		#error_log
-		$registrationId = $this->request->get('registrationId');
+		$transactionData = $this->paymentService->getCredentials($paymentKey);
+		$resultJson = $this->gatewayService->paymentConfirmation($checkoutId, $transactionData);
 
-		if ($registrationId) {
-			$validation = $this->debitRecurringPaypal($registrationId);
+		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
+		{
+			$validation = $this->validationRegister($paymentKey, $resultJson);
+
+		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
+			return false;
 		} else {
-			$validation = $this->validationRegister($checkoutId, $paymentKey);
+			return false;
 		}
 
 		if ($validation) {
@@ -179,17 +183,14 @@ class PaymentResultController extends Controller
 	/**
 	 * handle validation payment
 	 */
-	public function validationRegister($checkoutId, $paymentKey)
+	public function validationRegister($paymentKey, $resultJson)
 	{
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
-		$transactionData = $this->paymentService->getCredentials($paymentKey);
-
-        $this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
-        $resultJson = $this->gatewayService->paymentConfirmation($checkoutId, $transactionData);
+		$transactionData = $this->getRegisterParameter($paymentKey);
 
 		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
 		{
@@ -198,6 +199,7 @@ class PaymentResultController extends Controller
 				$resultJson = $this->payAndSavePaypalRegister($paymentKey, $resultJson, '');
 			} elseif ($paymentSettings['transactionMode'] == 'PA') {
 				$this->captureRegister($paymentKey, $transactionData, $resultJson);
+				return true;
 			} else {
 				$this->saveAccount($resultJson, $paymentKey);
 				return true;
@@ -209,6 +211,22 @@ class PaymentResultController extends Controller
 			return false;
 		}
 	}
+
+	private function getRegisterParameter($paymentKey)
+    {
+
+        $currency = 'EUR';
+        $paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+
+        $transactionData = $this->paymentService->getCredentials($paymentKey);
+        $transactionData['amount'] = $paymentSettings['amount'];
+        $transactionData['currency'] = $currency;
+        $transactionData['transaction_id'] = (int)$this->paymentHelper->getCustomerId();
+        $transactionData['payment_recurring'] = 'INITIAL';
+        $transactionData['test_mode'] = $this->paymentService->getTestMode($paymentKey);
+
+        return $transactionData;
+    }
 
 	public function saveAccount($resultJson, $paymentKey)
 	{
@@ -230,12 +248,12 @@ class PaymentResultController extends Controller
         $registrationId = $resultJson['registrationId'];
 
         $transactionData['payment_type'] = "CP";
-
         $paymentResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:paymentResult', $paymentResult);
 
         if ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 			$this->saveAccount($resultJson, $paymentKey);
+			return true;
 		} elseif ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
 			
 		}
