@@ -249,20 +249,13 @@ class PaymentService
 			$paymentWidgetContent = $this->gatewayService->getCheckoutResponse($parameters);	
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $paymentWidgetContent);
 
-			if (!$paymentWidgetContent['is_valid'] || strpos($paymentWidgetContent['response'], 'errorDetail') !== false) {
-				return [
-					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
-				];	
-			}
-
 			if ($this->gatewayService->getTransactionResult($paymentWidgetContent['result']['code']) == 'ACK') {
 				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentWidgetContent['id'];
 			} else {
 				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentWidgetContent['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
 				];	
 			}
 			

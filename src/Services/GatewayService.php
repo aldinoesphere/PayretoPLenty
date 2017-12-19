@@ -590,47 +590,12 @@ class GatewayService
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$responseData = curl_exec($ch);
-        $curlErrorNo = curl_errno($ch);
-		if($curlErrorNo) {
-			$curlResponse['response'] = self::getCurlErrorIdentifier($curlErrorNo);
-            $curlResponse['is_valid'] = false;
-		} else {
-            $jsonResponse = json_encode($responseData, true);
-            if (isset($jsonResponse)) {
-                $curlResponse['response'] = $jsonResponse;
-            } else {
-                $curlResponse['response'] = $responseData;
-            }
-            $curlResponse['is_valid'] = true;
-        }
+		if(curl_errno($ch)) {
+			return curl_error($ch);
+		}
 		curl_close($ch);
-		return $curlResponse;
+		return $responseData;
 	}
-
-    /**
-     * get Curl error identifier translation
-     *
-     * @param string $code
-     * @return string
-     */
-    private static function getCurlErrorIdentifier($code)
-    {
-        $errorIdentifier = array(
-            '60' => 'ERROR_MERCHANT_SSL_CERTIFICATE'
-        );
-
-        if ($code) {
-            if (array_key_exists($code, $errorIdentifier)) {
-                $errorMessages = $errorIdentifier[$code];
-            } else {
-                $errorMessages = 'ERROR_GENERAL_NORESPONSE';
-            }
-        } else {
-            $errorMessages =  'ERROR_GENERAL_GENERAL';
-        }
-
-        return $errorMessages;
-    }
 
 	/**
 	 * gateway payment confirmation
@@ -697,6 +662,8 @@ class GatewayService
 		}
 
 		$response = json_decode($response, true);
+		$this->getLogger(__METHOD__)->error('Payreto:response', $response);
+		$this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
 		return $response;
 	}
 
