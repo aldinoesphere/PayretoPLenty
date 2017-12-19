@@ -380,7 +380,8 @@ class PaymentResultController extends Controller
 	private function refundPayment($transactionData, $referenceId)
     {
         $transactionData['payment_type'] = "RF";
-        $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $resultJson = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
     }
 
 }
