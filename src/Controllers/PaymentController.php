@@ -201,7 +201,7 @@ class PaymentController extends Controller
             }
 		} else {
             $this->notification->error('Test Error');
-			return $this->response->redirectTo('confirmation');
+			return $this->response->redirectTo('checkout');
         }
 	}
 
