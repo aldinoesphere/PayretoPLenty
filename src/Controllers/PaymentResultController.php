@@ -15,7 +15,7 @@ use Plenty\Plugin\Templates\Twig;
 
 use IO\Api\ApiResource;
 use IO\Api\ApiResponse;
-use IO\Api\ResponseCode;
+use IO\Services\NotificationService;
 
 use Payreto\Services\GatewayService;
 use Payreto\Helper\PaymentHelper;
@@ -101,6 +101,12 @@ class PaymentResultController extends Controller
 
     /**
      *
+     * @var notification
+     */
+    private $notification;
+
+    /**
+     *
      * @var accountController
      */
     private $accountController;
@@ -135,7 +141,8 @@ class PaymentResultController extends Controller
                     SettingsController $settingsController,
                     BasketHelper $basketHelper,
                     ApiResponse $apiResponse,
-                    AccountController $accountController
+                    AccountController $accountController,
+                    NotificationService $notification
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -151,6 +158,7 @@ class PaymentResultController extends Controller
         $this->basketHelper = $basketHelper;
         $this->apiResponse = $apiResponse;
         $this->accountController = $accountController;
+        $this->notification = $notification;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -173,7 +181,8 @@ class PaymentResultController extends Controller
 			return false;
 		}
 
-        return $this->response->redirectTo('/my-payment-information?status=success');
+		$this->notification->success('Payment account has been saved');
+        return $this->response->redirectTo('my-payment-information');
 	}
 
 	/**
