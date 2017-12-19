@@ -204,11 +204,11 @@ class PaymentController extends Controller
         $paymentKey = $paymentMethod->paymentKey;
         $paymentType = $this->paymentService->getPaymentType($basket);
 
-        $paymentData = $this->paymentService->getCredentials($paymentMethod);
+        $paymentData = $this->paymentService->getCredentials($paymentMethod->paymentKey);
         $paymentData['amount'] = $basket->basketAmount;
         $paymentData['currency'] = $basket->currency;
         $paymentData['payment_recurring'] = 'REPEATED';
-        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
+        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod->paymentKey);
         $paymentData['paymentType'] = 'DB';
 
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
@@ -299,7 +299,7 @@ class PaymentController extends Controller
 				'amount' => $basket->basketAmount,
 				'currency' => $basket->currency,
 				'payment_type' => 'CP',
-				'test_mode' => $this->paymentService->getTestMode($paymentMethod)
+				'test_mode' => $this->paymentService->getTestMode($paymentMethod->paymentKey)
 			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
 			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
@@ -366,12 +366,12 @@ class PaymentController extends Controller
 	public function payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket)
 	{
 		$registrationId = $paymentConfirmation['id'];
-        $paymentData = $this->paymentService->getCredentials($paymentMethod);
+        $paymentData = $this->paymentService->getCredentials($paymentMethod->paymentKey);
         $paymentData['amount'] = $basket->basketAmount;
         $paymentData['currency'] = $basket->currency;
         $paymentData['transaction_id'] = $paymentConfirmation['merchantTransactionId'];
         $paymentData['payment_recurring'] = 'INITIAL';
-        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod);
+        $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod->paymentKey);
         $paymentData['paymentType'] = 'DB';
 
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);

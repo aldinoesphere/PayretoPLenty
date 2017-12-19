@@ -173,9 +173,9 @@ class PaymentService
 	 *
 	 * @return array|null
 	 */
-	public function getPaymentSettings($settingType)
+	public function getPaymentSettings($paymentKey)
 	{
-		$this->loadCurrentSettings($settingType);
+		$this->loadCurrentSettings($paymentKey);
 		return $this->settings;
 	}
 
@@ -211,7 +211,7 @@ class PaymentService
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		$parameters = array_merge(
-			$this->getCredentials($paymentMethod),
+			$this->getCredentials($paymentMethod->paymentKey),
 			$this->getTransactionParameters($basket, $paymentMethod),
 			$this->getCustomerParameters()
 		);
@@ -272,9 +272,9 @@ class PaymentService
 	 *
 	 * @return array
 	 */
-	public function getCredentials($paymentMethod) {
+	public function getCredentials($paymentKey) {
 		$payretoSettings = $this->getPayretoSettings();
-		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
+		$paymentSettings = $this->getPaymentSettings($paymentKey);
 		$credentials = [
 						'login' 		=> $payretoSettings['userId'],
 						'password' 		=> $payretoSettings['password'],
@@ -290,16 +290,16 @@ class PaymentService
 	 * @param class PaymentMethod
 	 * @return array|null
 	 */
-	public function getTestMode($paymentMethod) 
+	public function getTestMode($paymentKey) 
 	{
 
-		if ($this->getServerMode($paymentMethod) == "LIVE") {
+		if ($this->getServerMode($paymentKey) == "LIVE") {
             return false;
         }
 
         
-        $this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
-        if ( $this->getPaymentKey($paymentMethod) == 'PAYRETO_GRP') {
+        $this->getLogger(__METHOD__)->error('Payreto:paymentKey', $paymentKey);
+        if ($paymentKey == 'PAYRETO_GRP') {
             return 'INTERNAL';
         } else {
             return "EXTERNAL";
@@ -313,15 +313,10 @@ class PaymentService
 	 * @param class PaymentMethod
 	 * @return array|null
 	 */
-	public function getServerMode($paymentMethod) 
+	public function getServerMode($paymentKey) 
 	{
-		$paymentSettings = $this->getPaymentSettings($this->getPaymentKey($paymentMethod));
+		$paymentSettings = $this->getPaymentSettings($paymentKey);
 		return $paymentSettings['server'];
-	}
-
-	public function getPaymentKey($paymentMethod) 
-	{
-		return $paymentKey = !empty($paymentMethod->paymentKey) ? $paymentMethod->paymentKey : $paymentMethod;
 	}
 
 	/**
@@ -444,7 +439,7 @@ class PaymentService
 			'transaction_id' => $basket->id,
 			'amount' => $basket->basketAmount,
 			'currency' => $basket->currency,
-			'test_mode' => $this->getTestMode($paymentMethod)
+			'test_mode' => $this->getTestMode($paymentMethod->paymentKey)
 		];
 		$transactionParameters['payment_type'] = $this->getPaymentType($basket);
 
@@ -664,7 +659,7 @@ class PaymentService
 					'amount' => $payment->amount,
 					'currency' => $payment->currency,
 					'payment_type' => 'RF',
-					'test_mode' => $this->getTestMode($payment->method)
+					'test_mode' => $this->getTestMode($payment->method->paymentKey)
 				]
 			);
 
