@@ -253,7 +253,6 @@ class PaymentResultController extends Controller
 
         if ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'ACK') {
 			$this->saveAccount($resultJson, $paymentKey);
-			return true;
 		} elseif ($this->gatewayService->getTransactionResult($paymentResult['result']['code']) == 'NOK') {
 			
 		}
