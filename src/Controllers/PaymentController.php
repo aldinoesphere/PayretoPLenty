@@ -101,6 +101,12 @@ class PaymentController extends Controller
 
     /**
      *
+     * @var notification
+     */
+    private $notification;
+
+    /**
+     *
      * @var accountController
      */
     private $accountController;
@@ -135,7 +141,8 @@ class PaymentController extends Controller
                     SettingsController $settingsController,
                     BasketHelper $basketHelper,
                     ApiResponse $apiResponse,
-                    AccountController $accountController
+                    AccountController $accountController,
+                    NotificationService $notification
 	) {
 		$this->request = $request;
 		$this->response = $response;
@@ -151,6 +158,7 @@ class PaymentController extends Controller
         $this->basketHelper = $basketHelper;
         $this->apiResponse = $apiResponse;
         $this->accountController = $accountController;
+        $this->notification = $notification;
 
 		$this->payretoSettings = $paymentService->getPayretoSettings();
 	}
@@ -192,8 +200,8 @@ class PaymentController extends Controller
                 return $this->response->redirectTo('confirmation');
             }
 		} else {
-            $notification = pluginApp(NotificationService::class);
-            $notification->error('test');
+            $this->notification->error('Test Error');
+			return $this->response->redirectTo('confirmation');
         }
 	}
 
