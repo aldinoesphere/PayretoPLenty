@@ -303,7 +303,7 @@ class PaymentResultController extends Controller
         $customerId = (int)$this->paymentHelper->getCustomerId();
 
         $transactionData = $this->getDeleteParameter($paymentKey, $customerId);
-
+        $this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
         $response = $this->gatewayService->deleteRegistration($referenceId, $transactionData);
         
         $returnCode = $response['result']['code'];
