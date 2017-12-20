@@ -17,7 +17,7 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Log\Loggable;
 
-use IO\Services\NotificationService;
+// use IO\Services\NotificationService;
 
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
@@ -134,8 +134,7 @@ class PaymentService
 		OrderService $orderService,
 		OrderRepositoryContract $orderRepository,
 		SettingsController $settingsController,
-		AccountController $accountController,
-		NotificationService $notification
+		AccountController $accountController
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -149,7 +148,7 @@ class PaymentService
 		$this->orderRepository = $orderRepository;
 		$this->settingsController = $settingsController;
 		$this->accountController = $accountController;
-		$this->notification = $notification;
+		// $this->notification = $notification;
 	}
 
 	/**
@@ -681,12 +680,12 @@ class PaymentService
 
 			if ($resultRefund == 'ACK') 
 			{
-				$this->notification->success('Refunded');
+				// $this->notification->success('Refunded');
 			} elseif ($resultRefund == 'NOK') {
 				$returnMessage = $this->gatewayService->getErrorIdentifier($resultRefund);
-				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+				// $this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 			} else {
-				$this->notification->error('ERROR_UNKNOWN');
+				// $this->notification->error('ERROR_UNKNOWN');
 			}
 
 			$this->getLogger(__METHOD__)->error('Payreto:refundResult', $refundResult);
@@ -694,7 +693,7 @@ class PaymentService
 		}
 		catch (\Exception $e)
 		{
-			$this->notification->error($e->getMessage());
+			// $this->notification->error($e->getMessage());
 		}
 	}
 
