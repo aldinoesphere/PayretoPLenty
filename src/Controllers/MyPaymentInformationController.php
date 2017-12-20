@@ -182,7 +182,8 @@ class MyPaymentInformationController extends Controller
 		$data = [
 			'id' => $account->id,
 			'paymentKey' => $account->paymentGroup,
-			'deleteResponseUrl' => '',
+			'deleteResponseUrl' => '/payment/payreto/do/delete',
+			'referenceId' => $account->refId,
 			'cancelUrl' => 'my-payment-information'
 		];
 

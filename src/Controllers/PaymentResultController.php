@@ -295,4 +295,38 @@ class PaymentResultController extends Controller
         $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
     }
 
+    public function postProcess()
+    {
+        $id = $this->request->get('id');
+        $paymentKey = $this->request->get('paymentKey');
+        $customerId = (int)$this->paymentHelper->getCustomerId();
+
+        $referenceId = $this->request->get($referenceId);
+        $transactionData = $this->getDeleteParameter($paymentKey);
+
+        $response = $this->gatewayService->deleteRegistration($referenceId, $transactionData);
+        
+        $returnCode = $response['result']['code'];
+        $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
+        $this->getLogger(__METHOD__)->error('Payreto:transactionResult', $transactionResult);
+
+        if ($transactionResult == "ACK") {
+        	$this->accountController->deleteAccount($id);
+            $this->notification->error('SUCCESS_MC_DELETE');
+        } else {
+			$this->notification->error('ERROR_MC_DELETE');
+        }
+
+        return $this->response->redirectTo('my-payment-information');
+    }
+
+    private function getDeleteParameter($paymentKey, $customerId)
+    {
+        $transactionData = $this->paymentService->getCredentials($paymentKey);
+        $transactionData['transaction_id'] = $customerId;
+        $transactionData['test_mode'] = $this->paymentService->getTestMode($paymentKey);
+
+        return $transactionData;
+    }
+
 }

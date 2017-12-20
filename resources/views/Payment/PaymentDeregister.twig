@@ -27,7 +27,8 @@
 	    		<div class="col-sm-3">
 	    			<form action="{{ deleteResponseUrl }}" method="post">
 		                <input type="hidden" name="id" value="{{ id }}"/>
-		                <input type="hidden" name="selected_payment" value="{{ paymentKey }}"/>  
+		                <input type="hidden" name="paymentKey" value="{{ paymentKey }}"/> 
+		                <input type="hidden" name="referenceId" value="{{ referenceId }}"/> 
 		                <input type="submit" name="action" value="Confirm" class="btn btn-primary btn-medium">
 		            </form>
 	    		</div>

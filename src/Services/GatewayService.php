@@ -619,6 +619,21 @@ class GatewayService
 		return $responseData;
 	}
 
+    private function getGatewayDeleteAccount($confirmationUrl)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $confirmationUrl);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseData = curl_exec($ch);
+        if(curl_errno($ch)) {
+            return curl_error($ch);
+        }
+        curl_close($ch);
+        return $responseData;
+    }
+
 	/**
 	 * Get payment widget server mode
 	 *
@@ -640,6 +655,22 @@ class GatewayService
             return self::$registerUrlLive. $referenceId . '/payments';
         } else {
             return self::$registerUrlTest. $referenceId . '/payments';
+        }
+    }
+
+    /**
+     * Get deregister payment URL
+     *
+     * @param string $serverMode server mode
+     * @param string $referenceId
+     * @return string
+     */
+    private static function getDeRegisterUrl($serverMode, $referenceId)
+    {
+        if ($serverMode=="LIVE") {
+            return self::$registerUrlLive. $referenceId;
+        } else {
+            return self::$registerUrlTest. $referenceId;
         }
     }
 
@@ -666,6 +697,17 @@ class GatewayService
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
 		return $response;
 	}
+
+    public function deleteRegistration($referenceId, $transactionData)
+    {
+
+        $deRegisterUrl = self::getDeRegisterUrl($transactionData['server_mode'], $referenceId);
+        $deRegisterUrl .= '?'.http_build_query(self::getCredentialParameter($transactionData));
+
+        $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
+
+        return $resultJson;
+    }
 
 	/**
 	 * Get Sid from gateway to use at payment page url
