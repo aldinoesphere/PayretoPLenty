@@ -423,7 +423,7 @@ class PaymentService
 			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
 			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
 			$chartParameters['cartItems'][$key]['type'] = 'basic';
-			$chartParameters['cartItems'][$key]['price'] = $item->price;
+			$chartParameters['cartItems'][$key]['price'] = (float)$item->price;
 			$chartParameters['cartItems'][$key]['currency'] = $basket->currency;
 			$chartParameters['cartItems'][$key]['quantity'] = $item->quantity;
 			$chartParameters['cartItems'][$key]['merchantItemId'] = $item->itemId;	
