@@ -301,8 +301,8 @@ class PaymentResultController extends Controller
         $paymentKey = $this->request->get('paymentKey');
         $referenceId = $this->request->get('referenceId');
         $customerId = (int)$this->paymentHelper->getCustomerId();
-        
-        $transactionData = $this->getDeleteParameter($paymentKey);
+
+        $transactionData = $this->getDeleteParameter($paymentKey, $customerId);
 
         $response = $this->gatewayService->deleteRegistration($referenceId, $transactionData);
         
