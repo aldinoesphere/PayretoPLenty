@@ -15,6 +15,7 @@ use Plenty\Plugin\Templates\Twig;
 
 use IO\Api\ApiResponse;
 use IO\Api\ResponseCode;
+use IO\Services\NotificationService;
 
 use Payreto\Helper\PaymentHelper;
 use Payreto\Controllers\AccountController;
@@ -73,7 +74,8 @@ class MyPaymentInformationController extends Controller
 		AccountController $accountController,
 		PaymentService $paymentService,
 		GatewayService $gatewayService,
-		SettingsController $settingsController
+		SettingsController $settingsController,
+		NotificationService $notification
 	) {
 		$this->response = $response;
 		$this->request = $request;
@@ -82,6 +84,7 @@ class MyPaymentInformationController extends Controller
 		$this->accountController = $accountController;
 		$this->paymentService = $paymentService;
 		$this->settingsController = $settingsController;
+		$this->notification = $notification;
 	}
 	
 	public function show(Twig $twig)
@@ -159,7 +162,8 @@ class MyPaymentInformationController extends Controller
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);
 		} elseif ($resultWidget == 'NOK') {
-
+			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
+			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		}
 	}
 
