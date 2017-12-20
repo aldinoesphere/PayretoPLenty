@@ -627,7 +627,9 @@ class GatewayService
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $responseData = curl_exec($ch);
+        $this->getLogger(__METHOD__)->error('Payreto:responseData', $responseData);
         if(curl_errno($ch)) {
+            $this->getLogger(__METHOD__)->error('Payreto:curl_errno', curl_errno($ch));
             return curl_error($ch);
         }
         curl_close($ch);
