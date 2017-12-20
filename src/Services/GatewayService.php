@@ -988,29 +988,6 @@ class GatewayService
         return http_build_query($parameters);
 	}
 
-	/**
-	 * send request and get refund status from gateway
-	 *
-	 * @param $parameters
-	 * @throws \Exception
-	 * @return xml
-	 */
-	public function doRefund($transactionId, $transactionData)
-	{
-		$checkoutUrl = $this->oppwaPaymentUrlTest . '/' . $transactionId;
-		$checkoutParameters = $this->getCheckoutParameters($transactionData);
-
-		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
-
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
-
-		$responseId = json_decode($response, true);
-		return $responseId;
-	}
-
     /**
      * get error identifier based of code
      *

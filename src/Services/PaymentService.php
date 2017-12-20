@@ -17,6 +17,8 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Log\Loggable;
 
+use IO\Services\NotificationService;
+
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Helper\BasketHelper;
@@ -66,6 +68,12 @@ class PaymentService
 	 * @var systemService
 	 */
 	private $systemService;
+
+	/**
+     *
+     * @var notification
+     */
+    private $notification;
 
 	/**
 	 *
@@ -126,7 +134,8 @@ class PaymentService
 		OrderService $orderService,
 		OrderRepositoryContract $orderRepository,
 		SettingsController $settingsController,
-		AccountController $accountController
+		AccountController $accountController,
+		NotificationService $notification
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -140,6 +149,7 @@ class PaymentService
 		$this->orderRepository = $orderRepository;
 		$this->settingsController = $settingsController;
 		$this->accountController = $accountController;
+		$this->notification = $notification;
 	}
 
 	/**
@@ -665,25 +675,27 @@ class PaymentService
 
 			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
 
-			$response = $this->gatewayService->doRefund($transactionId, $transactionData);
+			$refundResult = $this->gatewayService->backOfficePayment($transactionId, $transactionData);
 
-			$this->getLogger(__METHOD__)->error('Payreto:response', $response);
+			$resultRefund = $this->gatewayService->getTransactionResult($refundResult);
+
+			if ($resultRefund == 'ACK') 
+			{
+				$this->notification->success('Refunded');
+			} elseif ($resultRefund == 'NOK') {
+				$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
+				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+			} else {
+				$this->notification->error('ERROR_UNKNOWN');
+			}
+
+			$this->getLogger(__METHOD__)->error('Payreto:refundResult', $refundResult);
 
 		}
 		catch (\Exception $e)
 		{
-			$this->getLogger(__METHOD__)->error('Payreto:refundFailed', $e);
-
-			return [
-				'error' => true,
-				'errorMessage' => $e->getMessage()
-			];
+			$this->notification->error($e->getMessage());
 		}
-
-		return [
-			'success' => true,
-			'response' => $response
-		];
 	}
 
 	

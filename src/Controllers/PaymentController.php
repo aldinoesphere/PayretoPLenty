@@ -356,7 +356,7 @@ class PaymentController extends Controller
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
 		} elseif ($this->gatewayService->getTransactionResult($paymentResult) == 'NOK') {
-			$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResult);
+			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		} else {
 			return false;
