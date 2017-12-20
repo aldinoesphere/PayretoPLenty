@@ -710,6 +710,8 @@ class GatewayService
 
         $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
 
+        $resultJson = json_decode($resultJson, true);
+
         return $resultJson;
     }
 
