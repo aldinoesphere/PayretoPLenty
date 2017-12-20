@@ -57,6 +57,12 @@ class MyPaymentInformationController extends Controller
 	private $paymentService;
 
 	/**
+     *
+     * @var notification
+     */
+    private $notification;
+
+	/**
 	 * @var settingsController
 	 */
 	private $settingsController;
