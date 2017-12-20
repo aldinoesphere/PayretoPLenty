@@ -704,6 +704,8 @@ class GatewayService
         $deRegisterUrl = self::getDeRegisterUrl($transactionData['server_mode'], $referenceId);
         $deRegisterUrl .= '?'.http_build_query(self::getCredentialParameter($transactionData));
 
+        $this->getLogger(__METHOD__)->error('Payreto:deRegisterUrl', $deRegisterUrl);
+
         $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
 
         return $resultJson;
