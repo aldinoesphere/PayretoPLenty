@@ -96,7 +96,7 @@ class MyPaymentInformationController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
 
-		if ($customerId) {
+		if (!$customerId) {
 			return $this->response->redirectTo('login');
 		}
 
