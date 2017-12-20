@@ -51,6 +51,15 @@ class AccountService extends DatabaseBaseService
         return $account;
     }
 
+    public function loadAccountById($id)
+    {
+        $database = pluginApp(DataBase::class);
+        $account = $database->query(Account::class)
+                    ->where('id', '=', $id)
+                    ->get();
+        return $account;
+    }
+
     /**
      * load the settings
      *
@@ -102,9 +111,7 @@ class AccountService extends DatabaseBaseService
     {
         $database = pluginApp(DataBase::class);
 
-        $query = $database->query(Account::class)
-            ->where('id', '=', $id)
-            ->get();
+        $query = $this->loadAccountById($id);
 
         $account = $query[0];
         $delete = $database->delete($account);

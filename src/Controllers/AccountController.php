@@ -88,6 +88,17 @@ class AccountController extends Controller
 	}
 
 	/**
+	 * load the settings
+	 *
+	 * @param string $settingType
+	 * @return array
+	 */
+	public function loadAccountById($id)
+	{
+		return $this->accountService->loadAccountById($id);
+	}
+
+	/**
 	 * Load the settings for one webshop
 	 *
 	 * @param string $plentyId

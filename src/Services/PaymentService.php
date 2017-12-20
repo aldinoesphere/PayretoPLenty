@@ -232,7 +232,7 @@ class PaymentService
 			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 
-			if ((float)$basket->basketAmount < 200 ) {
+			if ((float)$basket->basketAmount < 200 || (float)$basket->basketAmount > 3000) {
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
 					'content' => 'The financing amount is outside the permitted amounts (200 - 3,000 EUR)'
@@ -245,7 +245,7 @@ class PaymentService
 				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
 				];
 			}
 			

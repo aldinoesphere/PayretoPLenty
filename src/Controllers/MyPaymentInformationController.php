@@ -174,4 +174,18 @@ class MyPaymentInformationController extends Controller
 		}
 	}
 
+	public function deleteAccountConfirmation(Twig $twig, $id)
+	{
+		$account = $this->accountController->loadAccountById($id);
+
+		$data = [
+			'id' => $account['id'],
+			'paymentKey' => $account['paymentGroup'],
+			'deleteResponseUrl' => '',
+			'cancelUrl' => 'my-payment-information'
+		];
+
+		return $twig->render('Payreto::Payment.PaymentDeregister', $data);
+	}
+
 }
