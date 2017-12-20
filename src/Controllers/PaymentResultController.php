@@ -299,9 +299,9 @@ class PaymentResultController extends Controller
     {
         $id = $this->request->get('id');
         $paymentKey = $this->request->get('paymentKey');
+        $referenceId = $this->request->get('referenceId');
         $customerId = (int)$this->paymentHelper->getCustomerId();
-
-        $referenceId = $this->request->get($referenceId);
+        
         $transactionData = $this->getDeleteParameter($paymentKey);
 
         $response = $this->gatewayService->deleteRegistration($referenceId, $transactionData);
