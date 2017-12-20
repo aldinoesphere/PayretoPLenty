@@ -241,9 +241,10 @@ class PaymentController extends Controller
             return $debitResponse;
         } else {
             if ($transactionResult == 'NOK') {
-                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
+                $returnMessage = $this->gatewayService->getErrorIdentifier($transactionResult);
+				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
             } else {
-                $returnMessage = 'ERROR_UNKNOWN';
+				$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
             }
         }
         return false;
@@ -359,7 +360,7 @@ class PaymentController extends Controller
 			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		} else {
-			return false;
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
 		}
 	}
 
@@ -398,9 +399,10 @@ class PaymentController extends Controller
             return $debitResponse;
         } else {
             if ($transactionResult == 'NOK') {
-                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
+                $returnMessage = $this->gatewayService->getErrorIdentifier($transactionResult);
+				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
             } else {
-                $returnMessage = 'ERROR_UNKNOWN';
+				$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
             }
         }
         return false;
@@ -412,16 +414,11 @@ class PaymentController extends Controller
         $basket = $basketHelper->getBasket();
 		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$checkoutId = $this->request->get('id');
-        $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId); 
-		$paymentSettings = $this->paymentService->getPaymentSettings($paymentMethod->paymentKey);
+        $this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
-		$parameters = [
-			'authentication.userId' => $this->payretoSettings['userId'],
-			'authentication.password' => $this->payretoSettings['password'],
-			'authentication.entityId' => $paymentSettings['entityId']
-		];
+		$paymentData = $this->paymentService->getCredentials($paymentMethod->paymentKey);
 
-		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $parameters);
+		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $paymentData);
         $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
         
         $paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
