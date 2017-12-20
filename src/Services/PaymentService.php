@@ -683,7 +683,7 @@ class PaymentService
 			{
 				$this->notification->success('Refunded');
 			} elseif ($resultRefund == 'NOK') {
-				$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
+				$returnMessage = $this->gatewayService->getErrorIdentifier($resultRefund);
 				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 			} else {
 				$this->notification->error('ERROR_UNKNOWN');
