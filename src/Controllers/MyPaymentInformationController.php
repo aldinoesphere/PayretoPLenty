@@ -123,20 +123,21 @@ class MyPaymentInformationController extends Controller
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$checkoutResponse = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+		$widgetResult = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+		$resultWidget = $this->gatewayService->getTransactionResult($widgetResult['result']['code']);
 
-		if ($this->gatewayService->getTransactionResult($checkoutResponse['result']['code']) == 'ACK') 
+		if ($resultWidget == 'ACK') 
 		{
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $checkoutResponse['id'] .'/' . $paymentKey;
-			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $checkoutResponse['id']);
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $widgetResult['id'] .'/' . $paymentKey;
+			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $widgetResult['id']);
 
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $checkoutResponse);
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $widgetResult);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
 
 			$data = [
 				'paymentBrand' => $paymentBrand,
-				'checkoutId' => $checkoutResponse['id'],
+				'checkoutId' => $widgetResult['id'],
 				'paymentPageUrl' => $paymentPageUrl,
 	            'cancelUrl' => '/my-payment-information',
 	            'paymentWidgetUrl' => $paymentWidgetUrl,
@@ -153,8 +154,11 @@ class MyPaymentInformationController extends Controller
 					break;
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);
+		} elseif ($resultWidget == 'NOK') {
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+			return $this->response->redirectTo('my-payment-information');
 		} else {
-			$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResponse['result']['code']);
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
 		}
 	}
 
