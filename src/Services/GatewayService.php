@@ -629,7 +629,6 @@ class GatewayService
         $responseData = curl_exec($ch);
         $this->getLogger(__METHOD__)->error('Payreto:responseData', $responseData);
         if(curl_errno($ch)) {
-            $this->getLogger(__METHOD__)->error('Payreto:curl_errno', curl_errno($ch));
             return curl_error($ch);
         }
         curl_close($ch);
@@ -709,7 +708,7 @@ class GatewayService
         $this->getLogger(__METHOD__)->error('Payreto:deRegisterUrl', $deRegisterUrl);
 
         $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
-
+        $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
         $resultJson = json_decode($resultJson, true);
 
         return $resultJson;
