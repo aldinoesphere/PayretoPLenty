@@ -312,9 +312,9 @@ class PaymentResultController extends Controller
 
         if ($transactionResult == "ACK") {
         	$this->accountController->deleteAccount($id);
-            $this->notification->error('SUCCESS_MC_DELETE');
+            $this->notification->success($this->gatewayService->getErrorMessage('SUCCESS_MC_DELETE'));
         } else {
-			$this->notification->error('ERROR_MC_DELETE');
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_MC_DELETE'));
         }
 
         return $this->response->redirectTo('my-payment-information');
