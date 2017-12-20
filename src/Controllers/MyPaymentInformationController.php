@@ -162,7 +162,7 @@ class MyPaymentInformationController extends Controller
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);
 		} elseif ($resultWidget == 'NOK') {
-			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
+			$returnMessage = $this->gatewayService->getErrorIdentifier($widgetResult);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		}
 	}
