@@ -177,6 +177,7 @@ class MyPaymentInformationController extends Controller
 	public function deleteAccountConfirmation(Twig $twig, $id)
 	{
 		$account = $this->accountController->loadAccountById($id);
+		$this->getLogger(__METHOD__)->error('Payreto:account', $account);
 
 		$data = [
 			'id' => $account['id'],
