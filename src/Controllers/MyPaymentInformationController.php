@@ -170,6 +170,7 @@ class MyPaymentInformationController extends Controller
 		} elseif ($resultWidget == 'NOK') {
 			$returnMessage = $this->gatewayService->getErrorIdentifier($widgetResult);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+			return $this->response->redirectTo('my-payment-information');
 		}
 	}
 
