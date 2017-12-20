@@ -109,7 +109,7 @@ class MyPaymentInformationController extends Controller
 			return $this->response->redirectTo('login');
 		}
 
-		// return $twig->render('Payreto::Information.MyPaymentInformation', $accountArray);
+		return $twig->render('Payreto::Information.MyPaymentInformation', $accountArray);
 		
 	}
 
@@ -168,10 +168,10 @@ class MyPaymentInformationController extends Controller
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);
 		} elseif ($resultWidget == 'NOK') {
-			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
-			return $this->response->redirectTo('my-payment-information');
+			// $this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+			// return $this->response->redirectTo('my-payment-information');
 		} else {
-			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
+			// $this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
 		}
 	}
 
