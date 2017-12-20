@@ -325,6 +325,7 @@ class PaymentResultController extends Controller
         $transactionData = $this->paymentService->getCredentials($paymentKey);
         $transactionData['transaction_id'] = $customerId;
         $transactionData['test_mode'] = $this->paymentService->getTestMode($paymentKey);
+        $transactionData['server_mode'] = 'TEST';
 
         return $transactionData;
     }
