@@ -178,6 +178,8 @@ class MyPaymentInformationController extends Controller
 	{
 		$account = $this->accountController->loadAccountById($id)[0];
 		$this->getLogger(__METHOD__)->error('Payreto:account', $account);
+		$this->getLogger(__METHOD__)->error('Payreto:id', $account['id']);
+		$this->getLogger(__METHOD__)->error('Payreto:paymentGroup', $account['paymentGroup']);
 
 		$data = [
 			'id' => $account['id'],
