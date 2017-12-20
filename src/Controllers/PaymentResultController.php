@@ -309,7 +309,7 @@ class PaymentResultController extends Controller
         $returnCode = $response['result']['code'];
         $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
         $this->getLogger(__METHOD__)->error('Payreto:transactionResult', $transactionResult);
-
+        $this->accountController->deleteAccount($id);
         if ($transactionResult == "ACK") {
         	$this->accountController->deleteAccount($id);
             $this->notification->success($this->gatewayService->getErrorMessage('SUCCESS_MC_DELETE'));

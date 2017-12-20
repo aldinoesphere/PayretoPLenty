@@ -708,7 +708,6 @@ class GatewayService
         $this->getLogger(__METHOD__)->error('Payreto:deRegisterUrl', $deRegisterUrl);
 
         $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
-        $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
         $resultJson = json_decode($resultJson, true);
 
         return $resultJson;
