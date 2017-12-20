@@ -17,8 +17,6 @@ use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Frontend\Services\SystemService;
 use Plenty\Plugin\Log\Loggable;
 
-// use IO\Services\NotificationService;
-
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Helper\BasketHelper;
@@ -148,7 +146,6 @@ class PaymentService
 		$this->orderRepository = $orderRepository;
 		$this->settingsController = $settingsController;
 		$this->accountController = $accountController;
-		// $this->notification = $notification;
 	}
 
 	/**

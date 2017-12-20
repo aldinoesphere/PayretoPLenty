@@ -96,6 +96,10 @@ class MyPaymentInformationController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
 
+		if ($customerId) {
+			return $this->response->redirectTo('login');
+		}
+
 		return $twig->render('Payreto::Information.MyPaymentInformation', $accountArray);
 		
 	}
@@ -155,7 +159,7 @@ class MyPaymentInformationController extends Controller
 			}
 			return $twig->render('Payreto::Payment.' . $template, $data);
 		} elseif ($resultWidget == 'NOK') {
-			
+
 		}
 	}
 
