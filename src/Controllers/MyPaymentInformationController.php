@@ -152,6 +152,7 @@ class MyPaymentInformationController extends Controller
 				'paymentBrand' => $paymentBrand,
 				'checkoutId' => $widgetResult['id'],
 				'paymentPageUrl' => $paymentPageUrl,
+				'redirect' => $isRedirect,
 	            'cancelUrl' => '/my-payment-information',
 	            'paymentWidgetUrl' => $paymentWidgetUrl,
 	            'frameTestMode' => $paymentSettings['server']

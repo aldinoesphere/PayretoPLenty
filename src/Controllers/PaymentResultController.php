@@ -166,7 +166,7 @@ class PaymentResultController extends Controller
 	/**
 	 * handle return_url from payment gateway
 	 */
-	public function handleReturnRegister($checkoutId = 0, $paymentKey = '')
+	public function handleReturnRegister($checkoutId = 0, $paymentKey = '', $referenceId = 0)
 	{
 		$transactionData = $this->paymentService->getCredentials($paymentKey);
 		$resultJson = $this->gatewayService->paymentConfirmation($checkoutId, $transactionData);
