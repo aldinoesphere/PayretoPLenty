@@ -397,7 +397,7 @@ class PaymentService
 								'sex' => $customer->gender,
 								'phone' => $customer->privatePhone,
 								'last_name' => $customer->lastName,
-								'birthdate' => $customer->birthdayAt,
+								'birthdate' => date('Y-m-d', strtotime($customer->birthdayAt)),
 								'first_name' => $customer->firstName
 							],
 			'shipping' => 
