@@ -199,7 +199,7 @@ class BasketHelper
 	{
 		$customerService = pluginApp(CustomerService::class);
 
-		return $customerService->getContactClassData($customerService->getContactId());
+		return $customerService->getContact();
 	}
 
 }
