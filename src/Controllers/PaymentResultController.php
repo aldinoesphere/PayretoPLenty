@@ -209,7 +209,7 @@ class PaymentResultController extends Controller
 			$captureResult = $this->captureRegister($recurringId, $paymentKey, $transactionData, $resultJson);
 			$referenceId = $captureResult['id'];
 		} else {
-			$this->saveAccount($resultJson, $paymentKey);
+			$this->saveAccount($recurringId, $resultJson, $paymentKey);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
