@@ -104,15 +104,16 @@ class MyPaymentInformationController extends Controller
 			'visa' =>	$app->getUrlPath('payreto').'/images/logos/visa.png',
 			'master' =>	$app->getUrlPath('payreto').'/images/logos/master.png',
 			'amex' =>	$app->getUrlPath('payreto').'/images/logos/amex.png',
-			'directDebit' =>	$app->getUrlPath('payreto').'/images/logos/dds.png',
+			'directDebit' =>	$app->getUrlPath('payreto').'/images/logos/sepa.png',
 			'paypal' =>	$app->getUrlPath('payreto').'/images/logos/paypal.png'
 			];
 
 		foreach ($accounts as $account) {
-			$accountArray[$account->paymentGroup][] = array_push($account, $icon);
+			$accountArray[$account->paymentGroup][] = $account;
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
+		$this->getLogger(__METHOD__)->error('Payreto:icon', $icon);
 
 		if (!$customerId) {
 			return $this->response->redirectTo('login');
