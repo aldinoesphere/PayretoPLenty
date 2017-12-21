@@ -119,4 +119,33 @@ class AccountService extends DatabaseBaseService
         return $delete;
     }
 
+    public function updateAccount($refId, $accounts)
+    {
+        /**
+         * @var DataBase $database
+         */
+        $database = pluginApp(DataBase::class);
+
+        $resultAccount = $this->loadAccountByRefId($refId);
+        $accountModel = $resultAccount[0];
+        $accountModel->customerId = $accounts['customerId'];
+        $accountModel->paymentGroup = $accounts['paymentGroup'];
+        $accountModel->brand = $accounts['brand'];
+        $accountModel->email = $accounts['email'];
+        $accountModel->holder = $accounts['holder'];
+        $accountModel->last4digits = $accounts['last4digits'];
+        $accountModel->expMonth = $accounts['expMonth'];
+        $accountModel->expYear = $accounts['expYear'];
+        $accountModel->serverMode = $accounts['serverMode'];
+        $accountModel->channelId = $accounts['channelId'];
+        $accountModel->refId = $accounts['refId'];
+        $accountModel->paymentDefault = $accounts['paymentDefault'];
+        $accountModel->updatedAt = date('Y-m-d H:i:s');
+        $this->getLogger(__METHOD__)->error('Payreto:accountModel', $accountModel);
+        $this->getLogger(__METHOD__)->error('Payreto:accounts', $accounts);
+            
+        $database->save($accountModel);
+        return 1;
+    }
+
 }

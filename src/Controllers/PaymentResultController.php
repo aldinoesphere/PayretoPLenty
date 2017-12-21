@@ -166,14 +166,14 @@ class PaymentResultController extends Controller
 	/**
 	 * handle return_url from payment gateway
 	 */
-	public function handleReturnRegister($checkoutId = 0, $paymentKey = '', $referenceId = 0)
+	public function handleReturnRegister($checkoutId = 0, $paymentKey = '', $recurringId = 0)
 	{
 		$transactionData = $this->paymentService->getCredentials($paymentKey);
 		$resultJson = $this->gatewayService->paymentConfirmation($checkoutId, $transactionData);
 
 		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
 		{
-			$validation = $this->validationRegister($paymentKey, $resultJson);
+			$validation = $this->validationRegister($recurringId, $paymentKey, $resultJson);
 
 		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
 			return false;
@@ -188,7 +188,7 @@ class PaymentResultController extends Controller
 	/**
 	 * handle validation payment
 	 */
-	public function validationRegister($paymentKey, $resultJson)
+	public function validationRegister($recurringId, $paymentKey, $resultJson)
 	{
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
@@ -196,6 +196,10 @@ class PaymentResultController extends Controller
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
 		$transactionData = $this->getRegisterParameter($paymentKey);
+		if ($recurringId) {
+            $transactionData['transaction_id'] = $resultJson['merchantTransactionId'];
+            $transactionData['server_mode'] = 'TEST';
+        }
 
 		if ($paymentKey == 'PAYRETO_PPM_RC') 
 		{
@@ -212,6 +216,9 @@ class PaymentResultController extends Controller
 
 		$this->refundPayment($referenceId, $transactionData);
 
+		if ($recurringId) {
+			$this->gatewayService->deleteRegistration($recurringId, $transactionData);
+		}
 
 	}
 
@@ -231,7 +238,7 @@ class PaymentResultController extends Controller
         return $transactionData;
     }
 
-	public function saveAccount($resultJson, $paymentKey)
+	public function saveAccount($recurringId, $resultJson, $paymentKey)
 	{
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
@@ -242,7 +249,11 @@ class PaymentResultController extends Controller
 			]
 		);
 		$accountData = $this->paymentHelper->setAccountData($resultJson);
-		$this->accountController->saveAccount($accountData);
+		if ($recurringId) {
+			$this->accountController->updateAccount($recurringId, $accountData);
+		} else {
+			$this->accountController->saveAccount($accountData);	
+		}
 	}
 
 	public function captureRegister($paymentKey, $transactionData, $resultJson)

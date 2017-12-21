@@ -141,4 +141,9 @@ class AccountController extends Controller
 
 		return $status;
 	}
+
+	public function updateAccount($refId, $accountData)
+	{
+		return $this->accountService->updateAccount($refId, $accountData);
+	}
 }
