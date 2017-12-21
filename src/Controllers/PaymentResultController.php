@@ -203,10 +203,10 @@ class PaymentResultController extends Controller
 
 		if ($paymentKey == 'PAYRETO_PPM_RC') 
 		{
-			$paypalResult = $this->doPaypalRegister($paymentKey, $transactionData, $resultJson);
+			$paypalResult = $this->doPaypalRegister($recurringId, $paymentKey, $transactionData, $resultJson);
 			$referenceId = $paypalResult['id'];
 		} elseif ($paymentSettings['transactionMode'] == 'PA') {
-			$captureResult = $this->captureRegister($paymentKey, $transactionData, $resultJson);
+			$captureResult = $this->captureRegister($recurringId, $paymentKey, $transactionData, $resultJson);
 			$referenceId = $captureResult['id'];
 		} else {
 			$this->saveAccount($resultJson, $paymentKey);
@@ -256,7 +256,7 @@ class PaymentResultController extends Controller
 		}
 	}
 
-	public function captureRegister($paymentKey, $transactionData, $resultJson)
+	public function captureRegister($recurringId, $paymentKey, $transactionData, $resultJson)
 	{
 		$referenceId = $resultJson['id'];
         $registrationId = $resultJson['registrationId'];
@@ -266,14 +266,14 @@ class PaymentResultController extends Controller
         $this->getLogger(__METHOD__)->error('Payreto:captureResult', $captureResult);
 
         if ($this->gatewayService->getTransactionResult($captureResult['result']['code']) == 'ACK') {
-			$this->saveAccount($resultJson, $paymentKey);
+			$this->saveAccount($recurringId, $resultJson, $paymentKey);
 		} elseif ($this->gatewayService->getTransactionResult($captureResult['result']['code']) == 'NOK') {
 			
 		}
 		return $captureResult;
 	}
 
-	public function doPaypalRegister($paymentKey, $transactionData, $resultJson)
+	public function doPaypalRegister($recurringId, $paymentKey, $transactionData, $resultJson)
 	{
 		$registrationId = $resultJson['id'];
 
@@ -287,7 +287,7 @@ class PaymentResultController extends Controller
         $this->getLogger(__METHOD__)->error('Payreto:resultPaypal', $resultPaypal);
 
         if ($resultPaypal == 'ACK') {
-            $this->saveAccount($resultJson, $paymentKey);
+            $this->saveAccount($recurringId, $resultJson, $paymentKey);
         } else {
             if ($resultPaypal == 'NOK') {
                 $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
