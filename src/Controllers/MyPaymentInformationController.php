@@ -141,7 +141,7 @@ class MyPaymentInformationController extends Controller
 
 		if ($resultWidget == 'ACK') 
 		{
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $widgetResult['id'] .'/' . $paymentKey;
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $widgetResult['id'] .'/' . $paymentKey . '/0/';
 			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $widgetResult['id']);
 
 			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $widgetResult);
