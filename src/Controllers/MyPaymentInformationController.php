@@ -10,6 +10,7 @@ use Plenty\Modules\Basket\Contracts\BasketItemRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
 use Plenty\Modules\Frontend\Session\Storage\Contracts\FrontendSessionStorageFactoryContract;
+use Plenty\Plugin\Application;
 use Plenty\Plugin\Log\Loggable;
 use Plenty\Plugin\Templates\Twig;
 
@@ -98,9 +99,17 @@ class MyPaymentInformationController extends Controller
 		$customerId = $this->paymentHelper->getCustomerId();
 		$accounts = $this->accountController->loadAccounts($customerId);
 		$accountArray = [];
+		$app = pluginApp(Application::class);
+		$icon = [
+			'visa' =>	$app->getUrlPath('payreto').'/images/logos/visa.png',
+			'master' =>	$app->getUrlPath('payreto').'/images/logos/master.png',
+			'amex' =>	$app->getUrlPath('payreto').'/images/logos/amex.png',
+			'directDebit' =>	$app->getUrlPath('payreto').'/images/logos/dds.png',
+			'paypal' =>	$app->getUrlPath('payreto').'/images/logos/paypal.png'
+			];
 
 		foreach ($accounts as $account) {
-			$accountArray[$account->paymentGroup][] = $account;
+			$accountArray[$account->paymentGroup][] = array_merge($account, $icon);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
