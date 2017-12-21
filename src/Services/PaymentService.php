@@ -387,18 +387,18 @@ class PaymentService
 	{
 		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
 		$billings = pluginApp(basketHelper::class)->getBillingAddress();
-		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$customer = pluginApp(basketHelper::class)->getCustomer(); 
 		$this->getLogger(__METHOD__)->error('Payreto:customer', $customer);
-		
+
 		$customerParameters = [
 			'customer' => 
 							[
-								'email' => 'aldino.said@esphere.id',
-								'sex' => 'F',
-								'phone' => '+491701234567',
-								'last_name' => 'Jones',
-								'birthdate' => '1980-01-01',
-								'first_name' => 'Jane'
+								'email' => $customer->email,
+								'sex' => $customer->gender,
+								'phone' => $customer->privatePhone,
+								'last_name' => $customer->lastName,
+								'birthdate' => $customer->birthdayAt,
+								'first_name' => $customer->firstName
 							],
 			'shipping' => 
 							[
