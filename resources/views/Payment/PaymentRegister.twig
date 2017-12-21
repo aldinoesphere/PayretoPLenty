@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block PageBody %}
-	{% if redirect == '' %}
+	{% if redirect %}
 	    <style>
 			body {
 				display:none;
@@ -28,16 +28,24 @@
 		<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}">{{ paymentBrand }}</form> 
 	{% else %}
 		<div class="page-content checkout container-max">
-	    	<div>
+	    	<div class="row m-b-3">
+	    		<div class="col-sm-9">
+	    			<h1 class="h2">My Payment Information</h1>
+	            </div> 
+	        	<div class="col-xs-12"><hr></div>
+	        </div>
+	        <div>
 	    		<link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
 	    		<script type="text/javascript"> 
 				    var wpwlOptions = {
 						style: "card",
 				        onReady: function(){
 							var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>Cancel</a>";
+							var ttRegistration = "<div class='register-tooltip'>A small amount (<1 €) will be charged and instantly refunded to verify your account/card details.</div>";
 							var ttTestMode = "<div class='testmode'>THIS IS A TEST. NO REAL MONEY WILL BE TRANSFERED</div>";
 							var headerWidget = "<h2 style='text-align: center'>Use alternative payment data</h2>";
 				            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+				            jQuery('.wpwl-container').after(ttRegistration);
 				            {% if frameTestMode == 'TEST' %}
 					            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
 				            {% endif %}
