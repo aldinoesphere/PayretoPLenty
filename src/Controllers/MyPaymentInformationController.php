@@ -158,16 +158,6 @@ class MyPaymentInformationController extends Controller
 	            'frameTestMode' => $paymentSettings['server']
 			];
 			$this->getLogger(__METHOD__)->error('Payreto:data', $data);
-			switch ($isRedirect) {
-				case true:
-					$template = 'PaymentRedirect';
-					break;
-				
-				default:
-					$template = 'PaymentWidget';
-					break;
-			}
-			// return $twig->render('Payreto::Payment.' . $template, $data);
 			return $twig->render('Payreto::Payment.PaymentRegister', $data);
 		} elseif ($resultWidget == 'NOK') {
 			$returnMessage = $this->gatewayService->getErrorIdentifier($widgetResult);
@@ -190,6 +180,61 @@ class MyPaymentInformationController extends Controller
 		];
 
 		return $twig->render('Payreto::Payment.PaymentDeregister', $data);
+	}
+
+	public function changeAccount(Twig $twig, $paymentMethod, $id)
+	{
+		switch ($paymentMethod) {
+			case 'credit-card':
+				$paymentKey = 'PAYRETO_ACC_RC';
+				break;
+
+			case 'direct-debit':
+				$paymentKey = 'PAYRETO_DDS_RC';
+				break;
+
+			case 'paypal':
+				$paymentKey = 'PAYRETO_PPM_RC';
+				break;
+		}
+
+		$account = $this->accountController->loadAccountById($id)[0];
+
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentKey);
+		$paymentBrand = $paymentSettings['cardType'] ? str_replace(',', ' ', $paymentSettings['cardType']) : $optionSetting['paymentBrand'];
+		$isRedirect = $this->paymentService->isRedirectPayment($paymentKey);
+
+		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
+
+		$widgetResult = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+		$resultWidget = $this->gatewayService->getTransactionResult($widgetResult['result']['code']);
+
+		if ($resultWidget == 'ACK') 
+		{
+			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $widgetResult['id'] .'/' . $paymentKey . '/' . $account->refId . '/';
+			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $widgetResult['id']);
+
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $widgetResult);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
+
+			$data = [
+				'paymentBrand' => $paymentBrand,
+				'checkoutId' => $widgetResult['id'],
+				'paymentPageUrl' => $paymentPageUrl,
+				'redirect' => $isRedirect,
+	            'cancelUrl' => '/my-payment-information',
+	            'paymentWidgetUrl' => $paymentWidgetUrl,
+	            'frameTestMode' => $paymentSettings['server']
+			];
+			$this->getLogger(__METHOD__)->error('Payreto:data', $data);
+			return $twig->render('Payreto::Payment.PaymentRegister', $data);
+		} elseif ($resultWidget == 'NOK') {
+			$returnMessage = $this->gatewayService->getErrorIdentifier($widgetResult);
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+			return $this->response->redirectTo('my-payment-information');
+		}
 	}
 
 }
