@@ -18,9 +18,19 @@
 						var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>Cancel</a>";
 						var ttTestMode = "<div class='testmode'>THIS IS A TEST. NO REAL MONEY WILL BE TRANSFERED</div>";
 						var headerWidget = "<h2 style='text-align: center'>Use alternative payment data</h2>";
-			            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+						var btnPayNow = "<button type='submit' name='pay' class='wpwl-button wpwl-button-pay'>Pay Now</button>";
+			            jQuery('form.wpwl-form').find('.wpwl-button').after(buttonCancel);
+			            jQuery('form.wpwl-form').css("display","block");
+			            var clearFloat = "<div style='clear:both'></div>";
+			            jQuery('form.wpwl-form-virtualAccount-PAYPAL').find('.wpwl-button-brand').wrap( "<div class='payment-brand'></div>");
+			            jQuery('form.wpwl-form-virtualAccount-PAYPAL').find('.btn_cancel').after(btnPayNow);
+			            jQuery('form.wpwl-form-virtualAccount-PAYPAL').find('.wpwl-button-pay').after(clearFloat);
 			            {% if frameTestMode == 'TEST' %}
 				            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
+			            {% endif %}
+
+			            {% if recurring %}
+			                jQuery('#wpwl-registrations').after(headerWidget);
 			            {% endif %}
 					},
 					registrations: {
