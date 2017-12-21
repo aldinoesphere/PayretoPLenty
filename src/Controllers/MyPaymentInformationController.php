@@ -109,7 +109,7 @@ class MyPaymentInformationController extends Controller
 			];
 
 		foreach ($accounts as $account) {
-			$accountArray[$account->paymentGroup][] = array_merge($account, $icon);
+			$accountArray[$account->paymentGroup][] = array_push($account, $icon);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:accountArray', $accountArray);
