@@ -195,4 +195,11 @@ class BasketHelper
 		}
 	}
 
+	public function getCustomer() 
+	{
+		$customerService = pluginApp(CustomerService::class);
+
+		return $customerService->getContactClassData($customerService->getContactId());
+	}
+
 }

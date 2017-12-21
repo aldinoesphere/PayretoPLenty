@@ -387,6 +387,9 @@ class PaymentService
 	{
 		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
 		$billings = pluginApp(basketHelper::class)->getBillingAddress();
+		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$this->getLogger(__METHOD__)->error('Payreto:customer', $customer);
+		
 		$customerParameters = [
 			'customer' => 
 							[
