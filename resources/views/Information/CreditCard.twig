@@ -6,9 +6,20 @@
                     {% for value in creditCards %}
                         <li class="item">
                             <label class="item-inner">
-                                <span class="item-content small">
-                                    <strong>Ending in:{{ value.last4digits }}</strong> <span></span> 
-                                    <span>Expires on:{{ value.expMonth }}/{{ value.expYear }}</span>
+                                <span class="item-content">
+                                    <div class="col-sm-2">
+                                        {% if value.brand == 'VISA' %}
+                                            <img src="{{ value.visa }}" width="80"/>
+                                        {% elseif value.brand == 'AMEX' %}
+                                            <img src="{{ value.amex }}" width="80"/>
+                                        {% elseif value.brand == 'MASTER' %}
+                                            <img src="{{ value.master }}" width="80"/>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <strong>Ending in:{{ value.last4digits }}</strong> <span></span> 
+                                        <span>Expires on:{{ value.expMonth }}/{{ value.expYear }}</span>
+                                    </div>
                                 </span>
                                 <div class="item-controls">
                                     <span class="item-edit">

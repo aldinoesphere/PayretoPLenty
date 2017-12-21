@@ -6,8 +6,13 @@
                     {% for value in paypal %}
                         <li class="item">
                             <label for="addressSelectItem1326" class="item-inner">
-                                <span class="item-content small">
-                                    <strong>Email :{{ value.email }}</strong> <span></span>
+                                <span class="item-content">
+                                    <div class="col-sm-2">
+                                        <img src="{{ value.paypal }}" width="80"/>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <strong>Email :{{ value.email }}</strong> <span></span>
+                                    </div>
                                 </span>
                                 <div class="item-controls">
                                     <span class="item-edit">
