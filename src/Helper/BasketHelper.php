@@ -72,6 +72,7 @@ class BasketHelper
         			],
         			'orderItems' => $this->getBasketOrderItems()
         		],
+        		'currency' => $baskets->currency,
                 'valueNet' => $baskets->itemSumNet,
                 'valueGross' => $baskets->itemSum,
                 'shippingNet' => $baskets->shippingAmountNet,
