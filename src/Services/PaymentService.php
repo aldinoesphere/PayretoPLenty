@@ -394,7 +394,6 @@ class PaymentService
 			'customer' => 
 							[
 								'email' => $customer->email,
-								'sex' => $customer->gender,
 								'phone' => $customer->privatePhone,
 								'last_name' => $customer->lastName,
 								'birthdate' => date('Y-m-d', strtotime($customer->birthdayAt)),
@@ -473,7 +472,7 @@ class PaymentService
         if ($paymentSettings['recurring']) {
         	$transactionData['payment_registration'] = 'true';
         }
-        
+
         if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
             $recurringParameter['3D']['amount'] = $transaction['amount'];
             $recurringParameter['3D']['currency'] = $transaction['currency'];
