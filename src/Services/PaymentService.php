@@ -394,6 +394,7 @@ class PaymentService
 			'customer' => 
 							[
 								'email' => $customer->email,
+								'sex' => 'F',
 								'phone' => $customer->privatePhone,
 								'last_name' => $customer->lastName,
 								'birthdate' => date('Y-m-d', strtotime($customer->birthdayAt)),
