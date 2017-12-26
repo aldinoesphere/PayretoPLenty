@@ -761,14 +761,14 @@ class GatewayService
 	/**
 	 * Get Sid from gateway to use at payment page url
 	 *
-	 * @param array $parameters
+	 * @param array $transactionData
 	 * @throws \Exception
 	 * @return array
 	 */
-	public function paymentServerToServer($checkoutId, $parameters)
+	public function paymentServerToServer($checkoutId, $transactionData)
 	{
 		$confirmationUrl = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
-		$confirmationUrl .= '?' . http_build_query($parameters, '', '&');
+		$confirmationUrl .= '?' . http_build_query(self::getCredentialParameter($transactionData), '', '&');
 
 		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
 
