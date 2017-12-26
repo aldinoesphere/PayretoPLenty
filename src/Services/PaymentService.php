@@ -496,7 +496,7 @@ class PaymentService
         	$transactionData['payment_type'] = $this->getPaymentType(false, $paymentKey);
         }
         $transactionData['payment_recurring'] = 'INITIAL';
-        if ($this->getRecurringSetting()) {
+        if ($paymentSettings['recurring']) {
         	$transactionData['payment_registration'] = 'true';
         }
         $transactionData['transaction_id'] = $this->getTransactionIdbyReference();
