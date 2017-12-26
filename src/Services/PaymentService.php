@@ -498,6 +498,7 @@ class PaymentService
         $transactionData['payment_recurring'] = 'INITIAL';
 
         $this->getLogger(__METHOD__)->error('Payreto:recurring', $paymentSettings['recurring']);
+        
         if ($paymentSettings['recurring']) {
         	$transactionData['payment_registration'] = 'true';
         }
