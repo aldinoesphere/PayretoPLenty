@@ -163,7 +163,7 @@
                                 {{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.valueNet | formatMonetary( orderData.currency ) }}
+                                {{ orderData.valueNet | formatMonetary( 'EUR' ) }}
                             </dd>
                             {% endif %}
 
@@ -172,7 +172,7 @@
                                 <strong>{{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.valueGross | formatMonetary( orderData.currency ) }}</strong>
+                                <strong>{{ orderData.valueGross | formatMonetary( 'EUR' ) }}</strong>
                             </dd>
                             {% endif %}
 
@@ -181,7 +181,7 @@
                                 {{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.shippingNet | formatMonetary( orderData.currency ) }}
+                                {{ orderData.shippingNet | formatMonetary( 'EUR' ) }}
                             </dd>
                             {% endif %}
 
@@ -190,7 +190,7 @@
                                 <strong>{{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.shippingGross | formatMonetary( orderData.currency ) }}</strong>
+                                <strong>{{ orderData.shippingGross | formatMonetary( 'EUR' ) }}</strong>
                             </dd>
                             {% endif %}
 
@@ -205,7 +205,7 @@
                                     {{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketNet") }})
                                 </dt><!--
                                 --><dd>
-                                {{ BasketTotals.getTotalAmountNet( orderData ) | formatMonetary( orderData.currency ) }}
+                                {{ BasketTotals.getTotalAmountNet( orderData ) | formatMonetary( 'EUR' ) }}
                             </dd>
                                 {% endif %}
 
@@ -214,7 +214,7 @@
                                     <strong>{{ trans("Ceres::Template.basketCoupon") }}</strong>
                                 </dt><!--
                                 --><dd>
-                                <strong>{{ BasketTotals.getCouponValue( orderData ) | formatMonetary( orderData.currency ) }}</strong>
+                                <strong>{{ BasketTotals.getCouponValue( orderData ) | formatMonetary( 'EUR' ) }}</strong>
                             </dd>
                                 {% endif %}
 
@@ -225,7 +225,7 @@
                                                 {{ trans("Ceres::Template.basketVAT") }} {{ vat.vatRate }}%
                                             </dt><!--
                                             --><dd>
-                                                {{ vat.value | formatMonetary( orderData.currency ) }}
+                                                {{ vat.value | formatMonetary( 'EUR' ) }}
                                             </dd>
                                         {% endfor %}
 
@@ -238,7 +238,7 @@
                                             <strong>{{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                                         </dt><!--
                                         --><dd>
-                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) | formatMonetary( orderData.currency ) }}</strong>
+                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) | formatMonetary( 'EUR' ) }}</strong>
                                         </dd>
                                     </div>
                                 {% endif %}
