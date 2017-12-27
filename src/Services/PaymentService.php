@@ -222,8 +222,6 @@ class PaymentService
 			$this->getCustomerParameters()
 		);
 
-		// $this->paymentHelper->mapStatus();
-
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 		{
 			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));

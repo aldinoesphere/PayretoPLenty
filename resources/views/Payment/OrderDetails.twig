@@ -166,7 +166,7 @@
                                 {{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.valueNet | formatMonetary( basketTotalsCurrency ) }}
+                                {{ orderData.valueNet }}
                             </dd>
                             {% endif %}
 
@@ -175,7 +175,7 @@
                                 <strong>{{ trans("Ceres::Template.basketValue") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.valueGross | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                <strong>{{ orderData.valueGross }}</strong>
                             </dd>
                             {% endif %}
 
@@ -184,7 +184,7 @@
                                 {{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketNet") }})
                             </dt><!--
                      --><dd>
-                                {{ orderData.shippingNet | formatMonetary( basketTotalsCurrency ) }}
+                                {{ orderData.shippingNet }}
                             </dd>
                             {% endif %}
 
@@ -193,7 +193,7 @@
                                 <strong>{{ trans("Ceres::Template.itemShippingCosts") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                             </dt><!--
                      --><dd>
-                                <strong>{{ orderData.shippingGross | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                <strong>{{ orderData.shippingGross }}</strong>
                             </dd>
                             {% endif %}
 
@@ -208,7 +208,7 @@
                                     {{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketNet") }})
                                 </dt><!--
                                 --><dd>
-                                {{ BasketTotals.getTotalAmountNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                                {{ BasketTotals.getTotalAmountNet( orderData ) }}
                             </dd>
                                 {% endif %}
 
@@ -217,7 +217,7 @@
                                     <strong>{{ trans("Ceres::Template.basketCoupon") }}</strong>
                                 </dt><!--
                                 --><dd>
-                                <strong>{{ BasketTotals.getCouponValue( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                <strong>{{ BasketTotals.getCouponValue( orderData ) }}</strong>
                             </dd>
                                 {% endif %}
 
@@ -228,7 +228,7 @@
                                                 {{ trans("Ceres::Template.basketVAT") }} {{ vat.vatRate }}%
                                             </dt><!--
                                             --><dd>
-                                                {{ vat.value | formatMonetary( basketTotalsCurrency ) }}
+                                                {{ vat.value }}
                                             </dd>
                                         {% endfor %}
 
@@ -241,7 +241,7 @@
                                             <strong>{{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                                         </dt><!--
                                         --><dd>
-                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) }}</strong>
                                         </dd>
                                     </div>
                                 {% endif %}
