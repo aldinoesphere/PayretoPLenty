@@ -208,7 +208,7 @@
                                     {{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketNet") }})
                                 </dt><!--
                                 --><dd>
-                                {{ BasketTotals.getTotalAmountNet( orderData ) | formatMonetary( basketTotalsCurrency ) }}
+                                {{ orderData.order.amounts[0].netTotal | formatMonetary( basketTotalsCurrency ) }}
                             </dd>
                                 {% endif %}
 
@@ -241,7 +241,7 @@
                                             <strong>{{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
                                         </dt><!--
                                         --><dd>
-                                            <strong>{{ BasketTotals.getTotalAmountGross( orderData ) | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                            <strong>{{ orderData.order.amounts[0].grossTotal | formatMonetary( basketTotalsCurrency ) }}</strong>
                                         </dd>
                                     </div>
                                 {% endif %}
