@@ -426,6 +426,8 @@ class PaymentController extends Controller
         $paymentConfirmationData = array_merge($paymentConfirmationData, [
             'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
             'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
+            'sumOfInterest' => $paymentServerToServer['resultDetails']['ratenplan.zinsen.anfallendeZinsen'],
+            'orderTotal' => $paymentServerToServer['resultDetails']['ratenplan.gesamtsumme'],
             'checkoutId' => $paymentServerToServer['id'],
             'paymentMethodName' => $paymentMethod->name
         ]);

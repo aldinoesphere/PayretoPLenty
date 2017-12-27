@@ -238,14 +238,31 @@
                                     <div class="totalSum">
                                         <hr>
                                         <dt>
-                                            <strong>{{ trans("Ceres::Template.basketTotalSum") }} ({{ trans("Ceres::Template.basketGross") }})</strong>
+                                            <strong>Grand Total</strong>
                                         </dt><!--
                                         --><dd>
                                             <strong>{{ orderData.order.amounts[0].grossTotal | formatMonetary( basketTotalsCurrency ) }}</strong>
                                         </dd>
                                     </div>
                                 {% endif %}
-
+                                <div class="totalSum">
+                                    <hr>
+                                    <dt>
+                                        <strong>Sum Of Interest</strong>
+                                    </dt><!--
+                                    --><dd>
+                                        <strong>{{ sumOfInterest | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                    </dd>
+                                </div>
+                                <div class="totalSum">
+                                    <hr>
+                                    <dt>
+                                        <strong>Order Total</strong>
+                                    </dt><!--
+                                    --><dd>
+                                        <strong>{{ orderTotal | formatMonetary( basketTotalsCurrency ) }}</strong>
+                                    </dd>
+                                </div>
                             {% endif %}
 
                             {{ LayoutContainer.show("Ceres::OrderConfirmation.AfterTotals", orderData.order) }}
