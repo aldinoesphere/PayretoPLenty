@@ -340,7 +340,7 @@ class PaymentController extends Controller
             $paymentData['paymentKey'] = $paymentKey;
             $paymentData['amount'] = $paymentConfirmation['amount'];
             $paymentData['currency'] = $paymentConfirmation['currency'];
-            $paymentData['status'] = $this->getPaymentStatus($paymentType);
+            $paymentData['status'] = $paymentKey == 'PAYRETO_ECP' ? $this->paymentHelper->mapTransactionState('2') : $this->getPaymentStatus($paymentType);
             $orderData = $this->orderService->placeOrder($paymentType);
             $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
             $orderId = $orderData->order->id;
