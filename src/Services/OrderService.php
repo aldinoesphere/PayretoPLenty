@@ -85,20 +85,24 @@ class OrderService
 		return LocalizedOrder::wrap($order, "de");
 	}
 
-	public function getOrderStatus($paymentType) 
+	public function getOrderStatus($paymentType, $isCapture = false) 
 	{
-		switch ($paymentType) {
-			case 'PA':
-				return 4.5;
-				break;
+		if ($isCapture) {
+			return 5;
+		} else {
+			switch ($paymentType) {
+				case 'PA':
+					return 4.5;
+					break;
 
-			case 'DB':
-				return 5;
-				break;
-			
-			default:
-				return 5;
-				break;
+				case 'DB':
+					return 5;
+					break;
+				
+				default:
+					return 5;
+					break;
+			}
 		}
 	}
 
