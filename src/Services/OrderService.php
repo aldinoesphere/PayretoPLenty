@@ -44,7 +44,7 @@ class OrderService
 	 * Place an order
 	 * @return LocalizedOrder
 	 */
-	public function placeOrder($paymentType)
+	public function placeOrder($paymentType, $isCapture = false)
 	{
 		$basketService = pluginApp(BasketService::class);
 		$sessionStorageService = pluginApp(SessionStorageService::class);
@@ -59,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus($this->getOrderStatus($paymentType))
+						->withStatus($this->getOrderStatus($paymentType, $isCapture))
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
