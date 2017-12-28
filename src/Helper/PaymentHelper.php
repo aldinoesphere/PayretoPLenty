@@ -387,7 +387,7 @@ class PaymentHelper
 		return false;
 	}
 
-	public function isPaymentRecurring($paymentMethod)
+	public function isPaymentRecurring($paymentMethod) 
     {
         switch ($paymentMethod) {
             case 'PAYRETO_PPM_RC':
