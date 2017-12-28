@@ -328,12 +328,12 @@ class PaymentController extends Controller
 		{
 
 			if ($this->paymentHelper->isPaymentRecurring($paymentKey)) {
+				$this->saveRecurringPayment($paymentConfirmation, $paymentKey);
+				
 				if ($paymentKey == 'PAYRETO_PPM_RC') 
 				{
 					$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
 				}
-
-				$this->saveRecurringPayment($paymentConfirmation, $paymentKey);
 			}
 				
             $paymentData['transaction_id'] = $paymentConfirmation['id'];
