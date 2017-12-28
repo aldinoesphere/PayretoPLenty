@@ -241,7 +241,7 @@ class PaymentController extends Controller
             return $debitResponse;
         } else {
             if ($transactionResult == 'NOK') {
-                $returnMessage = $this->gatewayService->getErrorIdentifier($transactionResult);
+                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
 				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
             } else {
 				$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
@@ -322,26 +322,18 @@ class PaymentController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
-		$paymentResult = $paymentConfirmation['result']['code'];
+		$paymentResult = $this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']);
 
-		if ($this->gatewayService->getTransactionResult($paymentResult) == 'ACK') 
+		if ( $paymentResult == 'ACK') 
 		{
 
-			if ($this->paymentService->getRecurringSetting()) {
-
-				$paymentConfirmation = array_merge($paymentConfirmation, [
-					'paymentKey' => $paymentKey, 
-					'entityId' => $paymentSettings['entityId'],
-					'server' => $paymentSettings['server']
-					]
-				);
-				$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
-				$this->accountController->saveAccount($accountData);
-
+			if ($this->paymentService->getRecurringSetting() && $paymentSettings['recurring']) {
 				if ($paymentKey == 'PAYRETO_PPM_RC') 
 				{
 					$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
 				}
+
+				$this->saveRecurringPayment($paymentConfirmation, $paymentKey);
 			}
 				
             $paymentData['transaction_id'] = $paymentConfirmation['id'];
@@ -357,12 +349,26 @@ class PaymentController extends Controller
 
 			$this->paymentHelper->updatePlentyPayment($paymentData);
 			return $orderData;
-		} elseif ($this->gatewayService->getTransactionResult($paymentResult) == 'NOK') {
-			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentResult);
+		} elseif ($paymentResult == 'NOK') {
+			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['result']['code']);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
 		} else {
 			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
 		}
+	}
+
+	public function saveRecurringPayment($paymentConfirmation, $paymentKey)
+	{
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+
+		$paymentConfirmation = array_merge($paymentConfirmation, [
+			'paymentKey' => $paymentKey, 
+			'entityId' => $paymentSettings['entityId'],
+			'server' => $paymentSettings['server']
+			]
+		);
+		$accountData = $this->paymentHelper->setAccountData($paymentConfirmation);
+		$this->accountController->saveAccount($accountData);
 	}
 
 	public function getPaymentStatus($paymentType) 
@@ -400,7 +406,7 @@ class PaymentController extends Controller
             return $debitResponse;
         } else {
             if ($transactionResult == 'NOK') {
-                $returnMessage = $this->gatewayService->getErrorIdentifier($transactionResult);
+                $returnMessage = $this->gatewayService->getErrorIdentifier($returnCode);
 				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
             } else {
 				$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
