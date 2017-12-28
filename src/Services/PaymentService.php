@@ -467,7 +467,7 @@ class PaymentService
     {
         $recurringParameter = $this->getPaymentReference($paymentMethod);
         
-        $transactionData['payment_registration'] = 'true';
+        $recurringParameter['payment_registration'] = 'true';
         if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
             $recurringParameter['3D']['amount'] = $transaction['amount'];
             $recurringParameter['3D']['currency'] = $transaction['currency'];
