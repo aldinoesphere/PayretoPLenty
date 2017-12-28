@@ -232,7 +232,7 @@ class PaymentController extends Controller
             $paymentData['amount'] = $debitResponse['amount'];
             $paymentData['currency'] = $debitResponse['currency'];
             $paymentData['status'] = $this->getPaymentStatus($paymentType);
-            $orderData = $this->orderService->placeOrder($paymentType);
+            $orderData = $this->orderService->placeOrder($paymentType, false);
             $orderId = $orderData->order->id;
 			
 			$paymentData['orderId'] = $orderId;
@@ -346,7 +346,7 @@ class PaymentController extends Controller
             	$orderData = $this->orderService->placeOrder($paymentType, true);
             } else {
             	$paymentData['status'] = $this->getPaymentStatus($paymentType);
-            	$orderData = $this->orderService->placeOrder($paymentType);
+            	$orderData = $this->orderService->placeOrder($paymentType, false);
             }
             $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
             $orderId = $orderData->order->id;
