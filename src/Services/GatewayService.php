@@ -1667,6 +1667,9 @@ class GatewayService
             case 'ERROR_MERCHANT_SSL_CERTIFICATE':
                     $returnMessage = "SSL certificate problem, please contact the merchant.";
                 break;
+            case 'ERROR_CAPTURE_BACKEND':
+                    $returnMessage = 'Unfortunately, your attempt to capture the payment failed.';
+                break;
             default:
                     $returnMessage = "Unfortunately, your transaction has failed.
                     Please try again.";
