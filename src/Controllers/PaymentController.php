@@ -327,7 +327,7 @@ class PaymentController extends Controller
 		if ( $paymentResult == 'ACK') 
 		{
 
-			if ($this->paymentService->getRecurringSetting() && $paymentSettings['recurring']) {
+			if ($this->paymentHelper->isPaymentRecurring($paymentKey)) {
 				if ($paymentKey == 'PAYRETO_PPM_RC') 
 				{
 					$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);

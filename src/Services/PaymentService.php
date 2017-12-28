@@ -454,7 +454,7 @@ class PaymentService
 			unset($transactionParameters['payment_type']);
 		}
 
-		if ($this->getRecurringSetting()) {
+		if ($this->paymentHelper->isPaymentRecurring($paymentMethod->paymentKey)) {
 			$recurringParameter = $this->getRecurringPrameter($paymentMethod, $transactionParameters);
 			$transactionParameters = array_merge($transactionParameters, $recurringParameter);
 		}
@@ -465,13 +465,9 @@ class PaymentService
 
 	private function getRecurringPrameter($paymentMethod, $transaction)
     {
-    	$paymentSettings = $this->getPaymentSettings($paymentMethod->paymentKey);
         $recurringParameter = $this->getPaymentReference($paymentMethod);
-
-        if ($paymentSettings['recurring']) {
-        	$transactionData['payment_registration'] = 'true';
-        }
-
+        
+        $transactionData['payment_registration'] = 'true';
         if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
             $recurringParameter['3D']['amount'] = $transaction['amount'];
             $recurringParameter['3D']['currency'] = $transaction['currency'];
@@ -500,9 +496,7 @@ class PaymentService
         }
         $transactionData['payment_recurring'] = 'INITIAL';
 
-        if ($paymentSettings['recurring']) {
-        	$transactionData['payment_registration'] = 'true';
-        }
+    	$transactionData['payment_registration'] = 'true';
         $transactionData['transaction_id'] = $this->getTransactionIdbyReference();
 
         return $transactionData;

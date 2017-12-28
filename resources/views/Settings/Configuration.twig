@@ -278,8 +278,7 @@ img {
 			{% elseif settingType == 'PAYRETO_ECP' 
 				or  settingType == 'PAYRETO_GRP' 
 				or settingType == 'PAYRETO_ADB' 
-				or settingType == 'PAYRETO_PPM'
-				or settingType == 'PAYRETO_PPM_RC' %}
+				or settingType == 'PAYRETO_PPM' %}
 				<div>
 					<label for="Enabled">Server</label>
 					<select name="server" value="{{ setting.server }}">
@@ -302,14 +301,39 @@ img {
 					<label for="Shop Url">Entity-ID</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
 				</div>
-				{% if settingType == 'PAYRETO_PPM_RC' %}
-					<div class="clear"></div>
-					<div class="div-separator clear"></div>
-					<div>
-						<label for="Shop Url">Amount for Registration</label>
-						<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
-					</div>
-				{% endif %}
+			{% elseif settingType == 'PAYRETO_PPM_RC' %}
+				<div>
+					<label for="Enabled">Server</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">Enabled *</label>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
+						{% if generalSetting.recurring == '0' %}
+							<option value="0" selected>No</option>
+						{% else %}
+							<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+							<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+						{% endif %}
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">Entity-ID</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">Amount for Registration</label>
+					<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
+				</div>
 			{% elseif settingType == 'PAYRETO_DDS' %}
 				<div>
 					<label for="Enabled">Server</label>

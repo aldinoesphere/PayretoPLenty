@@ -387,6 +387,18 @@ class PaymentHelper
 		return false;
 	}
 
+	public function isPaymentRecurring($paymentMethod)
+    {
+        switch ($paymentMethod) {
+            case 'PAYRETO_PPM_RC':
+            case 'PAYRETO_DDS_RC':
+            case 'PAYRETO_ACC_RC':
+                return true;
+            default:
+                return false;
+        }
+    }
+
 	/**
 	 * update payment property value.
 	 *
