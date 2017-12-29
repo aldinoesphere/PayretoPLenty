@@ -146,26 +146,6 @@ class SettingsService extends DatabaseBaseService
     }
 
     /**
-     * set initial settings payment method name for each plentyId
-     *
-     */
-    // public function setInitialSettings()
-    // {
-    //     $clients = $this->getClients();
-
-    //     foreach ($clients as $plentyId)
-    //     {
-    //         $settings = array();
-    //         $settings[] = array(
-    //             'PID_'.$plentyId => array(
-    //                 'language' => $value
-    //             )
-    //         );
-    //         $this->saveSettings('payreto_settings', $settings);
-    //     }
-    // }
-
-    /**
      * get Payreto configuration by plentyId and settingType
      *
      * @param string $plentyId
