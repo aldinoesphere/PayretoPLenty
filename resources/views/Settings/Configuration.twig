@@ -103,11 +103,11 @@ img {
 	<h3>{{ trans('Payreto::Template.'~ settingType ~ '_TITLE') }}</h3>
 	{% if status == 'success' %}
 		<div class="message success" id="successMessage">
-			{{ trans('Your settings have been saved', [], 'messages', locale) }}
+			{{ trans('Payreto::Template.BACKEND_GENERAL_SETTINGS_SAVED') }}
 		</div>
 	{% elseif status == 'failed' %}
 		<div class="message failed" id="errorMessage">
-			{{ trans('Settings not saved', [], 'messages', locale) }}
+			{{ trans('Payreto::Template.ERROR_GENERAL_SAVE_SETTINGS') }}
 		</div>
 	{% endif %}
 	<div id="payretoSettings">
@@ -116,13 +116,13 @@ img {
 			<input type="hidden" name="plentyId" value="{{ plentyId }}" />
 			{% if settingType == 'general-setting' %}
 				<div>
-					<label for="User ID">User ID *</label>
+					<label for="User ID">{{ trans('Payreto::Template.BACKEND_CH_LOGIN') }}</label>
 					<input type="text" class="input-text" name="userId" value="{{ setting.userId }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Enabled">Recurring</label>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_RECURRING') }}</label>
 					<select name="recurring" value="{{ setting.recurring }}">
 						<option value="0" {{ (setting.recurring == '0') ? 'selected' : '' }}>No</option>
 						<option value="1" {{ (setting.recurring == '1') ? 'selected' : '' }}>Yes</option>
@@ -131,19 +131,19 @@ img {
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Password">Password *</label>
+					<label for="Password">{{ trans('Payreto::Template.BACKEND_CH_PASSWORD') }} *</label>
 					<input type="text" class="input-text" name="password" value="{{ setting.password }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Merchant Email">Merchant Email *</label>
+					<label for="Merchant Email">{{ trans('Payreto::Template.BACKEND_GENERAL_MERCHANTEMAIL') }} *</label>
 					<input type="text" class="input-text" name="merchantEmail" value="{{ setting.merchantEmail }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Shop Url">Shop Url</label>
+					<label for="Shop Url">{{ trans('Payreto::Template.BACKEND_GENERAL_SHOPURL') }}</label>
 					<input type="text" class="input-text" name="shopUrl" value="{{ setting.shopUrl }}"/>
 				</div>
 			{% elseif settingType == 'PAYRETO_ACC' %}
