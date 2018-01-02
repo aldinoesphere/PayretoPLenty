@@ -15,7 +15,7 @@ class AccPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var name
 	 */
-	protected $name = 'Payreto::Template.BACKEND_CH_PASSWORD';
+	protected $name = trans('Payreto::Template.BACKEND_CH_PASSWORD');
 
 	/**
 	 * @var logoFileName
