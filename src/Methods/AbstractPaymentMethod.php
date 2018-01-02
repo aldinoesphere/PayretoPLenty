@@ -127,6 +127,12 @@ class AbstractPaymentMethod extends PaymentMethodService
 	 */
 	public function getName()
 	{
+		$session = pluginApp(FrontendSessionStorageFactoryContract::class);
+		$lang = $session->getLocaleSettings()->language;
+
+		if ($this->paymentService->settings[$this->settingsType]['language'][$lang]) {
+			return $this->paymentService->settings[$this->settingsType]['language'][$lang];
+		}
 		return $this->name;
 	}
 
