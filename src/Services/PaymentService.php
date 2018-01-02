@@ -133,50 +133,50 @@ class PaymentService
 			],
 		'PAYRETO_DDS_RC' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_DDS' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_PDR' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_PPM_RC' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_PPM' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' =>'' ,
+					'en' => ''
 				]
 			],
 		'PAYRETO_ADB' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_GRP' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			],
 		'PAYRETO_ECP' => [
 				'language' => [
-					'de' => ,
-					'en' => 
+					'de' => '',
+					'en' => ''
 				]
 			]
 	];
