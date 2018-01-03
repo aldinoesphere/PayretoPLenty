@@ -1,9 +1,8 @@
 <!-- MY PAYMENT INFORMATION AREA -->
-{% set test = services.payment.checkCustomerLoginStatus() | json_encode() %}
 <div class="row">
     <div class="col-md-6">
         <h4>
-            {{ test }}
+            {{ services.payment.checkCustomerLoginStatus() | json_encode() }}
             {{ trans('Payreto::Template.FRONTEND_MC_INFO') }}
         </h4>
         <div>
