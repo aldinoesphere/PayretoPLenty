@@ -1,5 +1,5 @@
 <!-- MY PAYMENT INFORMATION AREA -->
-{% set test = services.payment.getRecurringSetting() %}
+{% set test = services.payment.getRecurringSetting() | json_encode() %}
 <div class="row">
     <div class="col-md-6">
         <h4 class="{{ test }}">
