@@ -11,14 +11,14 @@
     <div class="page-content checkout container-max">
     	<div class="row m-b-3">
     		<div class="col-sm-9">
-    			<h1 class="h2">My Payment Information</h1>
+    			<h1 class="h2">{{ trans("Payreto::Template.FRONTEND_MC_INFO") }}</h1>
             </div> 
         	<div class="col-xs-12"><hr></div>
         </div>
         <br>
 		<div class="row">
     		<div class="col-sm-12">
-	    		<h4>Credit Card</h4>
+	    		<h4>{{ trans("Payreto::Template.FRONTEND_MC_CC") }}</h4>
 	    		{% include "Payreto::Information.CreditCard" with { creditCards: PAYRETO_ACC_RC } %}
 	    	</div>
 		</div>
@@ -26,7 +26,7 @@
 		<br>
 		<div class="row">
     		<div class="col-sm-12">
-	    		<h4>Direct Debit</h4>
+	    		<h4>{{ trans("Payreto::Template.FRONTEND_MC_DD") }}</h4>
 	    		{% include "Payreto::Information.DirectDebit" with { directDebit: PAYRETO_DDS_RC } %}
 			</div>
 		</div>
@@ -34,7 +34,7 @@
 		<br>
 		<div class="row">
     		<div class="col-sm-12">
-	    		<h4>Paypal</h4>
+	    		<h4>{{ trans("Payreto::Template.FRONTEND_MC_PAYPAL") }}</h4>
 	    		{% include "Payreto::Information.Paypal" with { paypal: PAYRETO_PPM_RC } %}
 			</div>
 		</div>

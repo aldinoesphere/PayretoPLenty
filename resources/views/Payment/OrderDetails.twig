@@ -103,7 +103,7 @@
 
                     <div>
                         <div class="row">
-                            <a href="{{ informationUrl }}" target="_blank"><strong class="col-xs-12 col-sm-12">Read pre-contractual information on Installments</strong></a>
+                            <a href="{{ informationUrl }}" target="_blank"><strong class="col-xs-12 col-sm-12">{{ trans('Payreto::Template.FRONTEND_EASYCREDIT_LINK') }}</strong></a>
                         </div>
                     </div>
 
@@ -248,7 +248,7 @@
                                 <div class="totalSum">
                                     <hr>
                                     <dt>
-                                        <strong>Sum Of Interest</strong>
+                                        <strong>{{ trans('Payreto::Template.FRONTEND_EASYCREDIT_INTEREST') }}</strong>
                                     </dt><!--
                                     --><dd>
                                         <strong>{{ sumOfInterest | formatMonetary( basketTotalsCurrency ) }}</strong>
@@ -257,7 +257,7 @@
                                 <div class="totalSum">
                                     <hr>
                                     <dt>
-                                        <strong>Order Total</strong>
+                                        <strong>{{ trans('Payreto::Template.FRONTEND_EASYCREDIT_TOTAL') }}</strong>
                                     </dt><!--
                                     --><dd>
                                         <strong>{{ orderTotal | formatMonetary( basketTotalsCurrency ) }}</strong>
