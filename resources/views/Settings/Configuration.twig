@@ -98,6 +98,7 @@ img {
 		}
 	}
 </script>
+<script type="text/javascript" src="{{ plugin_path('Skrill') }}/js/settings.js" ></script>
 </head>
 <body>
 	<h3>{{ trans('Payreto::Template.'~ settingType ~ '_TITLE') }}</h3>
@@ -190,6 +191,20 @@ img {
 				<div>
 					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="changeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME', [], 'messages', locale) }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
 				</div>
 			{% elseif settingType == 'PAYRETO_ACC_RC' %}
 				<div>

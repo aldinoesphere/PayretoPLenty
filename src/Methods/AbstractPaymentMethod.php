@@ -129,11 +129,25 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		$session = pluginApp(FrontendSessionStorageFactoryContract::class);
 		$lang = $session->getLocaleSettings()->language;
+		$name = '';
 
-		if ($this->paymentService->settings[$this->settingsType]['language'][$lang]) {
-			return $this->paymentService->settings[$this->settingsType]['language'][$lang];
+		if (array_key_exists('language', $this->paymentService->settings))
+		{
+			if (array_key_exists($lang, $this->paymentService->settings['language']))
+			{
+				if (array_key_exists('paymentName', $this->paymentService->settings['language'][$lang]))
+				{
+					$name = $this->paymentService->settings['language'][$lang]['paymentName'];
+				}
+			}
 		}
-		return $this->name;
+
+		if (!strlen($name))
+		{
+			return $this->name;
+		}
+
+		return $name;
 	}
 
 	/**

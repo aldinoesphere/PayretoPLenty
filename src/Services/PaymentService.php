@@ -118,68 +118,7 @@ class PaymentService
 	/**
 	 * @var array
 	 */
-	public $settings = [
-		'PAYRETO_ACC_RC' => [
-				'language' => [
-					'de' => 'Kreditkarte',
-					'en' => 'Credit Card'
-				]
-			],
-		'PAYRETO_ACC' => [
-				'language' => [
-					'de' => 'Kreditkarte',
-					'en' => 'Credit Card'
-				]
-			],
-		'PAYRETO_DDS_RC' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_DDS' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_PDR' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_PPM_RC' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_PPM' => [
-				'language' => [
-					'de' =>'' ,
-					'en' => ''
-				]
-			],
-		'PAYRETO_ADB' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_GRP' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			],
-		'PAYRETO_ECP' => [
-				'language' => [
-					'de' => '',
-					'en' => ''
-				]
-			]
-	];
+	public $settings = [];
 
 	function __construct(
 		ItemRepositoryContract $itemRepository,
