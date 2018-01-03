@@ -2,7 +2,8 @@
 {% set test = services.payment.checkCustomerLoginStatus() %}
 <div class="row">
     <div class="col-md-6">
-        <h4 src="{{ test }}">
+        <h4>
+            {{ test }}
             {{ trans('Payreto::Template.FRONTEND_MC_INFO') }}
         </h4>
         <div>
