@@ -98,7 +98,7 @@ class MyPaymentInformationController extends Controller
 	{
 		$customerId = $this->paymentHelper->getCustomerId();
 		$accounts = $this->accountController->loadAccounts($customerId);
-		$accountArray = [];
+		$accountArray = ['is_recurring' => $this->paymentService->getRecurringSetting()];
 		$app = pluginApp(Application::class);
 		$icon = [
 			'visa' =>	$app->getUrlPath('payreto').'/images/logos/visa.png',

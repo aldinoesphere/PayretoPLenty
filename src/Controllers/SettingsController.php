@@ -106,37 +106,40 @@ class SettingsController extends Controller
 	 */
 	public function loadConfiguration(Twig $twig, $settingType)
 	{
-		$plentyId = $this->systemService->getPlentyId();
 
-		$this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
+		$this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', 'Loaded');
+		echo "wohe";
+		// $plentyId = $this->systemService->getPlentyId();
 
-		try {
-			$configuration = $this->settingsService->getConfiguration($plentyId, $settingType);
-			$generalSetting = $this->settingsService->getConfiguration($plentyId, 'general-setting');
-		}
-		catch (\Exception $e)
-		{
-			die('something wrong, please try again...');
-		}
-		if ($configuration['error']['code'] == '401')
-		{
-			die('access denied...');
-		}
+		// $this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
 
-		$this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', $configuration);
+		// try {
+		// 	$configuration = $this->settingsService->getConfiguration($plentyId, $settingType);
+		// 	$generalSetting = $this->settingsService->getConfiguration($plentyId, 'general-setting');
+		// }
+		// catch (\Exception $e)
+		// {
+		// 	die('something wrong, please try again...');
+		// }
+		// if ($configuration['error']['code'] == '401')
+		// {
+		// 	die('access denied...');
+		// }
 
-		return $twig->render(
-						'Payreto::Settings.Configuration',
-						array(
-							'status' => $this->request->get('status'),
-							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
-							'plentyId' => $plentyId,
-							'generalSetting' => $generalSetting,
-							'settingType' => $settingType,
-							'optionSetting'	=> $this->getOptionSetting($settingType),
-							'setting' => $configuration
-						)
-		);
+		// $this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', $configuration);
+
+		// return $twig->render(
+		// 				'Payreto::Settings.Configuration',
+		// 				array(
+		// 					'status' => $this->request->get('status'),
+		// 					'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
+		// 					'plentyId' => $plentyId,
+		// 					'generalSetting' => $generalSetting,
+		// 					'settingType' => $settingType,
+		// 					'optionSetting'	=> $this->getOptionSetting($settingType),
+		// 					'setting' => $configuration
+		// 				)
+		// );
 	}
 
 	public function getOptionSetting($settingType)

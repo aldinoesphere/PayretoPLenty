@@ -368,10 +368,6 @@ class PaymentService
 		}
     }
 
-    public function test() {
-    	return 'OK';
-    }
-
 	/**
      * Get risk kunden status
      *
