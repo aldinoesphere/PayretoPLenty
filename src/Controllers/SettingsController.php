@@ -108,7 +108,6 @@ class SettingsController extends Controller
 	{
 
 		$this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', 'Loaded');
-		echo "wohe";
 		// $plentyId = $this->systemService->getPlentyId();
 
 		// $this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
