@@ -85,34 +85,18 @@ img {
 	}
 }
 </style>
-<script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function(event) {
-		setTimeout(removeMessage, 5000);
-	});
-	function removeMessage() {
-		if (document.getElementById('successMessage')) {
-			document.getElementById('successMessage').style.display = 'none';
-		}
-		if (document.getElementById('errorMessage')) {
-			document.getElementById('errorMessage').style.display = 'none';
-		}
-	}
-</script>
 <script type="text/javascript" src="{{ plugin_path('Payreto') }}/js/settings.js" ></script>
 </head>
 <body>
 	<h3>{{ trans('Payreto::Template.'~ settingType ~ '_TITLE') }}</h3>
-	{% if status == 'success' %}
-		<div class="message success" id="successMessage">
+		<div class="message success" id="successMessage" style="display: none;">
 			{{ trans('Payreto::Template.BACKEND_GENERAL_SETTINGS_SAVED') }}
 		</div>
-	{% elseif status == 'failed' %}
-		<div class="message failed" id="errorMessage">
+		<div class="message failed" id="errorMessage" style="display: none;">
 			{{ trans('Payreto::Template.ERROR_GENERAL_SAVE_SETTINGS') }}
 		</div>
-	{% endif %}
 	<div id="payretoSettings">
-		<form action="save" method="post" name="savesettings" class="settings">
+		<form method="post" name="saveSettings" id="saveSettings" class="settings">
 			<input type="hidden" name="settingType" value="{{ settingType }}" />
 			<input type="hidden" name="plentyId" value="{{ plentyId }}" />
 			{% if settingType == 'general-setting' %}

@@ -4,69 +4,69 @@
     "menuEntries": [
                     {
                         "label": "General Settings",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "general-setting",
-                        "entryPoint": "../../../../../payreto/settings/general-setting"
+                        "entryPoint": "index.html?action=general-setting"
                     },
                     {
                         "label": "Credit Card (Recurring)",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "credit-card-recurring",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ACC_RC"
+                        "entryPoint": "index.html?action=PAYRETO_ACC_RC"
                     },
                     {
                         "label": "Credit Card",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "credit-card",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ACC"
+                        "entryPoint": "index.html?action=PAYRETO_ACC"
                     },
                     {
                         "label": "Direct Debit (Recurring)",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "deirect-debit-recurring",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_DDS_RC"
+                        "entryPoint": "index.html?action=PAYRETO_DDS_RC"
                     },
                     {
                         "label": "Direct Debit",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "direct-debit",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_DDS"
+                        "entryPoint": "index.html?action=PAYRETO_DDS"
                     },
                     {
                         "label": "Paydirect",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "paydirect",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_PDR"
+                        "entryPoint": "index.html?action=PAYRETO_PDR"
                     },
                     {
                         "label": "Paypal (Recurring)",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "paypal-recurring",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_PPM_RC" 
+                        "entryPoint": "index.html?action=PAYRETO_PPM_RC" 
                     },
                     {
                         "label": "Paypal",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "paypal",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_PPM"
+                        "entryPoint": "index.html?action=PAYRETO_PPM"
                     },
                     {
                         "label": "Online Bank TRansfer",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "online-bank-transfer",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ADB"
+                        "entryPoint": "index.html?action=PAYRETO_ADB"
                     },
                     {
                         "label": "Giropay",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "giropay",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_GRP"
+                        "entryPoint": "index.html?action=PAYRETO_GRP"
                     },
                     {
                         "label": "Easy Credit",
-                        "menu": "settings/orders/payreto",
+                        "menu": "settings/orders/payment/payreto",
                         "urlKey": "easy-credit",
-                        "entryPoint": "../../../../../payreto/settings/PAYRETO_ECP"
+                        "entryPoint": "index.html?action=PAYRETO_ECP"
                     }
     ]
 }

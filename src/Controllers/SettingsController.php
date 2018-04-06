@@ -106,40 +106,37 @@ class SettingsController extends Controller
 	 */
 	public function loadConfiguration(Twig $twig, $settingType)
 	{
+		$plentyId = $this->systemService->getPlentyId();
 
-		$this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', 'Loaded');
-		echo "wohe";
-		// $plentyId = $this->systemService->getPlentyId();
+		$this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
 
-		// $this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
+		try {
+			$configuration = $this->settingsService->loadSetting($plentyId, $settingType);
+			$generalSetting = $this->settingsService->loadSetting($plentyId, 'general-setting');
+		}
+		catch (\Exception $e)
+		{
+			die('something wrong, please try again...');
+		}
+		if ($configuration['error']['code'] == '401')
+		{
+			die('access denied...');
+		}
 
-		// try {
-		// 	$configuration = $this->settingsService->getConfiguration($plentyId, $settingType);
-		// 	$generalSetting = $this->settingsService->getConfiguration($plentyId, 'general-setting');
-		// }
-		// catch (\Exception $e)
-		// {
-		// 	die('something wrong, please try again...');
-		// }
-		// if ($configuration['error']['code'] == '401')
-		// {
-		// 	die('access denied...');
-		// }
+		$this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', $configuration);
 
-		// $this->getLogger(__METHOD__)->error('Payreto:loadConfiguration', $configuration);
-
-		// return $twig->render(
-		// 				'Payreto::Settings.Configuration',
-		// 				array(
-		// 					'status' => $this->request->get('status'),
-		// 					'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
-		// 					'plentyId' => $plentyId,
-		// 					'generalSetting' => $generalSetting,
-		// 					'settingType' => $settingType,
-		// 					'optionSetting'	=> $this->getOptionSetting($settingType),
-		// 					'setting' => $configuration
-		// 				)
-		// );
+		return $twig->render(
+						'Payreto::Settings.Configuration',
+						array(
+							'status' => $this->request->get('status'),
+							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
+							'plentyId' => $plentyId,
+							'generalSetting' => $generalSetting,
+							'settingType' => $settingType,
+							'optionSetting'	=> $this->getOptionSetting($settingType),
+							'setting' => $configuration
+						)
+		);
 	}
 
 	public function getOptionSetting($settingType)
@@ -257,8 +254,6 @@ class SettingsController extends Controller
 		foreach ($cardTypes as $key => $value) {
 			array_push($newCardTypes, $value);
 		}
-
-		$settings['settingType'] = $settingType;
 
 		if ($settingType == 'general-setting') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
@@ -388,7 +383,7 @@ class SettingsController extends Controller
 
 		$this->getLogger(__METHOD__)->error('Payreto:settings', $settings);
 
-		$result = $this->settingsService->saveConfiguration($settings);
+		$result = $this->settingsService->saveSettings($settingType, $settings);
 
 		if ($result == 1)
 		{
@@ -398,8 +393,7 @@ class SettingsController extends Controller
 		{
 			$status = 'failed';
 		}
-		$this->getLogger(__METHOD__)->error('Payreto:saveConfiguration', $settings);
 
-		return $this->response->redirectTo('payreto/settings/'.$settingType.'?status=' . $status);
+		return $status;
 	}
 }
