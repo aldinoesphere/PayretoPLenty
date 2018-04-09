@@ -216,7 +216,7 @@ class PaymentService
 	 */
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
-		$parameters = array_merge(
+		$transactionParameter = array_merge(
 			$this->getCredentials($paymentMethod->paymentKey),
 			$this->getTransactionParameters($basket, $paymentMethod),
 			$this->getCustomerParameters()
@@ -224,10 +224,10 @@ class PaymentService
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 		{
-			$parameters = array_merge($parameters, $this->getServerToServerParameters($basket, $paymentMethod));
-			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
+			$transactionParameter = array_merge($transactionParameter, $this->getServerToServerParameters($basket, $paymentMethod));
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $transactionParameter); 
 
-			$paymentResponse = $this->gatewayService->getServerToServer($parameters);
+			$paymentResponse = $this->gatewayService->getServerToServerResponse($transactionParameter);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 
 			if ((float)$basket->basketAmount < 200 || (float)$basket->basketAmount > 3000) {
@@ -237,10 +237,17 @@ class PaymentService
 				];
 			}
 
-			if ($this->gatewayService->getTransactionResult($paymentResponse['result']['code']) == 'ACK' ) {
-				$paymentPageUrl = $paymentResponse['redirect']['url'];
+			if ($paymentResponse['is_valid']) {
+				if ($this->gatewayService->getTransactionResult($paymentResponse['response']['result']['code']) == 'ACK' ) {
+					$paymentPageUrl = $paymentResponse['response']['redirect']['url'];
+				} elseif($this->gatewayService->getTransactionResult($paymentResponse['response']['result']['code']) == 'NOK') {
+					$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['response']['result']['code']);
+					return [
+						'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+						'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					];
+				}
 			} else {
-				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['result']['code']);
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
 					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
@@ -249,20 +256,41 @@ class PaymentService
 			
 		} else {
 
-			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters); 
-			$paymentWidgetContent = $this->gatewayService->getCheckoutResponse($parameters);	
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $paymentWidgetContent);
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $transactionParameter); 
+			$checkoutResult = $this->gatewayService->getCheckoutResult($transactionParameter);	
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResult', $checkoutResult);
 
-			if ($this->gatewayService->getTransactionResult($paymentWidgetContent['result']['code']) == 'ACK') {
-				$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $paymentWidgetContent['id'];
-			} else {
-				$returnMessage = $this->gatewayService::getErrorIdentifier($paymentWidgetContent['result']['code']);
+			if (!$checkoutResult['is_valid']) {
+				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResult['response']['result']['code']);
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+				];
+			} elseif(!isset($checkoutResult['response']['id'])) {
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
 					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
-				];	
+				];
+			} else {
+				$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl(
+	                $transactionParameter['server_mode'],
+	                $checkoutResult['response']['id']
+	            );
+				$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
+
+	            $paymentWidgetContent = $this->gatewayService->getGatewayResponse($paymentWidgetUrl, $transactionParameter['server_mode']);
+	            $this->getLogger(__METHOD__)->error('Payreto:paymentWidgetContent', $paymentWidgetContent);
+	            if ( !$paymentWidgetContent['is_valid']
+	            	|| strpos($paymentWidgetContent['response'], 'errorDetail') !== false
+	            ) {
+	            	return [
+						'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+						'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
+					];
+	            }
+
+	            $paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResult['response']['id'];
 			}
-			
 		}
 
 		return [
@@ -282,7 +310,8 @@ class PaymentService
 		$credentials = [
 						'login' 		=> $payretoSettings['userId'],
 						'password' 		=> $payretoSettings['password'],
-						'channel_id' 	=> $paymentSettings['entityId']
+						'channel_id' 	=> $paymentSettings['entityId'],
+						'server_mode' 	=> $this->getServerMode($paymentKey)
 					];
 
 		return $credentials;
@@ -392,7 +421,7 @@ class PaymentService
 			'customer' => 
 							[
 								'email' => $customer->email,
-								'sex' => 'F',
+								'sex' => $this->getGender($customer->gender),
 								'phone' => $customer->privatePhone,
 								'last_name' => $customer->lastName,
 								'birthdate' => date('Y-m-d', strtotime($customer->birthdayAt)),
@@ -415,6 +444,30 @@ class PaymentService
 		];
 
 		return $customerParameters;
+	}
+
+	/**
+	 * Get Gender
+	 *
+	 * @param string $gender
+	 * @return string
+	 */
+
+	public function getGender($gender = '')
+	{
+		if ($gender) {
+			switch ($gender) {
+				case 'male':
+					return 'M';
+					break;
+				
+				default:
+					return 'F';
+					break;
+			}
+		} else {
+			return '';
+		}
 	}
 
 	public function getChartParameters($basket) 

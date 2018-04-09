@@ -298,11 +298,7 @@ class PaymentController extends Controller
 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
-		$parameters = [
-			'login' => $this->payretoSettings['userId'],
-			'password' => $this->payretoSettings['password'],
-			'channel_id' => $paymentSettings['entityId']
-		];
+		$parameters = $this->paymentService->getCredentials($paymentKey);
 
 		if ($paymentKey == 'PAYRETO_ECP') {
 			$parameters = array_merge($parameters, [
@@ -312,54 +308,99 @@ class PaymentController extends Controller
 				'test_mode' => $this->paymentService->getTestMode($paymentMethod->paymentKey)
 			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-			$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
+			$this->capturePayment($checkoutId, $parameters);
 		} else {
             $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-            $paymentConfirmation = $this->gatewayService->paymentConfirmation($checkoutId, $parameters);
-		}
-		
-		$this->sessionStorage->getPlugin()->setValue('PayretoTransactionId', $paymentConfirmation['id']);
+            $paymentConfirmation = $this->gatewayService->getPaymentStatus($checkoutId, $parameters);
 
-		$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
-
-		$paymentResult = $this->gatewayService->getTransactionResult($paymentConfirmation['result']['code']);
-
-		if ( $paymentResult == 'ACK') 
-		{
-
-			if ($this->paymentHelper->isPaymentRecurring($paymentKey)) {
-				$this->saveRecurringPayment($paymentConfirmation, $paymentKey);
-				
-				if ($paymentKey == 'PAYRETO_PPM_RC') 
-				{
-					$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
-				}
-			}
-				
-            $paymentData['transaction_id'] = $paymentConfirmation['id'];
-            $paymentData['paymentKey'] = $paymentKey;
-            $paymentData['amount'] = $paymentConfirmation['amount'];
-            $paymentData['currency'] = $paymentConfirmation['currency'];
-            
-            if ($paymentKey == 'PAYRETO_ECP') {
-            	$paymentData['status'] = $this->paymentHelper->mapTransactionState('2');	
-            	$orderData = $this->orderService->placeOrder($paymentType, true);
+            if (!$paymentConfirmation['is_valid']) {
+            	$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
+				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
             } else {
-            	$paymentData['status'] = $this->getPaymentStatus($paymentType);
-            	$orderData = $this->orderService->placeOrder($paymentType);
-            }
-            $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
-            $orderId = $orderData->order->id;
-			
-			$paymentData['orderId'] = $orderId;
+            	$this->sessionStorage->getPlugin()->setValue('PayretoTransactionId', $paymentConfirmation['response']['id']);
+            	$this->getLogger(__METHOD__)->error('Payreto:paymentConfirmation', $paymentConfirmation);
 
-			$this->paymentHelper->updatePlentyPayment($paymentData);
-			return $orderData;
-		} elseif ($paymentResult == 'NOK') {
-			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['result']['code']);
+				$paymentResult = $this->gatewayService->getTransactionResult($paymentConfirmation['response']['result']['code']);
+
+				if ( $paymentResult == 'ACK') 
+				{
+
+					if ($this->paymentHelper->isPaymentRecurring($paymentKey)) {
+						$this->saveRecurringPayment($paymentConfirmation, $paymentKey);
+						
+						if ($paymentKey == 'PAYRETO_PPM_RC') 
+						{
+							$paymentConfirmation = $this->payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket);
+						}
+					}
+						
+		            $paymentData['transaction_id'] = $paymentConfirmation['response']['id'];
+		            $paymentData['paymentKey'] = $paymentKey;
+		            $paymentData['amount'] = $paymentConfirmation['response']['amount'];
+		            $paymentData['currency'] = $paymentConfirmation['response']['currency'];
+
+		        	$paymentData['status'] = $this->getPaymentStatus($paymentType);
+		        	$orderData = $this->orderService->placeOrder($paymentType);
+		            $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+		            $orderId = $orderData->order->id;
+					
+					$paymentData['orderId'] = $orderId;
+
+					$this->paymentHelper->updatePlentyPayment($paymentData);
+					return $orderData;
+				} elseif ($paymentResult == 'NOK') {
+		        	$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
+					$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+				} else {
+					$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
+				}
+            }
+		}
+	}
+
+	public function capturePayment($checkoutId, $parameters)
+	{
+		$paymentData = [];
+		$basketHelper = pluginApp(basketHelper::class);
+        $basket = $basketHelper->getBasket();
+        $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+		$paymentKey = $paymentMethod->paymentKey;
+        $paymentType = $this->paymentService->getPaymentType($basket);
+		$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
+
+		$this->sessionStorage->getPlugin()->setValue('PayretoTransactionId', $paymentConfirmation['response']['id']);
+		if (!$paymentConfirmation['is_valid']) {
+			$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
 			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+			return $this->response->redirectTo('checkout');
 		} else {
-			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
+			$paymentResult = $this->gatewayService->getTransactionResult($paymentConfirmation['response']['result']['code']);
+			if ( $paymentResult == 'ACK') 
+			{
+				$paymentData['transaction_id'] = $paymentConfirmation['response']['id'];
+	            $paymentData['paymentKey'] = $paymentKey;
+	            $paymentData['amount'] = $paymentConfirmation['response']['amount'];
+	            $paymentData['currency'] = $paymentConfirmation['response']['currency'];
+
+				$paymentData['status'] = $this->paymentHelper->mapTransactionState('2');	
+            	$orderData = $this->orderService->placeOrder($paymentType, true);
+
+            	$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+	            $orderId = $orderData->order->id;
+				
+				$paymentData['orderId'] = $orderId;
+
+				$this->paymentHelper->updatePlentyPayment($paymentData);
+				return $orderData;
+
+			} elseif ($paymentResult == 'NOK') {
+				$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
+				$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+	        	return $this->response->redirectTo('checkout');
+			} else {
+				$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
+	        	return $this->response->redirectTo('checkout');
+			}
 		}
 	}
 
@@ -431,21 +472,114 @@ class PaymentController extends Controller
 
 		$paymentData = $this->paymentService->getCredentials($paymentMethod->paymentKey);
 
-		$paymentServerToServer = $this->gatewayService->paymentServerToServer($checkoutId, $paymentData);
+		$paymentServerToServer = $this->gatewayService->getPaymentServerToServerStatus($checkoutId, $paymentData);
         $this->getLogger(__METHOD__)->error('Payreto:paymentServerToServer', $paymentServerToServer); 
-        
-        $paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
-        $paymentConfirmationData = array_merge($paymentConfirmationData, [
-            'informationUrl' => $paymentServerToServer['resultDetails']['vorvertraglicheInformationen'],
-            'tilgungsplan' => $paymentServerToServer['resultDetails']['tilgungsplanText'],
-            'sumOfInterest' => $paymentServerToServer['resultDetails']['ratenplan.zinsen.anfallendeZinsen'],
-            'orderTotal' => $paymentServerToServer['resultDetails']['ratenplan.gesamtsumme'],
-            'checkoutId' => $paymentServerToServer['id'],
-            'paymentMethodName' => $paymentMethod->name
-        ]);
-        $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
 
-        return $twig->render('Payreto::Payment.PaymentConfirmation' , $paymentConfirmationData);
+        if (!$paymentServerToServer['is_valid']) {
+        	$returnMessage = $this->gatewayService->getErrorIdentifier($paymentServerToServer['response']['result']['code']);
+			$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+        	return $this->response->redirectTo('checkout');
+        } else {
+        	$transactionResult = $this->gatewayService->getTransactionResult($paymentServerToServer['response']['result']['code']);
+
+	        if ($transactionResult == 'ACK') {
+	     		$paymentConfirmationData = $this->basketHelper->paymentConfirmationData();
+		        $paymentConfirmationData = array_merge($paymentConfirmationData, [
+		            'informationUrl' => $paymentServerToServer['response']['resultDetails']['vorvertraglicheInformationen'],
+		            'tilgungsplan' => $paymentServerToServer['response']['resultDetails']['tilgungsplanText'],
+		            'sumOfInterest' => $paymentServerToServer['response']['resultDetails']['ratenplan.zinsen.anfallendeZinsen'],
+		            'orderTotal' => $paymentServerToServer['response']['resultDetails']['ratenplan.gesamtsumme'],
+		            'checkoutId' => $paymentServerToServer['response']['id'],
+		            'paymentMethodName' => $paymentMethod->name
+		        ]);
+		        $this->getLogger(__METHOD__)->error('Payreto:paymentConfirmationData', $paymentConfirmationData);
+
+		        return $twig->render('Payreto::Payment.PaymentConfirmation' , $paymentConfirmationData);       
+	        } else {
+	            if ($transactionResult == 'NOK') {
+	                $returnMessage = $this->getEasyCreditErrorMessage($paymentServerToServer['response']);
+					$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+					return $this->response->redirectTo('checkout');
+	            } else {
+					$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));
+					return $this->response->redirectTo('checkout');
+	            }
+	        }
+        }
 	}
+
+	/**
+     * get error message from easycredit
+     *
+     * @param array $paymentResponse
+     * @return string
+     */
+    public function getEasyCreditErrorMessage($paymentResponse)
+    {
+        if ($this->isRiskPayment($paymentResponse) && isset($paymentResponse['resultDetails']['Error'])) {
+            $easyCreditErrorDetail = $this->getEasyCreditErrorDetail($paymentResponse);
+            if (isset($easyCreditErrorDetail['field']) && $easyCreditErrorDetail['field'] !== 'null') {
+                return $easyCreditErrorDetail['field'] . ': ' . $easyCreditErrorDetail['renderedMessage'];
+            } else {
+                return $easyCreditErrorDetail['renderedMessage'];
+            }
+        } elseif (isset($paymentResponse['resultDetails']['decisionNOK'])) {
+            return $paymentResponse['resultDetails']['decisionNOK'];
+        } else {
+            return $this->gatewayService->getErrorIdentifier($paymentResponse['result']['code']);
+        }
+    }
+
+    /**
+     * validate payment risk score
+     *
+     * @param array $paymentResponse
+     * @return boolean
+     */
+    protected function isRiskPayment($paymentResponse)
+    {
+        if (isset($paymentResponse['risk']['score'])) {
+            if ((int)$paymentResponse['risk']['score'] < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * get error details from easycredit
+     *
+     * @param array $paymentResponse
+     * @return array $easyCreditErrorDetail
+     */
+    protected function getEasyCreditErrorDetail($paymentResponse)
+    {
+        $easyCreditErrorDetail = array();
+        $errorResults = $this->explodeByMultiDelimiter(
+            array("{", "}"),
+            $paymentResponse['resultDetails']['Error']
+        );
+        $errorResults = explode(", ", $errorResults[1]);
+        foreach ($errorResults as $errorResult) {
+            $errorResultValue = explode("=", $errorResult);
+            $easyCreditErrorDetail[$errorResultValue[0]] = trim($errorResultValue[1], "'");
+        }
+
+        return $easyCreditErrorDetail;
+    }
+
+    /**
+     * explode string with multi delimiter
+     *
+     * @param array $delimiters
+     * @param string $string
+     * @return array $explodedString
+     */
+    protected function explodeByMultiDelimiter($delimiters, $string)
+    {
+        $string = str_replace($delimiters, $delimiters[0], $string);
+        $explodedString = explode($delimiters[0], $string);
+        return $explodedString;
+    }
 
 }

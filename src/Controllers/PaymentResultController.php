@@ -169,7 +169,7 @@ class PaymentResultController extends Controller
 	public function handleReturnRegister($checkoutId = 0, $paymentKey = '', $recurringId = 0)
 	{
 		$transactionData = $this->paymentService->getCredentials($paymentKey);
-		$resultJson = $this->gatewayService->paymentConfirmation($checkoutId, $transactionData);
+		$resultJson = $this->gatewayService->getPaymentStatus($checkoutId, $transactionData);
 
 		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
 		{
@@ -240,20 +240,20 @@ class PaymentResultController extends Controller
 
 	public function saveAccount($recurringId, $resultJson, $paymentKey)
 	{
-		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+		// $paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
-		$resultJson = array_merge($resultJson, [
-			'paymentKey' => $paymentKey, 
-			'entityId' => $paymentSettings['entityId'],
-			'server' => $paymentSettings['server']
-			]
-		);
-		$accountData = $this->paymentHelper->setAccountData($resultJson);
-		if ($recurringId) {
-			$this->accountController->updateAccount($recurringId, $accountData);
-		} else {
-			$this->accountController->saveAccount($accountData);	
-		}
+		// $resultJson = array_merge($resultJson, [
+		// 	'paymentKey' => $paymentKey, 
+		// 	'entityId' => $paymentSettings['entityId'],
+		// 	'server' => $paymentSettings['server']
+		// 	]
+		// );
+		// $accountData = $this->paymentHelper->setAccountData($resultJson);
+		// if ($recurringId) {
+		// 	$this->accountController->updateAccount($recurringId, $accountData);
+		// } else {
+		// 	$this->accountController->saveAccount($accountData);	
+		// }
 	}
 
 	public function captureRegister($recurringId, $paymentKey, $transactionData, $resultJson)

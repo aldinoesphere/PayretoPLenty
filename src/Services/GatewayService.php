@@ -9,28 +9,34 @@ use Plenty\Plugin\Log\Loggable;
 */
 class GatewayService
 {
-	use Loggable;
+    use Loggable;
 
-	/**
-	 * @var string
-	 */
-	protected $oppwaCheckoutUrlTest = 'https://test.oppwa.com/v1/checkouts';
-	protected $oppwaPaymentUrlTest = 'https://test.oppwa.com/v1/payments';
+    /**
+     * @var string
+     */
+    protected static $checkoutUrlTest = 'https://test.oppwa.com/v1/checkouts';
+    protected static $checkoutUrlLive = 'https://oppwa.com/v1/checkouts';
 
     protected static $registerUrlLive = 'https://oppwa.com/v1/registrations/';
     protected static $registerUrlTest = 'https://test.oppwa.com/v1/registrations/';
 
-	protected $oppwaCheckoutUrl = 'https://oppwa.com/v1/checkouts';
-	protected $oppwaPaymentUrl = 'https://oppwa.com/v1/payments';
+    protected static $serverToServerUrlLive = 'https://oppwa.com/v1/payments';
+    protected static $serverToServerUrlTest = 'https://test.oppwa.com/v1/payments';
 
-	protected $paymentWidgetUrlLive = 'https://oppwa.com/v1/paymentWidgets.js?checkoutId=';
-    protected $paymentWidgetUrlTest = 'https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=';
+    protected static $backofficeUrlLive = 'https://oppwa.com/v1/payments/';
+    protected static $backofficeUrlTest = 'https://test.oppwa.com/v1/payments/';
+
+    protected static $paymentWidgetUrlLive = 'https://oppwa.com/v1/paymentWidgets.js?checkoutId=';
+    protected static $paymentWidgetUrlTest = 'https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=';
+
+    protected static $queryUrlLive = 'https://ctpe.net/payment/query';
+    protected static $queryUrlTest = 'https://test.ctpe.net/payment/query';
 
     /**
-	 *
-	 * @var ackReturnCodes
-	 */
-	protected static $ackReturnCodes = array (
+     *
+     * @var ackReturnCodes
+     */
+    protected static $ackReturnCodes = array (
         '000.000.000',
         '000.100.110',
         '000.100.111',
@@ -88,10 +94,10 @@ class GatewayService
         '000.600.000'
     );
 
-	/**
-	 *
-	 * @var nokReturnCodes
-	 */
+    /**
+     *
+     * @var nokReturnCodes
+     */
     protected static $nokReturnCodes = array (
         '100.100.100',
         '100.100.101',
@@ -572,84 +578,96 @@ class GatewayService
         '999.999.999'
     );
 
-	/**
-	 * Get gateway response
-	 *
-	 * @param string $url
-	 * @param array $parameters
-	 * @throws \Exception
-	 * @return string
-	 */
-	private function getGatewayResponse($url, $checkoutParameters)
-	{
+    /**
+     * OPP URL
+     *
+     */
 
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $checkoutParameters);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$responseData = curl_exec($ch);
-		if(curl_errno($ch)) {
-			return curl_error($ch);
-		}
-		curl_close($ch);
-		return $responseData;
-	}
-
-	/**
-	 * gateway payment confirmation
-	 *
-	 * @param string $confirmationUrl
-	 * @throws \Exception
-	 * @return string
-	 */
-	private function getGatewayPaymentConfirmation($confirmationUrl)
-	{
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $confirmationUrl);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$responseData = curl_exec($ch);
-		if(curl_errno($ch)) {
-			return curl_error($ch);
-		}
-		curl_close($ch);
-		return $responseData;
-	}
-
-    private function getGatewayDeleteAccount($confirmationUrl)
+    /**
+     * Get checkout URL
+     *
+     * @param string $serverMode server mode
+     * @return string
+     */
+    private static function getCheckoutUrl($serverMode)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $confirmationUrl);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $responseData = curl_exec($ch);
-        $this->getLogger(__METHOD__)->error('Payreto:responseData', $responseData);
-        if(curl_errno($ch)) {
-            return curl_error($ch);
+        if ($serverMode == "LIVE") {
+            return self::$checkoutUrlLive;
+        } else {
+            return self::$checkoutUrlTest;
         }
-        curl_close($ch);
-        return $responseData;
     }
 
-	/**
-	 * Get payment widget server mode
-	 *
-	 * @param $serverWidget
-	 * @param $checkoutId
-	 * @return string
-	 */
-	public function getPaymentWidgetUrl($serverMode, $checkoutId) {
-		if ($serverMode == 'LIVE') {
-			return $this->paymentWidgetUrlLive . $checkoutId;
-		} else {
-			return $this->paymentWidgetUrlTest . $checkoutId;
-		}
-	}
+    /**
+     * Get payment status URL
+     *
+     * @param string $serverMode server mode
+     * @param string $checkoutId checkout id.
+     * @return string
+     */
+    private static function getPaymentStatusUrl($serverMode, $checkoutId)
+    {
+        if ($serverMode == "LIVE") {
+            return self::$checkoutUrlLive . '/' . $checkoutId. "/payment";
+        } else {
+            return self::$checkoutUrlTest . '/' . $checkoutId. "/payment";
+        }
+    }
 
+    /**
+     * Get the server to server URL based on the server mode for capture request
+     *
+     * @param string $server_mode server mode.
+     * @param string $checkoutId checkout id.
+     * @return string
+     */
+    private static function getPaymentServerToServerStatusUrl($serverMode, $checkoutId)
+    {
+        if ($serverMode == "LIVE") {
+            return self::$serverToServerUrlLive . '/' . $checkoutId;
+        } else {
+            return self::$serverToServerUrlTest . '/' . $checkoutId;
+        }
+    }
+
+    /**
+     * Get payment status URL
+     *
+     * @param string $serverMode server mode
+     * @param string $referenceId
+     * @return string
+     */
+    private static function getBackOfficeUrl($serverMode, $referenceId)
+    {
+        if ($serverMode == "LIVE") {
+            return self::$backofficeUrlLive.$referenceId;
+        } else {
+            return self::$backofficeUrlTest.$referenceId;
+        }
+    }
+
+    /**
+     * Get the serverToServer URL based on the server mode
+     *
+     * @param   string  $serverMode
+     * @return  string
+     */
+    private static function getServerToServerUrl($serverMode)
+    {
+        if ($serverMode == "LIVE") {
+            return self::$serverToServerUrlLive;
+        } else {
+            return self::$serverToServerUrlTest;
+        }
+    }
+
+    /**
+     * Get register payment URL
+     *
+     * @param string $serverMode server mode
+     * @param string $referenceId
+     * @return string
+     */
     private static function getRegisterUrl($serverMode, $referenceId)
     {
         if ($serverMode=="LIVE") {
@@ -675,29 +693,262 @@ class GatewayService
         }
     }
 
-	/**
-	 * Get Sid from gateway to use at payment page url
-	 *
-	 * @param array $transactionData
-	 * @throws \Exception
-	 * @return string
-	 */
-	public function getCheckoutResponse($transactionData)
-	{
-		$checkoutUrl = $this->oppwaCheckoutUrlTest;
-		$checkoutParameters = $this->getCheckoutParameters($transactionData);
-		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
+    /**
+     * Get the URL to execute query
+     *
+     * @param   string  $serverMode
+     * @return  string
+     */
+    private static function getQueryUrl($serverMode)
+    {
+        if ($serverMode=="LIVE") {
+            return self::$queryUrlLive;
+        } else {
+            return self::$queryUrlTest;
+        }
+    }
 
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
+    /**
+     * OPP Curl
+     *
+     */
 
-		$response = json_decode($response, true);
-		$this->getLogger(__METHOD__)->error('Payreto:response', $response);
-		$this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
-		return $response;
-	}
+    /**
+     * Sets the ssl verifypeer.
+     *
+     * @param      curl  $ch
+     * @param      string  $serverMode  The server mode
+     */
+    public static function setSSLVerifypeer($ch, $serverMode)
+    {
+        if ($serverMode == 'TEST') {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+    }
+
+    /**
+     * Get a response from the gateway
+     * @param  string $url
+     * @param  string $serverMode
+     * @param  string $type
+     * @param  string $postFields
+     * @param  string $format
+     * @return array
+     */
+    public function getGatewayResponse($url, $serverMode, $type = 'GET', $postFields = '', $format = 'string')
+    {
+        $this->getLogger(__METHOD__)->error('Payreto:url', $url);
+        $this->getLogger(__METHOD__)->error('Payreto:serverMode', $serverMode);
+        $this->getLogger(__METHOD__)->error('Payreto:type', $type);
+        $this->getLogger(__METHOD__)->error('Payreto:postFields', $postFields);
+        $this->getLogger(__METHOD__)->error('Payreto:format', $format);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        self::setSSLVerifypeer($ch, $serverMode);
+
+        if ($type == 'POST') {
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        } else {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
+        }
+        if ($format == 'xml') {
+            curl_setopt(
+                $ch,
+                CURLOPT_HTTPHEADER,
+                array('Content-type: application/x-www-form-urlencoded;charset=UTF-8')
+            );
+        }
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $responseBody = curl_exec($ch);
+        $this->getLogger(__METHOD__)->error('Payreto:responseBody', $responseBody);
+        $curlResponse = array();
+        $curlErrorNo = curl_errno($ch);
+        if ($curlErrorNo) {
+            $curlResponse['response'] = self::getCurlErrorIdentifier($curlErrorNo);
+            $curlResponse['is_valid'] = false;
+        } else {
+            $jsonResponse = json_decode($responseBody, true);
+            if (isset($jsonResponse)) {
+                $curlResponse['response'] = $jsonResponse;
+            } else {
+                $curlResponse['response'] = $responseBody;
+            }
+            $curlResponse['is_valid'] = true;
+        }
+
+        curl_close($ch);
+
+        return $curlResponse;
+    }
+
+    /**
+     * get Curl error identifier translation
+     *
+     * @param string $code
+     * @return string
+     */
+    private static function getCurlErrorIdentifier($code)
+    {
+        $errorIdentifier = array(
+            '60' => 'ERROR_MERCHANT_SSL_CERTIFICATE'
+        );
+
+        if ($code) {
+            if (array_key_exists($code, $errorIdentifier)) {
+                $errorMessages = $errorIdentifier[$code];
+            } else {
+                $errorMessages = 'ERROR_GENERAL_NORESPONSE';
+            }
+        } else {
+            $errorMessages =  'ERROR_GENERAL_GENERAL';
+        }
+
+        return $errorMessages;
+    }
+
+    /**
+     * gateway payment confirmation
+     *
+     * @param string $confirmationUrl
+     * @throws \Exception
+     * @return string
+     */
+    private function getGatewayPaymentConfirmation($confirmationUrl)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $confirmationUrl);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseData = curl_exec($ch);
+        if(curl_errno($ch)) {
+            return curl_error($ch);
+        }
+        curl_close($ch);
+        return $responseData;
+    }
+
+    private function getGatewayDeleteAccount($confirmationUrl)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $confirmationUrl);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);// this should be set to true in production
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $responseData = curl_exec($ch);
+        $this->getLogger(__METHOD__)->error('Payreto:responseData', $responseData);
+        if(curl_errno($ch)) {
+            return curl_error($ch);
+        }
+        curl_close($ch);
+        return $responseData;
+    }
+
+    /**
+     * OPP Main Operation
+     *
+     */
+
+    /**
+     * check payment status 3 times if no response
+     *
+     * @param string $paymentStatusUrl
+     * @param array $resultJson
+     * @param string $serverMode
+     * @return array $resultJson
+     */
+    private function isPaymentGetResponse($paymentStatusUrl, $resultJson, $serverMode)
+    {
+        $resultJson = $this->getGatewayResponse($paymentStatusUrl, $serverMode);
+        // for ($i=0; $i < 3; $i++) {
+        //     $response = true;
+        //     try {
+        //         $resultJson = $this->getGatewayResponse($paymentStatusUrl, $serverMode);
+        //     } catch (\Exception $e) {
+        //         $resultJson['response'] = 'ERROR_GENERAL_NORESPONSE';
+        //         $resultJson['is_valid'] = false;
+        //         $response = false;
+        //     }
+        //     if ($response && $resultJson) {
+        //         break;
+        //     }
+        // }
+
+        return $resultJson;
+    }
+
+    /**
+     * Get the Payment Status
+     *
+     * @param string $checkoutId
+     * @param array $transactionData
+     * @return array $response
+     */
+    public function getPaymentStatus($checkoutId, $transactionData)
+    {
+        $paymentStatusUrl = self::getPaymentStatusUrl($transactionData['server_mode'], $checkoutId);
+        $paymentStatusUrl .= '?'.http_build_query(self::getCredentialParameter($transactionData));
+
+        $resultJson = '';
+        $response = $this->isPaymentGetResponse($paymentStatusUrl, $resultJson, $transactionData['server_mode']);
+
+        return $response;
+    }
+
+    /**
+     * Send an Initial Payment server to server
+     *
+     * @param string $checkoutId
+     * @param array $transactionData
+     * @return array $response
+     */
+    public function getPaymentServerToServerStatus($checkoutId, $transactionData)
+    {
+
+        $paymentStatusUrl = self::getPaymentServerToServerStatusUrl($transactionData['server_mode'], $checkoutId);
+        $paymentStatusUrl .= '?'.http_build_query(self::getCredentialParameter($transactionData));
+
+        $resultJson = '';
+        $response = $this->isPaymentGetResponse($paymentStatusUrl, $resultJson, $transactionData['server_mode']);
+        return $response;
+    }
+
+    /**
+     * Get payment widget server mode
+     *
+     * @param $serverWidget
+     * @param $checkoutId
+     * @return string
+     */
+    public function getPaymentWidgetUrl($serverMode, $checkoutId) {
+        if ($serverMode == 'LIVE') {
+            return self::$paymentWidgetUrlLive . $checkoutId;
+        } else {
+            return self::$paymentWidgetUrlTest . $checkoutId;
+        }
+    }
+
+    /**
+     * Get Sid from gateway to use at payment page url
+     *
+     * @param array $transactionData
+     * @throws \Exception
+     * @return string
+     */
+    public function getCheckoutResult($transactionData)
+    {
+        $checkoutUrl = $this->getCheckoutUrl($transactionData['server_mode']);
+        $postData = $this->getCheckoutParameters($transactionData);
+        $response = $this->getGatewayResponse($checkoutUrl, $transactionData['server_mode'], 'POST', $postData);
+
+        $response = $response;
+        $this->getLogger(__METHOD__)->error('Payreto:response', $response);
+        $this->getLogger(__METHOD__)->error('Payreto:checkoutUrl', $checkoutUrl);
+        return $response;
+    }
 
     public function deleteRegistration($referenceId, $transactionData)
     {
@@ -708,101 +959,70 @@ class GatewayService
         $this->getLogger(__METHOD__)->error('Payreto:deRegisterUrl', $deRegisterUrl);
 
         $resultJson = $this->getGatewayDeleteAccount($deRegisterUrl);
-        $resultJson = json_decode($resultJson, true);
 
         return $resultJson;
     }
 
-	/**
-	 * Get Sid from gateway to use at payment page url
-	 *
-	 * @param array $transactionData
-	 * @throws \Exception
-	 * @return string
-	 */
-	public function getServerToServer($transactionData)
-	{
-		$checkoutUrl = $this->oppwaPaymentUrlTest;
-		$checkoutParameters = $this->getCheckoutParameters($transactionData);
-		$response = $this->getGatewayResponse($checkoutUrl, $checkoutParameters);
+    /**
+     * Get Sid from gateway to use at payment page url
+     *
+     * @param array $transactionData
+     * @throws \Exception
+     * @return string
+     */
+    public function getServerToServerResponse($transactionData)
+    {
+        $backOfficeUrl = self::getServerToServerUrl($transactionData['server_mode']);
+        $postData = $this->getCheckoutParameters($transactionData);
+        $response = $this->getGatewayResponse($backOfficeUrl, $transactionData['server_mode'], 'POST', $postData);
+        return $response;
+    }
 
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
+    /**
+     * Get Sid from gateway to use at payment page url
+     *
+     * @param array $transactionData
+     * @throws \Exception
+     * @return array
+     */
+    public function paymentServerToServer($checkoutId, $transactionData)
+    {
+        $confirmationUrl = self::getBackOfficeUrl($transactionData['server_mode'], $checkoutId);
+        $confirmationUrl .= '?' . http_build_query(self::getCredentialParameter($transactionData), '', '&');
 
-		$response = json_decode($response, true);
-		return $response;
-	}
+        $response = $this->getGatewayResponse($confirmationUrl, $transactionData['server_mode']);
 
-	/**
-	 * Get Sid from gateway to use at payment page url
-	 *
-	 * @param array $parameters
-	 * @throws \Exception
-	 * @return array
-	 */
-	public function paymentConfirmation($checkoutId, $transactionData)
-	{
-		$confirmationUrl = $this->oppwaCheckoutUrlTest . '/' . $checkoutId . '/payment';
-		$confirmationUrl .= '?' . http_build_query(self::getCredentialParameter($transactionData));
-		$this->getLogger(__METHOD__)->error('Payreto:confirmationUrl', $confirmationUrl);
-		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
+        if (!$response)
+        {
+            throw new \Exception('Sid is not valid : ' . $response);
+        }
 
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
+        $response = $response;
+        return $response;
+    }
 
-		$response = json_decode($response, true);
-		return $response;
-	}
+    /**
+     * Get Sid from gateway to use at payment page url
+     *
+     * @param array $transactionData
+     * @throws \Exception
+     * @return array
+     */
+    public function backOfficePayment($checkoutId, $transactionData)
+    {
+        $url = self::getBackOfficeUrl($transactionData['server_mode'], $checkoutId);
+        $checkoutParameters = $this->getCheckoutParameters($transactionData);
+        
+        $response = $this->getGatewayResponse($url, $checkoutParameters);
 
-	/**
-	 * Get Sid from gateway to use at payment page url
-	 *
-	 * @param array $transactionData
-	 * @throws \Exception
-	 * @return array
-	 */
-	public function paymentServerToServer($checkoutId, $transactionData)
-	{
-		$confirmationUrl = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
-		$confirmationUrl .= '?' . http_build_query(self::getCredentialParameter($transactionData), '', '&');
+        if (!$response)
+        {
+            throw new \Exception('Sid is not valid : ' . $response);
+        }
 
-		$response = $this->getGatewayPaymentConfirmation($confirmationUrl);
-
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
-
-		$response = json_decode($response, true);
-		return $response;
-	}
-
-	/**
-	 * Get Sid from gateway to use at payment page url
-	 *
-	 * @param array $transactionData
-	 * @throws \Exception
-	 * @return array
-	 */
-	public function backOfficePayment($checkoutId, $transactionData)
-	{
-		$url = $this->oppwaPaymentUrlTest . '/' . $checkoutId;
-		$checkoutParameters = $this->getCheckoutParameters($transactionData);
-		
-		$response = $this->getGatewayResponse($url, $checkoutParameters);
-
-		if (!$response)
-		{
-			throw new \Exception('Sid is not valid : ' . $response);
-		}
-
-		$response = json_decode($response, true);
-		return $response;
-	}
+        $response = $response;
+        return $response;
+    }
 
     private static function getRecurringPaymentParameter($transactionData)
     {
@@ -829,14 +1049,14 @@ class GatewayService
             throw new \Exception('Sid is not valid : ' . $resultJson);
         }
 
-        $resultJson = json_decode($resultJson, true);
+        $resultJson = $resultJson;
 
         return $resultJson;
     }
 
-	public static function getCredentialParameter($transactionData) 
-	{
-		$parameters = array();
+    public static function getCredentialParameter($transactionData) 
+    {
+        $parameters = array();
         $parameters['authentication.userId'] = $transactionData['login'];
         $parameters['authentication.password'] = $transactionData['password'];
         $parameters['authentication.entityId'] = $transactionData['channel_id'];
@@ -847,7 +1067,7 @@ class GatewayService
         }
 
         return $parameters;
-	}
+    }
 
 
     /**
@@ -873,7 +1093,7 @@ class GatewayService
 
     public function getTransactionResult($returnCode = false) 
     {
-    	if ($returnCode) {
+        if ($returnCode) {
             if (in_array($returnCode, self::$ackReturnCodes)) {
                 return "ACK";
             } elseif (in_array($returnCode, self::$nokReturnCodes)) {
@@ -884,17 +1104,17 @@ class GatewayService
     }
 
 
-	/**
-	 * get currenty payment status from gateway
-	 *
-	 * @param $parameters
-	 * @throws \Exception
-	 * @return array
-	 */
-	public function getCheckoutParameters($transactionData)
-	{
-		$parameters = [];
-		$parameters = self::getCredentialParameter($transactionData);
+    /**
+     * get currenty payment status from gateway
+     *
+     * @param $parameters
+     * @throws \Exception
+     * @return array
+     */
+    public function getCheckoutParameters($transactionData)
+    {
+        $parameters = [];
+        $parameters = self::getCredentialParameter($transactionData);
         $parameters['merchantTransactionId'] = $transactionData['transaction_id'];
         $parameters['customer.email'] = $transactionData['customer']['email'];
         $parameters['customer.givenName'] = $transactionData['customer']['first_name'];
@@ -1032,7 +1252,7 @@ class GatewayService
         }
 
         return http_build_query($parameters);
-	}
+    }
 
     /**
      * get error identifier based of code
@@ -1482,7 +1702,7 @@ class GatewayService
             '800.900.200' => 'ERROR_ADDRESS_PHONE'
         );
         if ($code) {
-            return array_key_exists($code, $errorMessages) ? $errorMessages[$code] : 'ERROR_UNKNOWN';
+            return array_key_exists('800.900.200', $errorMessages) ? $errorMessages[$code] : 'ERROR_UNKNOWN';
         } else {
             return 'ERROR_UNKNOWN';
         }

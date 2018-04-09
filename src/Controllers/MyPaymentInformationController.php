@@ -146,7 +146,7 @@ class MyPaymentInformationController extends Controller
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$widgetResult = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+		$widgetResult = $this->gatewayService->getCheckoutResult($recurringTranscationParameters);
 		$resultWidget = $this->gatewayService->getTransactionResult($widgetResult['result']['code']);
 
 		if ($resultWidget == 'ACK') 
@@ -217,7 +217,7 @@ class MyPaymentInformationController extends Controller
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$widgetResult = $this->gatewayService->getCheckoutResponse($recurringTranscationParameters);
+		$widgetResult = $this->gatewayService->getCheckoutResult($recurringTranscationParameters);
 		$resultWidget = $this->gatewayService->getTransactionResult($widgetResult['result']['code']);
 
 		if ($resultWidget == 'ACK') 
