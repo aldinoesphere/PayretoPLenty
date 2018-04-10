@@ -1002,26 +1002,19 @@ class GatewayService
     }
 
     /**
-     * Get Sid from gateway to use at payment page url
+     * Back Office Operation : Capture, Refund, Reversal
      *
+     * @param string $referenceId
      * @param array $transactionData
-     * @throws \Exception
-     * @return array
+     * @return array $resultJson
      */
-    public function backOfficePayment($checkoutId, $transactionData)
+    public function backOfficeOperation($referenceId, $transactionData)
     {
-        $url = self::getBackOfficeUrl($transactionData['server_mode'], $checkoutId);
-        $checkoutParameters = $this->getCheckoutParameters($transactionData);
-        
-        $response = $this->getGatewayResponse($url, $checkoutParameters);
+        $backOfficeUrl = self::getBackOfficeUrl($transactionData['server_mode'], $referenceId);
+        $postData = self::getBackOfficeParameter($transactionData);
+        $resultJson = $this->getGatewayResponse($backOfficeUrl, $transactionData['server_mode'], 'POST', $postData);
 
-        if (!$response)
-        {
-            throw new \Exception('Sid is not valid : ' . $response);
-        }
-
-        $response = $response;
-        return $response;
+        return $resultJson;
     }
 
     private static function getRecurringPaymentParameter($transactionData)
@@ -1249,6 +1242,27 @@ class GatewayService
             foreach ($transactionData['registrations'] as $key => $value) {
                   $parameters['registrations['.$key.'].id'] = $value;
             }
+        }
+
+        return http_build_query($parameters);
+    }
+
+    /**
+     * get detail which used for backoffice process
+     *
+     * @param array $transactionData
+     * @return string
+     */
+    private static function getBackOfficeParameter($transactionData)
+    {
+        $parameters = array();
+        $parameters = self::getCredentialParameter($transactionData);
+        $parameters['paymentType'] = $transactionData['payment_type'];
+
+        //Reversal (RV) didn't send amount & currency parameter
+        if ($transactionData['payment_type'] != 'RV') {
+            $parameters['amount'] = $transactionData['amount'];
+            $parameters['currency'] = $transactionData['currency'];
         }
 
         return http_build_query($parameters);
@@ -1741,6 +1755,33 @@ class GatewayService
             return array_key_exists($code, $errorMessages) ? $errorMessages[$code] : 'ERROR_GENERAL_PROCESSING';
         } else {
             return 'ERROR_GENERAL_PROCESSING';
+        }
+    }
+
+    /**
+     * check if code status is inreview
+     *
+     * @param string $code
+     * @return boolean
+     */
+    public function isSuccessReview($code)
+    {
+        $inReviews = array(
+            '000.400.000',
+            '000.400.010',
+            '000.400.020',
+            '000.400.030',
+            '000.400.040',
+            '000.400.050',
+            '000.400.060',
+            '000.400.070',
+            '000.400.080',
+            '000.400.090'
+        );
+        if (in_array($code, $inReviews)) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -262,7 +262,7 @@ class PaymentResultController extends Controller
         $registrationId = $resultJson['registrationId'];
 
         $transactionData['payment_type'] = "CP";
-        $captureResult = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $captureResult = $this->gatewayService->backOfficeOperation($referenceId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:captureResult', $captureResult);
 
         if ($this->gatewayService->getTransactionResult($captureResult['result']['code']) == 'ACK') {
@@ -302,7 +302,7 @@ class PaymentResultController extends Controller
     {
         $transactionData['payment_type'] = "RF";
         $this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
-        $resultJson = $this->gatewayService->backOfficePayment($referenceId, $transactionData);
+        $resultJson = $this->gatewayService->backOfficeOperation($referenceId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
     }
 

@@ -59,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus($this->getOrderStatus($paymentType, $isCapture))
+						->withStatus($this->getOrderStatus($paymentType))
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
@@ -85,9 +85,9 @@ class OrderService
 		return LocalizedOrder::wrap($order, "de");
 	}
 
-	public function getOrderStatus($paymentType, $isCapture = false) 
+	public function getOrderStatus($paymentType) 
 	{
-		if ($isCapture) {
+		if ($paymentType == 'CP' || $paymentType == 'RC' || $paymentType == 'DB') {
 			return 5;
 		} else {
 			switch ($paymentType) {
@@ -97,6 +97,10 @@ class OrderService
 
 				case 'DB':
 					return 5;
+					break;
+
+				case 'IR':
+					return 3.5;
 					break;
 				
 				default:

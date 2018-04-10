@@ -179,6 +179,8 @@ class PaymentController extends Controller
 			$validation = $this->validation($checkoutId);
 		}
 
+		$this->getLogger(__METHOD__)->error('Payreto:validation', $validation);
+
 		$basketItems = $this->basketItemRepository->all();
 
 		#error_log
@@ -292,7 +294,6 @@ class PaymentController extends Controller
         $basket = $basketHelper->getBasket();
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$paymentKey = $paymentMethod->paymentKey;
-        $paymentType = $this->paymentService->getPaymentType($basket);
 		
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
@@ -308,7 +309,7 @@ class PaymentController extends Controller
 				'test_mode' => $this->paymentService->getTestMode($paymentMethod->paymentKey)
 			]);
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
-			$this->capturePayment($checkoutId, $parameters);
+			return $this->capturePayment($checkoutId, $parameters);
 		} else {
             $this->getLogger(__METHOD__)->error('Payreto:parameters', $parameters);
             $paymentConfirmation = $this->gatewayService->getPaymentStatus($checkoutId, $parameters);
@@ -334,20 +335,7 @@ class PaymentController extends Controller
 						}
 					}
 						
-		            $paymentData['transaction_id'] = $paymentConfirmation['response']['id'];
-		            $paymentData['paymentKey'] = $paymentKey;
-		            $paymentData['amount'] = $paymentConfirmation['response']['amount'];
-		            $paymentData['currency'] = $paymentConfirmation['response']['currency'];
-
-		        	$paymentData['status'] = $this->getPaymentStatus($paymentType);
-		        	$orderData = $this->orderService->placeOrder($paymentType);
-		            $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
-		            $orderId = $orderData->order->id;
-					
-					$paymentData['orderId'] = $orderId;
-
-					$this->paymentHelper->updatePlentyPayment($paymentData);
-					return $orderData;
+		            return $this->doSuccessPayment($paymentMethod, $paymentConfirmation);
 				} elseif ($paymentResult == 'NOK') {
 		        	$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
 					$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
@@ -358,6 +346,37 @@ class PaymentController extends Controller
 		}
 	}
 
+	private function doSuccessPayment($paymentMethod, $resultJson)
+	{
+		$paymentData['transaction_id'] = $resultJson['response']['id'];
+        $paymentData['paymentKey'] = $paymentMethod->paymentKey;
+        $paymentData['amount'] = $resultJson['response']['amount'];
+        $paymentData['currency'] = $resultJson['response']['currency'];
+        $paymentType = $this->getPaymentTypeResponse($resultJson['response']);
+    	$paymentData['status'] = $this->getPaymentStatus($paymentType);
+    	$orderData = $this->orderService->placeOrder($paymentType);
+        $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+        $orderId = $orderData->order->id;
+		
+		$paymentData['orderId'] = $orderId;
+
+		$this->paymentHelper->updatePlentyPayment($paymentData);
+		return $orderData;
+	}
+
+	private function getPaymentTypeResponse($resultJson)
+    {
+        $returnCode = $resultJson['result']['code'];
+
+        if ($this->gatewayService->isSuccessReview($returnCode)) {
+            $paymentType = 'IR';
+        } else {
+            $paymentType = (isset($resultJson['paymentType']) ? $resultJson['paymentType'] : '');
+        }
+
+        return $paymentType;
+    }
+
 	public function capturePayment($checkoutId, $parameters)
 	{
 		$paymentData = [];
@@ -366,7 +385,7 @@ class PaymentController extends Controller
         $paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
 		$paymentKey = $paymentMethod->paymentKey;
         $paymentType = $this->paymentService->getPaymentType($basket);
-		$paymentConfirmation = $this->gatewayService->backOfficePayment($checkoutId, $parameters);
+		$paymentConfirmation = $this->gatewayService->backOfficeOperation($checkoutId, $parameters);
 
 		$this->sessionStorage->getPlugin()->setValue('PayretoTransactionId', $paymentConfirmation['response']['id']);
 		if (!$paymentConfirmation['is_valid']) {
@@ -377,21 +396,22 @@ class PaymentController extends Controller
 			$paymentResult = $this->gatewayService->getTransactionResult($paymentConfirmation['response']['result']['code']);
 			if ( $paymentResult == 'ACK') 
 			{
-				$paymentData['transaction_id'] = $paymentConfirmation['response']['id'];
-	            $paymentData['paymentKey'] = $paymentKey;
-	            $paymentData['amount'] = $paymentConfirmation['response']['amount'];
-	            $paymentData['currency'] = $paymentConfirmation['response']['currency'];
+				// $paymentData['transaction_id'] = $paymentConfirmation['response']['id'];
+	   //          $paymentData['paymentKey'] = $paymentKey;
+	   //          $paymentData['amount'] = $paymentConfirmation['response']['amount'];
+	   //          $paymentData['currency'] = $paymentConfirmation['response']['currency'];
 
-				$paymentData['status'] = $this->paymentHelper->mapTransactionState('2');	
-            	$orderData = $this->orderService->placeOrder($paymentType, true);
+				// $paymentData['status'] = $this->paymentHelper->mapTransactionState('2');	
+    //         	$orderData = $this->orderService->placeOrder($paymentType, true);
 
-            	$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
-	            $orderId = $orderData->order->id;
+    //         	$this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+	   //          $orderId = $orderData->order->id;
 				
-				$paymentData['orderId'] = $orderId;
+				// $paymentData['orderId'] = $orderId;
 
-				$this->paymentHelper->updatePlentyPayment($paymentData);
-				return $orderData;
+				// $this->paymentHelper->updatePlentyPayment($paymentData);
+				// return $orderData;
+				return $this->doSuccessPayment($paymentMethod, $paymentConfirmation);
 
 			} elseif ($paymentResult == 'NOK') {
 				$returnMessage = $this->gatewayService->getErrorIdentifier($paymentConfirmation['response']['result']['code']);
@@ -420,14 +440,10 @@ class PaymentController extends Controller
 
 	public function getPaymentStatus($paymentType) 
 	{
-		switch ($paymentType) {
-			case 'PA':
-				return $this->paymentHelper->mapTransactionState('0');
-				break;
-			
-			default:
-				return $this->paymentHelper->mapTransactionState('2');
-				break;
+		if ($paymentType === 'CP' || $paymentType === 'RC' || $paymentType === 'DB') {
+			return $this->paymentHelper->mapTransactionState('2');
+		} else() {
+			return $this->paymentHelper->mapTransactionState('0');
 		}
 	}
 
@@ -498,7 +514,7 @@ class PaymentController extends Controller
 	        } else {
 	            if ($transactionResult == 'NOK') {
 	                $returnMessage = $this->getEasyCreditErrorMessage($paymentServerToServer['response']);
-					$this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+					$this->notification->error($returnMessage);
 					return $this->response->redirectTo('checkout');
 	            } else {
 					$this->notification->error($this->gatewayService->getErrorMessage('ERROR_UNKNOWN'));

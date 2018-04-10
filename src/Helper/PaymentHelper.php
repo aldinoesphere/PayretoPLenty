@@ -544,16 +544,10 @@ class PaymentHelper
 	 * get payment status (use for payment/refund detail information status).
 	 *
 	 * @param array $status
-	 * @param bool $isCredentialValid
 	 * @return string
 	 */
-	public function getPaymentStatus(string $status, $isCredentialValid = true)
+	public function getPaymentStatus(string $status)
 	{
-		if (!$isCredentialValid)
-		{
-			return 'Invalid Credential';
-		}
-
 		switch ($status)
 		{
 			case '0':

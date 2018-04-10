@@ -224,16 +224,31 @@ class PaymentService
 
 		if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
 		{
+			$customer = pluginApp(basketHelper::class)->getCustomer();
 			$transactionParameter = array_merge($transactionParameter, $this->getServerToServerParameters($basket, $paymentMethod));
 			$this->getLogger(__METHOD__)->error('Payreto:parameters', $transactionParameter); 
 
 			$paymentResponse = $this->gatewayService->getServerToServerResponse($transactionParameter);
 			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
 
-			if ((float)$basket->basketAmount < 200 || (float)$basket->basketAmount > 3000) {
+			if (!$this->getEasycreditAmountAllowed($basket)) {
 				return [
 					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
 					'content' => 'The financing amount is outside the permitted amounts (200 - 3,000 EUR)'
+				];
+			}
+
+			if (!$this->isDateOfBirthValid()) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'Please enter your date of birth to use easyCredit.'
+				];
+			}
+
+			if (!$this->isGenderValid()) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'Please enter your gender to make payment with easyCredit.'
 				];
 			}
 
@@ -297,6 +312,52 @@ class PaymentService
 			'type' => GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL,
 			'content' => $paymentPageUrl
 		];
+	}
+
+	protected function isGenderValid() {
+		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$gender = $customer->gender;
+
+		$this->getLogger(__METHOD__)->error('Payreto:gender', $gender);
+
+		if (is_null($gender)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected function isDateOfBirthValid() {
+		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$birthdate = substr($customer->birthdayAt, 0,10);
+
+		$customerDateOfBirth = explode("-", $birthdate);
+
+        $year = (int)$customerDateOfBirth[0];
+        $month = (int)$customerDateOfBirth[1];
+        $day = (int)$customerDateOfBirth[2];
+
+        if ($year < 1900) {
+            return false;
+        }
+
+        if ($month < 0 || $month > 12) {
+            return false;
+        }
+
+        if ($day < 0 || $day > 31) {
+            return false;
+        }
+
+        return true;
+	}
+
+	protected function getEasycreditAmountAllowed($basket) {
+		if ((float)$basket->basketAmount < 200 || (float)$basket->basketAmount > 5000 || $basket->currency != 'EUR') {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -415,6 +476,8 @@ class PaymentService
 		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
 		$billings = pluginApp(basketHelper::class)->getBillingAddress();
 		$customer = pluginApp(basketHelper::class)->getCustomer(); 
+		$this->getLogger(__METHOD__)->error('Payreto:shippings', $shippings);
+		$this->getLogger(__METHOD__)->error('Payreto:billings', $billings);
 		$this->getLogger(__METHOD__)->error('Payreto:customer', $customer);
 
 		$customerParameters = [
@@ -431,14 +494,14 @@ class PaymentService
 							[
 								'city' => $shippings->town,
 								'country' => 'DE',
-								'street1' => $shippings->address1,
+								'street1' => $shippings->address1 . ' ' . $shippings->address2 . ' ' . $shippings->address3 . ' ' . $shippings->address4,
 								'postcode' => $shippings->postalCode
 							],
 			'billing' =>
 							[
 								'city' => $billings->town,
 								'country_code' => 'DE',
-								'street' => $billings->address1,
+								'street' => $billings->address1 . ' ' . $billings->address2 . ' ' . $billings->address3 . ' ' . $billings->address4,
 								'zip' => $billings->postalCode
 							]
 		];
@@ -727,7 +790,7 @@ class PaymentService
 
 			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
 
-			$refundResult = $this->gatewayService->backOfficePayment($transactionId, $transactionData);
+			$refundResult = $this->gatewayService->backOfficeOperation($transactionId, $transactionData);
 
 			$resultRefund = $this->gatewayService->getTransactionResult($refundResult);
 
