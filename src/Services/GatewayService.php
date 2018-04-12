@@ -1062,6 +1062,21 @@ class GatewayService
         return $parameters;
     }
 
+    /**
+     * Update payment status
+     *
+     * @param string $referenceId reference id.
+     * @param array  $order transaction parameters.
+     * @return xml
+     */
+    public function updateStatus( $referenceId, $order ) {
+        unset( $order['test_mode'] );
+        $status_url  = self::getBackOfficeUrl( $order['server_mode'], $referenceId );
+        $status_url .= '?' . http_build_query( self::getCredentialParameter( $order ), '', '&' );
+
+        return $this->getGatewayResponse( $status_url, $order['server_mode'] );
+    }
+
 
     /**
      * get detail of cart item
@@ -1783,6 +1798,19 @@ class GatewayService
         } else {
             return false;
         }
+    }
+
+    public function getPaymentTypeResponse($resultJson)
+    {
+        $returnCode = $resultJson['result']['code'];
+
+        if ($this->isSuccessReview($returnCode)) {
+            $paymentType = 'IR';
+        } else {
+            $paymentType = (isset($resultJson['paymentType']) ? $resultJson['paymentType'] : '');
+        }
+
+        return $paymentType;
     }
 
     public function getErrorMessage($errorIdentifier)

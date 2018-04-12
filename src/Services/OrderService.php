@@ -85,6 +85,14 @@ class OrderService
 		return LocalizedOrder::wrap($order, "de");
 	}
 
+	public function updateOrderStatus($orderId, $paymentType) {
+		$data = [
+			'statusId' => $this->getOrderStatus($paymentType)
+		];
+
+		return $order = $this->orderRepository->updateOrder($data, $orderId);
+	}
+
 	public function getOrderStatus($paymentType) 
 	{
 		if ($paymentType == 'CP' || $paymentType == 'RC' || $paymentType == 'DB') {

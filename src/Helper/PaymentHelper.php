@@ -258,8 +258,6 @@ class PaymentHelper
 
 		$payment = pluginApp(Payment::class);
 
-		$this->getLogger(__METHOD__)->error('Payreto:payment', $payment);
-
 		$mopId = 0;
 		$paymentMethod = $this->getPaymentMethodByPaymentKey($paymentStatus['paymentKey']);
 
@@ -279,7 +277,7 @@ class PaymentHelper
 		$payment->currency = $paymentStatus['currency'];
 		$payment->amount = $paymentStatus['amount'];
 
-		if ($state == Payment::STATUS_APPROVED)
+		if ($state == Payment::STATUS_CAPTURED)
 		{
 			$payment->unaccountable = 0;
 		} else {
@@ -530,7 +528,7 @@ class PaymentHelper
 		}
 		if (isset($status))
 		{
-			$paymentBookingText[] = "Refund status : " . $this->getPaymentStatus($status);
+			$paymentBookingText[] = "Refund status : " . $this->getPaymentMessage($status);
 		}
 		if (!empty($paymentBookingText))
 		{
@@ -541,24 +539,55 @@ class PaymentHelper
 	}
 
 	/**
+	 * Get payment status order transaction
+	 * @param String $paymentType
+	 * @return int
+	 * 
+	 * Status :
+	 * 1. Awaiting Approval -> In-review
+	 * 2. Approved -> Pre-Authorization
+	 * 3. Captured -> DB/RC/CP
+	 */
+	public function getPaymentStatus($paymentType) 
+	{
+		if ($paymentType === 'PA') {
+			return $this->mapTransactionState('2');
+		} elseif ($paymentType === 'CP' || $paymentType === 'RC' || $paymentType === 'DB') {
+			return $this->mapTransactionState('3');
+		} else {
+			return $this->mapTransactionState('1');
+		}
+	}
+
+	/**
 	 * get payment status (use for payment/refund detail information status).
 	 *
 	 * @param array $status
 	 * @return string
 	 */
-	public function getPaymentStatus(string $status)
+	public function getPaymentMessage(string $status)
 	{
 		switch ($status)
 		{
-			case '0':
-				return 'Pending';
+			case '1':
+				return 'In-Review';
+				break;
 			case '2':
-				return 'Processed';
+				return 'Pre-Athorization';
+				break;
+			case '3':
+				return 'Payment Accepted';
+				break;
+			case '5':
+				return 'Canceled';
+				break;
 			case '-2':
 				return 'Failed';
+				break;
+			default :
+				return 'In-Review';
+				break;
 		}
-
-		return 'null';
 	}
 
 	/**
@@ -575,7 +604,7 @@ class PaymentHelper
 		$this->getLogger(__METHOD__)->error('Payreto:statusConstants', $statusConstants);
 		switch ($status)
 		{
-			case '0':
+			case '1':
 				return Payment::STATUS_AWAITING_APPROVAL;
 			case '2':
 				if ($isRefund)
@@ -585,6 +614,10 @@ class PaymentHelper
 				return Payment::STATUS_APPROVED;
 			case '-2':
 				return Payment::STATUS_REFUSED;
+			case '3':
+				return Payment::STATUS_CAPTURED;
+			case '5':
+				return Payment::STATUS_CANCELED;
 		}
 
 		return Payment::STATUS_AWAITING_APPROVAL;
@@ -668,7 +701,7 @@ class PaymentHelper
 		if (isset($paymentStatus['status']))
 		{
 			$paymentBookingText[] = "Payment status : " .
-				$this->getPaymentStatus((string)$paymentStatus['status']);
+				$this->getPaymentMessage((string)$paymentStatus['status']);
 		}
 		if (isset($paymentStatus['IP_country']))
 		{

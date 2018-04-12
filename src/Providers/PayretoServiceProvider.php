@@ -72,7 +72,7 @@ class PayretoServiceProvider extends ServiceProvider
 						'Payreto\Procedures\RefundEventProcedure@run'
 		);
 
-		// Register Payreto Refund Event Procedure
+		// Register Payreto Update Order Status Event Procedure
 		$eventProceduresService->registerProcedure(
 						'Payreto',
 						ProcedureEntry::PROCEDURE_GROUP_ORDER,
