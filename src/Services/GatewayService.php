@@ -1796,7 +1796,7 @@ class GatewayService
         if (in_array($code, $inReviews)) {
             return true;
         } else {
-            return false;
+            return true;
         }
     }
 

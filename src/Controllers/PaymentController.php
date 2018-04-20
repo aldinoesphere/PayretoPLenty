@@ -230,7 +230,7 @@ class PaymentController extends Controller
 
         if ($transactionResult == 'ACK') {
         	$paymentData['transaction_id'] = $debitResponse['id'];
-            $paymentData['paymentKey'] = $paymentKey;
+            $paymentData['payment_type'] = $paymentKey;
             $paymentData['amount'] = $debitResponse['amount'];
             $paymentData['currency'] = $debitResponse['currency'];
             $paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentType);
@@ -301,7 +301,7 @@ class PaymentController extends Controller
 
 		$parameters = $this->paymentService->getCredentials($paymentKey);
 
-		if ($paymentKey == 'PAYRETO_ECP') {
+		if ($paymentKey == 'PAYRETO_AEC') {
 			$parameters = array_merge($parameters, [
 				'amount' => $basket->basketAmount,
 				'currency' => $basket->currency,
@@ -349,7 +349,7 @@ class PaymentController extends Controller
 	private function doSuccessPayment($paymentMethod, $resultJson)
 	{
 		$paymentData['transaction_id'] = $resultJson['response']['id'];
-        $paymentData['paymentKey'] = $paymentMethod->paymentKey;
+        $paymentData['payment_type'] = $paymentMethod->paymentKey;
         $paymentData['amount'] = $resultJson['response']['amount'];
         $paymentData['currency'] = $resultJson['response']['currency'];
         $paymentType = $this->gatewayService->getPaymentTypeResponse($resultJson['response']);

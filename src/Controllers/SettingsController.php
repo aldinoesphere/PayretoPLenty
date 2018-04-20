@@ -229,7 +229,7 @@ class SettingsController extends Controller
 					];
 				break;
 
-			case 'PAYRETO_ECP':
+			case 'PAYRETO_AEC':
 				return [
 						'title' => 'Easy Credit',
 						'paymentBrand' => 'RATENKAUF',
@@ -302,7 +302,7 @@ class SettingsController extends Controller
 						);
 		} elseif($settingType == 'PAYRETO_GRP' 
 			|| $settingType == 'PAYRETO_ADB' 
-			|| $settingType == 'PAYRETO_ECP' 
+			|| $settingType == 'PAYRETO_AEC' 
 			|| $settingType == 'PAYRETO_PPM') {
 			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),

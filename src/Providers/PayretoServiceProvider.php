@@ -22,7 +22,7 @@ use Payreto\Helper\PaymentHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Methods\AccPaymentMethod;
 use Payreto\Methods\AccRcPaymentMethod;
-use Payreto\Methods\EcpPaymentMethod;
+use Payreto\Methods\AecPaymentMethod;
 use Payreto\Methods\DdsPaymentMethod;
 use Payreto\Methods\DdsRcPaymentMethod;
 use Payreto\Methods\PpmPaymentMethod;
@@ -52,7 +52,7 @@ class PayretoServiceProvider extends ServiceProvider
     ) {
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC', AccPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC_RC', AccRcPaymentMethod::class);
-    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ECP', EcpPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_AEC', AecPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS', DdsPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS_RC', DdsRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM', PpmPaymentMethod::class);

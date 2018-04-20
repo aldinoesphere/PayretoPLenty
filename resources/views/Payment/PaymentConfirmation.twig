@@ -30,11 +30,6 @@
             <hr>
             <div class="row">
                 {% set loggedIn = frontend.Account.getIsAccountLoggedIn %}
-                <div class="col-xs-6 col-md-4 {% if loggedIn %}offset-md-2{% else %}offset-xs-3 offset-md-4{% endif %}">
-                    <a href="/checkout" type="" class="btn btn-primary btn-block bg-primary">{{ trans('Payreto::Template.FRONTEND_BT_CANCEL') }}</a>
-                </div>
-
-
                 {% if loggedIn %}
                     <div class="col-xs-6 col-md-4">
                         <a href="/payment/payreto/return/{{ checkoutId }}/" type="" class="btn btn-primary btn-block bg-primary">{{ trans('Payreto::Template.FRONTEND_BT_CONFIRM') }}</a>

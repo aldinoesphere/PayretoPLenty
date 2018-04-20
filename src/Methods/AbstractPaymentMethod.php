@@ -133,6 +133,7 @@ class AbstractPaymentMethod extends PaymentMethodService
 
 		if (array_key_exists('language', $this->paymentService->settings))
 		{
+			$this->getLogger(__METHOD__)->error('Payreto:language', array_key_exists('language', $this->paymentService->settings));
 			if (array_key_exists($lang, $this->paymentService->settings['language']))
 			{
 				if (array_key_exists('paymentName', $this->paymentService->settings['language'][$lang]))
@@ -170,7 +171,6 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		$app = pluginApp(Application::class);
 		$icon = $app->getUrlPath('payreto').'/images/logos/'.$this->getLogoFileName();
-
 		return $icon;
 	}
 

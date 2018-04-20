@@ -3,11 +3,30 @@
     "description": "Payreto Backend Menu",
     "namespace": "Payreto",
     "version": "1.0.0",
-    "author": "Payreto Dev",
     "type": "payment",
+    "price": 0.00,
+    "categories": ["3519"],
+    "keywords": [
+        "Credit Cards",
+        "Payment",
+        "Payment Gateway",
+        "Debit Cards",
+        "Payment Method",
+        "Sofort",
+        "Giropay"
+    ],
+    "author": "PAYRETO GmbH",
+    "authorIcon": "icon_author_xs.png",
+    "email": "newbusiness@paysafe.com",
+    "phone": "+44 2083389332",
     "serviceProvider": "Payreto\\Providers\\PayretoServiceProvider",
+    "containers"        : [],
+    "dataProviders"     : [],
+    "javaScriptFiles"   : [],
+    "require"           : [],
+    "dependencies"      : [],
     "runOnBuild"        : [
-        "Payreto\\Migrations\\CreatesTestPayretoTables",
-        "Payreto\\Migrations\\CreatesPaymentMethod"
+        "Payreto\\Migrations\\CreatesPayretoTables_b_1_0_2",
+        "Payreto\\Migrations\\CreatesPaymentMethod_b_1_0_2"
     ]
 }

@@ -122,7 +122,7 @@ class UpdateOrderStatusEventProcedure
 
         				if ($payment->status == 1 && $paymentType != 'IR') {
         					$paymentData['transaction_id'] = $inReviewStatus['response']['id'];
-				            $paymentData['paymentKey'] = $payment->method->paymentKey;
+				            $paymentData['payment_type'] = $payment->method->paymentKey;
 				            $paymentData['amount'] = $inReviewStatus['response']['amount'];
 				            $paymentData['currency'] = $inReviewStatus['response']['currency'];
 				            $paymentData['status'] = $paymentHelper->getPaymentStatus($paymentType);
@@ -188,7 +188,7 @@ class UpdateOrderStatusEventProcedure
 			$transactionResult = $this->gatewayService->getTransactionResult($paymentResult['response']['result']['code']);
 			if ($transactionResult == 'ACK') {
 				$paymentData['transaction_id'] = $paymentResult['response']['id'];
-	            $paymentData['paymentKey'] = $payment->paymentKey;
+	            $paymentData['payment_type'] = $payment->paymentKey;
 	            $paymentData['amount'] = $paymentResult['response']['amount'];
 	            $paymentData['currency'] = $paymentResult['response']['currency'];
 	            $paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentResult['response']['paymentType']);

@@ -222,7 +222,7 @@ class PaymentService
 			$this->getCustomerParameters()
 		);
 
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP')
+		if ($paymentMethod->paymentKey == 'PAYRETO_AEC')
 		{
 			$customer = pluginApp(basketHelper::class)->getCustomer();
 			$transactionParameter = array_merge($transactionParameter, $this->getServerToServerParameters($basket, $paymentMethod));
@@ -423,7 +423,7 @@ class PaymentService
 	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
 	{
 		$paymentParameters = [];
-		if ($paymentMethod->paymentKey == 'PAYRETO_ECP') {
+		if ($paymentMethod->paymentKey == 'PAYRETO_AEC') {
 			$paymentParameters =array_merge( 
 					$this->getChartParameters($basket),
 					[
