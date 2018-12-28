@@ -1035,14 +1035,12 @@ class GatewayService
 
         $registerUrl = self::getRegisterUrl($transactionData['server_mode'], $referenceId);
         $postData = self::getRecurringPaymentParameter($transactionData);
-        $resultJson = $this->getGatewayResponse($registerUrl, $postData);
+        $resultJson = $this->getGatewayResponse($registerUrl, $transactionData['server_mode'], 'POST', $postData);
 
         if (!$resultJson)
         {
             throw new \Exception('Sid is not valid : ' . $resultJson);
         }
-
-        $resultJson = $resultJson;
 
         return $resultJson;
     }
@@ -1796,7 +1794,7 @@ class GatewayService
         if (in_array($code, $inReviews)) {
             return true;
         } else {
-            return true;
+            return false;
         }
     }
 

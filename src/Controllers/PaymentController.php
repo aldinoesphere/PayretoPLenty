@@ -225,14 +225,14 @@ class PaymentController extends Controller
         $debitResponse = $this->gatewayService->getRecurringPaymentResult($registrationId, $paymentData);
         $this->getLogger(__METHOD__)->error('Payreto:debitResponse', $debitResponse);
 
-        $returnCode = $debitResponse['result']['code'];
+        $returnCode = $debitResponse['response']['result']['code'];
         $transactionResult = $this->gatewayService->getTransactionResult($returnCode);
 
         if ($transactionResult == 'ACK') {
-        	$paymentData['transaction_id'] = $debitResponse['id'];
+        	$paymentData['transaction_id'] = $debitResponse['response']['id'];
             $paymentData['payment_type'] = $paymentKey;
-            $paymentData['amount'] = $debitResponse['amount'];
-            $paymentData['currency'] = $debitResponse['currency'];
+            $paymentData['amount'] = $debitResponse['response']['amount'];
+            $paymentData['currency'] = $debitResponse['response']['currency'];
             $paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentType);
             $orderData = $this->orderService->placeOrder($paymentType);
             $orderId = $orderData->order->id;
@@ -400,7 +400,7 @@ class PaymentController extends Controller
 	{
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
-		$paymentConfirmation = array_merge($paymentConfirmation, [
+		$paymentConfirmation = array_merge($paymentConfirmation['response'], [
 			'paymentKey' => $paymentKey, 
 			'entityId' => $paymentSettings['entityId'],
 			'server' => $paymentSettings['server']
@@ -412,11 +412,11 @@ class PaymentController extends Controller
 
 	public function payAndSavePaypal($paymentMethod, $paymentConfirmation, $basket)
 	{
-		$registrationId = $paymentConfirmation['id'];
+		$registrationId = $paymentConfirmation['response']['id'];
         $paymentData = $this->paymentService->getCredentials($paymentMethod->paymentKey);
         $paymentData['amount'] = $basket->basketAmount;
         $paymentData['currency'] = $basket->currency;
-        $paymentData['transaction_id'] = $paymentConfirmation['merchantTransactionId'];
+        $paymentData['transaction_id'] = $paymentConfirmation['response']['merchantTransactionId'];
         $paymentData['payment_recurring'] = 'INITIAL';
         $paymentData['test_mode'] = $this->paymentService->getTestMode($paymentMethod->paymentKey);
         $paymentData['paymentType'] = 'DB';

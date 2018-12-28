@@ -146,21 +146,35 @@ class MyPaymentInformationController extends Controller
 
 		$recurringTranscationParameters = $this->paymentService->getRecurringPaymentParameters($paymentKey);
 
-		$widgetResult = $this->gatewayService->getCheckoutResult($recurringTranscationParameters);
-		$resultWidget = $this->gatewayService->getTransactionResult($widgetResult['result']['code']);
+		$checkoutResult = $this->gatewayService->getCheckoutResult($recurringTranscationParameters);
 
-		if ($resultWidget == 'ACK') 
-		{
-			$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $widgetResult['id'] .'/' . $paymentKey . '/0/';
-			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl($paymentSettings['server'], $widgetResult['id']);
-
-			$this->getLogger(__METHOD__)->error('Payreto:checkoutResponse', $widgetResult);
-			$this->getLogger(__METHOD__)->error('Payreto:paymentPageUrl', $paymentPageUrl);
+		if (!$checkoutResult['is_valid']) {
+			$returnMessage = $this->gatewayService->getErrorIdentifier($checkoutResult['response']['result']['code']);
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+			return $this->response->redirectTo('my-payment-information');
+		} elseif(!isset($checkoutResult['response']['id'])) {
+			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+			return $this->response->redirectTo('my-payment-information');
+		} else {
+			$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl(
+                $recurringTranscationParameters['server_mode'],
+                $checkoutResult['response']['id']
+            );
 			$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
 
-			$data = [
+            $paymentWidgetContent = $this->gatewayService->getGatewayResponse($paymentWidgetUrl, $recurringTranscationParameters['server_mode']);
+            $this->getLogger(__METHOD__)->error('Payreto:paymentWidgetContent', $paymentWidgetContent);
+            if ( !$paymentWidgetContent['is_valid']
+            	|| strpos($paymentWidgetContent['response'], 'errorDetail') !== false
+            ) {
+            	$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
+				return $this->response->redirectTo('my-payment-information');
+            }
+
+            $paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay-register/' . $checkoutResult['response']['id'] .'/' . $paymentKey . '/0/';
+            $data = [
 				'paymentBrand' => $paymentBrand,
-				'checkoutId' => $widgetResult['id'],
+				'checkoutId' => $checkoutResult['response']['id'],
 				'paymentPageUrl' => $paymentPageUrl,
 				'redirect' => $isRedirect,
 	            'cancelUrl' => '/my-payment-information',
@@ -169,10 +183,6 @@ class MyPaymentInformationController extends Controller
 			];
 			$this->getLogger(__METHOD__)->error('Payreto:data', $data);
 			return $twig->render('Payreto::Payment.PaymentRegister', $data);
-		} elseif ($resultWidget == 'NOK') {
-			$returnMessage = $this->gatewayService->getErrorIdentifier($widgetResult);
-			$this->notification->error($this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT'));
-			return $this->response->redirectTo('my-payment-information');
 		}
 	}
 

@@ -170,12 +170,15 @@ class PaymentResultController extends Controller
 	{
 		$transactionData = $this->paymentService->getCredentials($paymentKey);
 		$resultJson = $this->gatewayService->getPaymentStatus($checkoutId, $transactionData);
+		$this->getLogger(__METHOD__)->error('Payreto:StartHandleRegister', 'Start Handle Register');
+		$this->getLogger(__METHOD__)->error('Payreto:resultJson', $resultJson);
 
-		if ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'ACK') 
+		if ($this->gatewayService->getTransactionResult($resultJson['response']['result']['code']) == 'ACK') 
 		{
+			$this->getLogger(__METHOD__)->error('Payreto:transactionResult', 'ACK');
 			$validation = $this->validationRegister($recurringId, $paymentKey, $resultJson);
 
-		} elseif ($this->gatewayService->getTransactionResult($resultJson['result']['code']) == 'NOK') {
+		} elseif ($this->gatewayService->getTransactionResult($resultJson['response']['result']['code']) == 'NOK') {
 			return false;
 		} else {
 			return false;
@@ -191,21 +194,24 @@ class PaymentResultController extends Controller
 	public function validationRegister($recurringId, $paymentKey, $resultJson)
 	{
 		
+		$this->getLogger(__METHOD__)->error('Payreto:StartValidationRegister', 'Start Validation Register');
 		$this->getLogger(__METHOD__)->error('Payreto:checkoutId', $checkoutId);
 
 		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
 		$transactionData = $this->getRegisterParameter($paymentKey);
 		if ($recurringId) {
-            $transactionData['transaction_id'] = $resultJson['merchantTransactionId'];
+            $transactionData['transaction_id'] = $resultJson['response']['merchantTransactionId'];
             $transactionData['server_mode'] = 'TEST';
         }
 
 		if ($paymentKey == 'PAYRETO_PPM_RC') 
 		{
+			$this->getLogger(__METHOD__)->error('Payreto:doPaypalRegister', 'do Paypal Registration');
 			$paypalResult = $this->doPaypalRegister($recurringId, $paymentKey, $transactionData, $resultJson);
 			$referenceId = $paypalResult['id'];
 		} elseif ($paymentSettings['transactionMode'] == 'PA') {
+			$this->getLogger(__METHOD__)->error('Payreto:captureRegister', 'capture Registration');
 			$captureResult = $this->captureRegister($recurringId, $paymentKey, $transactionData, $resultJson);
 			$referenceId = $captureResult['id'];
 		} else {
@@ -240,26 +246,26 @@ class PaymentResultController extends Controller
 
 	public function saveAccount($recurringId, $resultJson, $paymentKey)
 	{
-		// $paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
+		$paymentSettings = $this->paymentService->getPaymentSettings($paymentKey);
 
-		// $resultJson = array_merge($resultJson, [
-		// 	'paymentKey' => $paymentKey, 
-		// 	'entityId' => $paymentSettings['entityId'],
-		// 	'server' => $paymentSettings['server']
-		// 	]
-		// );
-		// $accountData = $this->paymentHelper->setAccountData($resultJson);
-		// if ($recurringId) {
-		// 	$this->accountController->updateAccount($recurringId, $accountData);
-		// } else {
-		// 	$this->accountController->saveAccount($accountData);	
-		// }
+		$resultJson = array_merge($resultJson['response'], [
+			'paymentKey' => $paymentKey, 
+			'entityId' => $paymentSettings['entityId'],
+			'server' => $paymentSettings['server']
+			]
+		);
+		$accountData = $this->paymentHelper->setAccountData($resultJson);
+		if ($recurringId) {
+			$this->accountController->updateAccount($recurringId, $accountData);
+		} else {
+			$this->accountController->saveAccount($accountData);	
+		}
 	}
 
 	public function captureRegister($recurringId, $paymentKey, $transactionData, $resultJson)
 	{
-		$referenceId = $resultJson['id'];
-        $registrationId = $resultJson['registrationId'];
+		$referenceId = $resultJson['response']['id'];
+        $registrationId = $resultJson['response']['registrationId'];
 
         $transactionData['payment_type'] = "CP";
         $captureResult = $this->gatewayService->backOfficeOperation($referenceId, $transactionData);
@@ -275,14 +281,14 @@ class PaymentResultController extends Controller
 
 	public function doPaypalRegister($recurringId, $paymentKey, $transactionData, $resultJson)
 	{
-		$registrationId = $resultJson['id'];
+		$registrationId = $resultJson['response']['id'];
 
         $transactionData['paymentType'] = 'DB';
 
         $paypalResult = $this->gatewayService->getRecurringPaymentResult($registrationId, $transactionData);
         $this->getLogger(__METHOD__)->error('Payreto:paypalResult', $paypalResult);
 
-        $returnCode = $paypalResult['result']['code'];
+        $returnCode = $paypalResult['response']['result']['code'];
         $resultPaypal = $this->gatewayService->getTransactionResult($returnCode);
         $this->getLogger(__METHOD__)->error('Payreto:resultPaypal', $resultPaypal);
 
