@@ -779,7 +779,7 @@ class PaymentService
 		{
 			$transactionId = $payment->properties[0]->value;
 			$transactionData = array_merge(
-				$this->getCredentials($payment->method),
+				$this->getCredentials($payment->method->paymentKey),
 				[
 					'amount' => $payment->amount,
 					'currency' => $payment->currency,
@@ -788,6 +788,8 @@ class PaymentService
 				]
 			);
 
+			$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
+			$this->getLogger(__METHOD__)->error('Payreto:payments', $payment);
 			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
 
 			$refundResult = $this->gatewayService->backOfficeOperation($transactionId, $transactionData);

@@ -230,7 +230,7 @@ class PaymentController extends Controller
 
         if ($transactionResult == 'ACK') {
         	$paymentData['transaction_id'] = $debitResponse['response']['id'];
-            $paymentData['payment_type'] = $paymentKey;
+            $paymentData['paymentKey'] = $paymentKey;
             $paymentData['amount'] = $debitResponse['response']['amount'];
             $paymentData['currency'] = $debitResponse['response']['currency'];
             $paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentType);
@@ -349,13 +349,14 @@ class PaymentController extends Controller
 	private function doSuccessPayment($paymentMethod, $resultJson)
 	{
 		$paymentData['transaction_id'] = $resultJson['response']['id'];
-        $paymentData['payment_type'] = $paymentMethod->paymentKey;
+        $paymentData['paymentKey'] = $paymentMethod->paymentKey;
         $paymentData['amount'] = $resultJson['response']['amount'];
         $paymentData['currency'] = $resultJson['response']['currency'];
         $paymentType = $this->gatewayService->getPaymentTypeResponse($resultJson['response']);
     	$paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentType);
     	$orderData = $this->orderService->placeOrder($paymentType);
         $this->getLogger(__METHOD__)->error('Payreto:orderData', $orderData);
+        $this->getLogger(__METHOD__)->error('Payreto:paymentData', $paymentData);
         $orderId = $orderData->order->id;
 		
 		$paymentData['orderId'] = $orderId;
