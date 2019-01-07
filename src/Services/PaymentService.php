@@ -788,30 +788,36 @@ class PaymentService
 				]
 			);
 
-			$this->getLogger(__METHOD__)->error('Payreto:transactionData', $transactionData);
-			$this->getLogger(__METHOD__)->error('Payreto:payments', $payment);
-			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
-
 			$refundResult = $this->gatewayService->backOfficeOperation($transactionId, $transactionData);
 
-			$resultRefund = $this->gatewayService->getTransactionResult($refundResult);
+			$resultRefund = $this->gatewayService->getTransactionResult($refundResult['response']['result']['code']);
 
 			if ($resultRefund == 'ACK') 
 			{
-				// $this->notification->success('Refunded');
+				return [
+					'success' => true,
+					'response' => $refundResult['response']
+				];
 			} elseif ($resultRefund == 'NOK') {
 				$returnMessage = $this->gatewayService->getErrorIdentifier($resultRefund);
-				// $this->notification->error($this->gatewayService->getErrorMessage($returnMessage));
+				return [
+					'error' => true,
+					'errorMessage' => $returnMessage
+				];
 			} else {
-				// $this->notification->error('ERROR_UNKNOWN');
+				return [
+					'error' => true,
+					'errorMessage' => 'ERROR_UNKNOWN'
+				];
 			}
-
-			$this->getLogger(__METHOD__)->error('Payreto:refundResult', $refundResult);
 
 		}
 		catch (\Exception $e)
 		{
-			// $this->notification->error($e->getMessage());
+			return [
+				'error' => true,
+				'errorMessage' => $e->getMessage()
+			];
 		}
 	}
 

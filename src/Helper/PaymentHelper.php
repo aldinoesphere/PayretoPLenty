@@ -14,6 +14,8 @@ use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 use Plenty\Plugin\Log\Loggable;
 
+use Payreto\Services\GatewayService;
+
 /**
 * 
 */
@@ -48,6 +50,12 @@ class PaymentHelper
 
 	/**
 	 *
+	 * @var gatewayService
+	 */
+	private $gatewayService;
+
+	/**
+	 *
 	 * @var shippingServiceProviders
 	 */
 	private $shippingServiceProviders;
@@ -58,7 +66,8 @@ class PaymentHelper
 		PaymentPropertyRepositoryContract $paymentPropertyRepository,
 		PaymentOrderRelationRepositoryContract $paymentOrderRelationRepository,
 		OrderRepositoryContract $orderRepository,
-		ShippingServiceProviderRepositoryContract $shippingServiceProviders
+		ShippingServiceProviderRepositoryContract $shippingServiceProviders,
+		GatewayService $gatewayService
 	)
 	{
 		$this->paymentMethodRepository          = $paymentMethodRepository;
@@ -68,6 +77,7 @@ class PaymentHelper
 		$this->orderRepository                  = $orderRepository;
 		$this->shippingServiceProviders 		= $shippingServiceProviders;
 		$this->orderRepository 					= $orderRepository;
+		$this->gatewayService = $gatewayService;
 	}
 
 
@@ -140,9 +150,9 @@ class PaymentHelper
 
 		if ($state == Payment::STATUS_REFUNDED)
 		{
-			$debitPayment->unaccountable = 1;
-		} else {
 			$debitPayment->unaccountable = 0;
+		} else {
+			$debitPayment->unaccountable = 1;
 		}
 
 		$paymentProperty = [];
@@ -515,20 +525,20 @@ class PaymentHelper
 		if (is_array($refundStatus))
 		{
 			$mbTransactionId = (string)$refundStatus['id'];
-			$status = 2;
+			$resultCode = $refundStatus['result']['code'];
 		}
 		else
 		{
 			$mbTransactionId = (string)$refundStatus->id;
-			$status = (string)$refundStatus->status;
+			$resultCode = (string)$refundStatus->result->code;
 		}
 		if (isset($mbTransactionId))
 		{
-			$paymentBookingText[] = "MB Transaction ID : " . $mbTransactionId;
+			$paymentBookingText[] = "Transaction ID : " . $mbTransactionId;
 		}
-		if (isset($status))
+		if (isset($resultCode))
 		{
-			$paymentBookingText[] = "Refund status : " . $this->getPaymentMessage($status);
+			$paymentBookingText[] = "Refund status : " . $this->getPaymentMessage($resultCode);
 		}
 		if (!empty($paymentBookingText))
 		{
@@ -562,31 +572,28 @@ class PaymentHelper
 	/**
 	 * get payment status (use for payment/refund detail information status).
 	 *
-	 * @param array $status
+	 * @param array $resultCode
 	 * @return string
 	 */
-	public function getPaymentMessage(string $status)
+	public function getPaymentMessage(string $resultCode)
 	{
-		switch ($status)
-		{
-			case '1':
-				return 'In-Review';
-				break;
-			case '2':
-				return 'Pre-Athorization';
-				break;
-			case '3':
-				return 'Payment Accepted';
-				break;
-			case '5':
-				return 'Canceled';
-				break;
-			case '-2':
-				return 'Failed';
-				break;
-			default :
-				return 'In-Review';
-				break;
+		$paymentResult = $this->gatewayService->getTransactionResult($resultCode);
+		$isSuccessReview = $this->gatewayService->isSuccessReview($resultCode);
+		if ($isSuccessReview) {
+			return 'Pending';
+		} else {
+			switch ($paymentResult)
+			{
+				case 'ACK':
+					return 'Processed';
+					break;
+				case 'NOK':
+					return 'Failed';
+					break;
+				default :
+					return 'Canceled';
+					break;
+			}
 		}
 	}
 
@@ -701,7 +708,7 @@ class PaymentHelper
 		if (isset($paymentStatus['status']))
 		{
 			$paymentBookingText[] = "Payment status : " .
-				$this->getPaymentMessage((string)$paymentStatus['status']);
+				$this->getPaymentMessage($paymentStatus['result']['code']);
 		}
 		if (isset($paymentStatus['IP_country']))
 		{

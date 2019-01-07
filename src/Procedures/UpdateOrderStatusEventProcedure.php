@@ -127,6 +127,7 @@ class UpdateOrderStatusEventProcedure
 				            $paymentData['currency'] = $inReviewStatus['response']['currency'];
 				            $paymentData['status'] = $paymentHelper->getPaymentStatus($paymentType);
 							$paymentData['orderId'] = $orderId;
+							$paymentData['result']['code'] = $inReviewStatus['response']['result']['code'];
 
 							$paymentHelper->updatePaymentPropertyValue(
 									$payment->properties,
@@ -193,6 +194,7 @@ class UpdateOrderStatusEventProcedure
 	            $paymentData['currency'] = $paymentResult['response']['currency'];
 	            $paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentResult['response']['paymentType']);
 	            $paymentData['orderId'] = $orderId;
+	            $paymentData['result']['code'] = $paymentResult['response']['result']['code'];
 
 	            $this->paymentHelper->updatePaymentPropertyValue(
 							$payment->properties,

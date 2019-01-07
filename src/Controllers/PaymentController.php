@@ -352,6 +352,7 @@ class PaymentController extends Controller
         $paymentData['paymentKey'] = $paymentMethod->paymentKey;
         $paymentData['amount'] = $resultJson['response']['amount'];
         $paymentData['currency'] = $resultJson['response']['currency'];
+        $paymentData['result']['code'] = $resultJson['response']['result']['code'];
         $paymentType = $this->gatewayService->getPaymentTypeResponse($resultJson['response']);
     	$paymentData['status'] = $this->paymentHelper->getPaymentStatus($paymentType);
     	$orderData = $this->orderService->placeOrder($paymentType);
