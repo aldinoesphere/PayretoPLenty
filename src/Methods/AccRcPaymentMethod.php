@@ -5,25 +5,25 @@ namespace Payreto\Methods;
 use Plenty\Plugin\Log\Loggable;
 
 /**
-* Class EcpPaymentMethod
+* Class AccPaymentMethod
 * @package Payreto\Methods
 */
-class EcpPaymentMethod extends AbstractPaymentMethod
+class AccRcPaymentMethod extends AbstractPaymentMethod
 {
 	use Loggable;
 
 	/**
 	 * @var name
 	 */
-	protected $name = 'Easy Credit';
+	protected $name = 'Credit Cards';
 
 	/**
 	 * @var logoFileName
 	 */
-	protected $logoFileName = 'aec.png';
+	protected $logoFileName = 'acc.png';
 
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'easy-credit';
+	protected $settingsType = 'PAYRETO_ACC_RC';
 }

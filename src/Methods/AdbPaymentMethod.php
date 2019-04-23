@@ -25,5 +25,5 @@ class AdbPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'online-bank-transfer';
+	protected $settingsType = 'PAYRETO_ADB';
 }

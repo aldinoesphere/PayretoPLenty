@@ -111,7 +111,8 @@ class SettingsController extends Controller
 		$this->getLogger(__METHOD__)->error('Payreto:plentyId', $plentyId);
 
 		try {
-			$configuration = $this->settingsService->getConfiguration($plentyId, $settingType);
+			$configuration = $this->settingsService->loadSetting($plentyId, $settingType);
+			$generalSetting = $this->settingsService->loadSetting($plentyId, 'general-setting');
 		}
 		catch (\Exception $e)
 		{
@@ -130,10 +131,113 @@ class SettingsController extends Controller
 							'status' => $this->request->get('status'),
 							'locale' => substr($_COOKIE['plentymarkets_lang_'], 0, 2),
 							'plentyId' => $plentyId,
+							'generalSetting' => $generalSetting,
 							'settingType' => $settingType,
+							'optionSetting'	=> $this->getOptionSetting($settingType),
 							'setting' => $configuration
 						)
 		);
+	}
+
+	public function getOptionSetting($settingType)
+	{
+		switch ($settingType) {
+			case 'general-setting':
+				return [
+					'title' =>	'General Setting'
+				];
+				break;
+
+			case 'PAYRETO_ACC_RC':
+				return [
+						'title' => 'Credit Card (recurring)',
+						'paymentBrand' => '',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_ACC':
+				return [
+						'title' => 'Credit Card',
+						'paymentBrand' => '',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_DDS_RC':
+				return [
+						'title' => 'Direct Debit (recurring)',
+						'paymentBrand' => 'DIRECTDEBIT_SEPA',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_DDS':
+				return [
+						'title' => 'DIrect Debit',
+						'paymentBrand' => 'DIRECTDEBIT_SEPA',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_PDR':
+				return [
+						'title' => 'Paydirect',
+						'paymentBrand' => 'PAYDIREKT',
+						'paymentTemplate' => 'PaymentRedirect',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_PPM_RC':
+				return [
+						'title' => 'Paypal (recurring)',
+						'paymentBrand' => 'PAYPAL',
+						'paymentTemplate' => 'PaymentPaypalSavedWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_PPM':
+				return [
+						'title' => 'Paypal',
+						'paymentBrand' => 'PAYPAL',
+						'paymentTemplate' => 'PaymentRedirect',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_ADB':
+				return [
+						'title' => 'Online Bank Transfer',
+						'paymentBrand' => 'SOFORTUEBERWEISUNG',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_GRP':
+				return [
+						'title' => 'Giropay',
+						'paymentBrand' => 'GIROPAY',
+						'paymentTemplate' => 'PaymentWidget',
+						'paymentType' => 'DB'
+					];
+				break;
+
+			case 'PAYRETO_AEC':
+				return [
+						'title' => 'Easy Credit',
+						'paymentBrand' => 'RATENKAUF',
+						'paymentTemplate' => 'PaymentRedirect',
+						'paymentType' => 'PA'
+					];
+				break;
+		}
 	}
 
 	/**
@@ -151,40 +255,135 @@ class SettingsController extends Controller
 			array_push($newCardTypes, $value);
 		}
 
-		$settings['settingType'] = $settingType;
-
-		switch ($settingType) {
-			case 'general-setting':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+		if ($settingType == 'general-setting') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'userId' => $this->request->get('userId'),
+							'recurring' => $this->request->get('recurring'),
 							'password' => $this->request->get('password'),
 							'merchantEmail' => $this->request->get('merchantEmail'),
 							'shopUrl' => $this->request->get('shopUrl')
 						);
-				break;
-
-			case 'credit-card':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+		} elseif($settingType == 'PAYRETO_ACC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
 							'language' => $this->request->get('language'),
 							'display' => $this->request->get('display'),
 							'cardType' => implode(',', $newCardTypes),
 							'transactionMode' => $this->request->get('transactionMode'),
-							'entityId' => $this->request->get('entityId')
-						);		
-				break;
-
-			case 'easy-credit':
-				$settings['settings'][0]['PID_'.$plentyId] = array(
+							'entityId' => $this->request->get('entityId'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
+		} elseif($settingType == 'PAYRETO_ACC_RC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'language' => $this->request->get('language'),
+							'display' => $this->request->get('display'),
+							'multiChannel' => $this->request->get('multiChannel'),
+							'cardType' => implode(',', $newCardTypes),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount'),
+							'entityIdMoto' => $this->request->get('entityIdMoto'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
+		} elseif($settingType == 'PAYRETO_GRP' 
+			|| $settingType == 'PAYRETO_ADB' 
+			|| $settingType == 'PAYRETO_AEC' 
+			|| $settingType == 'PAYRETO_PPM') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
 							'server' => $this->request->get('server'),
 							'display' => $this->request->get('display'),
-							'entityId' => $this->request->get('entityId')
+							'entityId' => $this->request->get('entityId'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
 						);
-				break;
+		} elseif($settingType == 'PAYRETO_DDS') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
+		} elseif($settingType == 'PAYRETO_DDS_RC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
+		} elseif($settingType == 'PAYRETO_PDR') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'transactionMode' => $this->request->get('transactionMode'),
+							'minimumAge' => $this->request->get('minimumAge'),
+							'entityId' => $this->request->get('entityId'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
+		} elseif ($settingType == 'PAYRETO_PPM_RC') {
+			$settings['settings'][0]['PID_'.$plentyId] = array(
+							'server' => $this->request->get('server'),
+							'display' => $this->request->get('display'),
+							'entityId' => $this->request->get('entityId'),
+							'amount' => $this->request->get('amount'),
+							'language' => array(
+								'en' => array(
+									'paymentName' => $this->request->get('languageEnPaymentName')
+								),
+								'de' => array(
+									'paymentName' => $this->request->get('languageDePaymentName')
+								)
+							)
+						);
 		}
 
 		$this->getLogger(__METHOD__)->error('Payreto:settings', $settings);
 
-		$result = $this->settingsService->saveConfiguration($settings);
+		$result = $this->settingsService->saveSettings($settingType, $settings);
 
 		if ($result == 1)
 		{
@@ -194,8 +393,7 @@ class SettingsController extends Controller
 		{
 			$status = 'failed';
 		}
-		$this->getLogger(__METHOD__)->error('Payreto:saveConfiguration', $settings);
 
-		return $this->response->redirectTo('payreto/settings/'.$settingType.'?status=' . $status);
+		return $status;
 	}
 }

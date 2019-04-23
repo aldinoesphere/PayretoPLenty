@@ -85,98 +85,64 @@ img {
 	}
 }
 </style>
-<script type="text/javascript">
-
-	function onChange(value) {
-		console.log(this.value);
-		console.log(value);
-	}
-</script>
+<script type="text/javascript" src="{{ plugin_path('Payreto') }}/js/settings.js" ></script>
 </head>
 <body>
-	<h3>{{ settingType }}</h3>
+	<h3>{{ trans('Payreto::Template.'~ settingType ~ '_TITLE') }}</h3>
+		<div class="message success" id="successMessage" style="display: none;">
+			{{ trans('Payreto::Template.BACKEND_GENERAL_SETTINGS_SAVED') }}
+		</div>
+		<div class="message failed" id="errorMessage" style="display: none;">
+			{{ trans('Payreto::Template.ERROR_GENERAL_SAVE_SETTINGS') }}
+		</div>
 	<div id="payretoSettings">
-		<form action="save" method="post" name="savesettings" class="settings">
+		<form method="post" name="saveSettings" id="saveSettings" class="settings">
 			<input type="hidden" name="settingType" value="{{ settingType }}" />
 			<input type="hidden" name="plentyId" value="{{ plentyId }}" />
 			{% if settingType == 'general-setting' %}
 				<div>
-					<label for="User ID">User ID *</label>
+					<label for="User ID">{{ trans('Payreto::Template.BACKEND_CH_LOGIN') }}</label>
 					<input type="text" class="input-text" name="userId" value="{{ setting.userId }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Password">Password *</label>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_RECURRING') }}</label>
+					<select name="recurring" value="{{ setting.recurring }}">
+						<option value="0" {{ (setting.recurring == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.recurring == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Password">{{ trans('Payreto::Template.BACKEND_CH_PASSWORD') }} *</label>
 					<input type="text" class="input-text" name="password" value="{{ setting.password }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Merchant Email">Merchant Email *</label>
+					<label for="Merchant Email">{{ trans('Payreto::Template.BACKEND_GENERAL_MERCHANTEMAIL') }} *</label>
 					<input type="text" class="input-text" name="merchantEmail" value="{{ setting.merchantEmail }}" required />
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Shop Url">Shop Url</label>
+					<label for="Shop Url">{{ trans('Payreto::Template.BACKEND_GENERAL_SHOPURL') }}</label>
 					<input type="text" class="input-text" name="shopUrl" value="{{ setting.shopUrl }}"/>
 				</div>
-			{% elseif settingType == 'credit-card' %}
+			{% elseif settingType == 'PAYRETO_ACC' %}
 				<div>
-					<label for="Enabled">Language *</label>
-					<select name="language" value="{{ setting.language }}">
-						<option value="de" {{ (setting.language == 'de') ? 'selected' : '' }}>English</option>
-						<option value="en" {{ (setting.language == 'en') ? 'selected' : '' }}>Germany</option>
-					</select>
-				</div>
-				<div class="clear"></div>
-				<div class="div-separator clear"></div>
-				<div>
-					<label for="Enabled">Enabled *</label>
-					<select name="display" value="{{ setting.display }}">
-						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
-						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
-					</select>
-				</div>
-				<div class="clear"></div>
-				<div class="div-separator clear"></div>
-				<div>
-					<label for="Card Type">Card Types *</label>
-					{% set cardTypes = setting.cardType|split(',') %}
-					<select name="cardTypes[]" multiple="multiple" value="{{ ('MASTER' in cardTypes) }}">
-						<option value="VISA" {{ ('VISA' in cardTypes) ? 'selected' : '' }}>Visa</option>
-						<option value="MASTER" {{ ('MASTER' in cardTypes) ? 'selected' : '' }}>Master Card</option>
-						<option value="AMEX" {{ ('AMEX' in cardTypes) ? 'selected' : '' }}>American Express</option>
-					</select>
-				</div>
-				<div class="clear"></div>
-				<div class="div-separator clear"></div>
-				<div>
-					<label for="Merchant Email">Transaction-Mode </label>
-					<select name="transactionMode" onchange="onChange()" value="{{ setting.transactionMode }}">
-						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>Debit</option>
-						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>Pre - Authorization</option>
-					</select>
-				</div>
-				<div class="clear"></div>
-				<div class="div-separator clear"></div>
-				<div>
-					<label for="Shop Url">Entity-ID</label>
-					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
-				</div>
-			{% elseif settingType == 'easy-credit'  %}
-				<div>
-					<label for="Enabled">Server</label>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
 					<select name="server" value="{{ setting.server }}">
-						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>Live</option>
-						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>Test</option>
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
 					</select>
 				</div>
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Enabled">Enabled *</label>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
 					<select name="display" value="{{ setting.display }}">
 						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
 						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
@@ -185,8 +151,369 @@ img {
 				<div class="clear"></div>
 				<div class="div-separator clear"></div>
 				<div>
-					<label for="Shop Url">Entity-ID</label>
+					<label for="Card Type">{{ trans('Payreto::Template.BACKEND_CH_CARDS') }} *</label>
+					{% set cardTypes = setting.cardType|split(',') %}
+					<select name="cardTypes[]" multiple="multiple" value="{{ ('MASTER' in cardTypes) }}" required>
+						<option value="VISA" {{ ('VISA' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_VISA') }}</option>
+						<option value="MASTER" {{ ('MASTER' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_MASTER') }}</option>
+						<option value="AMEX" {{ ('AMEX' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_AMEX') }}</option>
+						<option value="JCB" {{ ('JCB' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_JCB') }}</option>
+						<option value="DINERS" {{ ('DINERS' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_DINERS') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="transactionMode">{{ trans('Payreto::Template.BACKEND_CH_MODE') }}</label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEDEBIT') }}</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEPREAUTH') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
 					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_ACC_RC' %}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
+						{% if generalSetting.recurring == '0' %}
+							<option value="0" selected>No</option>
+						{% else %}
+							<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+							<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+						{% endif %}
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="amount">{{ trans('Payreto::Template.BACKEND_CH_AMOUNT') }}</label>
+					<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_MULTICHANNEL') }}</label>
+					<select name="multiChannel" value="{{ setting.multiChannel }}">
+						<option value="0" {{ (setting.multiChannel == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.multiChannel == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Card Type">{{ trans('Payreto::Template.BACKEND_CH_CARDS') }} *</label>
+					{% set cardTypes = setting.cardType|split(',') %}
+					<select name="cardTypes[]" multiple="multiple" value="{{ ('MASTER' in cardTypes) }}" required>
+						<option value="VISA" {{ ('VISA' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_VISA') }}</option>
+						<option value="MASTER" {{ ('MASTER' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_MASTER') }}</option>
+						<option value="AMEX" {{ ('AMEX' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_AMEX') }}</option>
+						<option value="JCB" {{ ('JCB' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_JCB') }}</option>
+						<option value="DINERS" {{ ('DINERS' in cardTypes) ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CC_DINERS') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="transactionMode">{{ trans('Payreto::Template.BACKEND_CH_MODE') }}</label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEDEBIT') }}</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEPREAUTH') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Shop Url">{{ trans('Payreto::Template.BACKEND_CH_MOTO') }}</label>
+					<input type="text" class="input-text" name="entityIdMoto" value="{{ setting.entityIdMoto }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_AEC' 
+				or  settingType == 'PAYRETO_GRP' 
+				or settingType == 'PAYRETO_ADB' 
+				or settingType == 'PAYRETO_PPM' %}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_PPM_RC' %}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
+						{% if generalSetting.recurring == '0' %}
+							<option value="0" selected>No</option>
+						{% else %}
+							<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+							<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+						{% endif %}
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="amount">{{ trans('Payreto::Template.BACKEND_CH_AMOUNT') }}</label>
+					<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_DDS' %}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="transactionMode">{{ trans('Payreto::Template.BACKEND_CH_MODE') }}</label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEDEBIT') }}</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEPREAUTH') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_DDS_RC'%}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}" {{ (generalSetting.recurring == '0') ? 'disabled' : '' }}>
+						{% if generalSetting.recurring == '0' %}
+							<option value="0" selected>No</option>
+						{% else %}
+							<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+							<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+						{% endif %}
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="transactionMode">{{ trans('Payreto::Template.BACKEND_CH_MODE') }}</label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEDEBIT') }}</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEPREAUTH') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="amount">{{ trans('Payreto::Template.BACKEND_CH_AMOUNT') }}</label>
+					<input type="text" class="input-text" name="amount" value="{{ setting.amount }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
+				</div>
+			{% elseif settingType == 'PAYRETO_PDR' %}
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_SERVER') }}</label>
+					<select name="server" value="{{ setting.server }}">
+						<option value="LIVE" {{ (setting.server == 'LIVE') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_LIVE') }}</option>
+						<option value="TEST" {{ (setting.server == 'TEST') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODE_TEST') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_ACTIVE') }} *</label>
+					<select name="display" value="{{ setting.display }}">
+						<option value="0" {{ (setting.display == '0') ? 'selected' : '' }}>No</option>
+						<option value="1" {{ (setting.display == '1') ? 'selected' : '' }}>Yes</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="transactionMode">{{ trans('Payreto::Template.BACKEND_CH_MODE') }}</label>
+					<select name="transactionMode" value="{{ setting.transactionMode }}">
+						<option value="DB" {{ (setting.transactionMode == 'DB') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEDEBIT') }}</option>
+						<option value="PA" {{ (setting.transactionMode == 'PA') ? 'selected' : '' }}>{{ trans('Payreto::Template.BACKEND_CH_MODEPREAUTH') }}</option>
+					</select>
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Enabled">{{ trans('Payreto::Template.BACKEND_CH_MINIMUM_AGE') }} *</label>
+					<input type="text" class="input-text" name="minimumAge" value="{{ setting.minimumAge }}" required="required" />
+				</div>
+				<div class="clear"></div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Entity-ID">{{ trans('Payreto::Template.BACKEND_CH_CHANNEL') }}</label>
+					<input type="text" class="input-text" name="entityId" value="{{ setting.entityId }}"/>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Languages">{{ trans('Payreto::Template.BACKEND_GENERAL_LANGUAGE') }}</label>
+					<select onChange="payretoChangeLanguage(this.value);" id="payretoLanguage" name="payretoLanguage" value="en">
+						<option value="en">{{ trans('Payreto::Template.BACKEND_GENERAL_ENGLISH') }}</option>
+						<option value="de">{{ trans('Payreto::Template.BACKEND_GENERAL_GERMAN') }}</option>
+					</select>
+				</div>
+				<div class="div-separator clear"></div>
+				<div>
+					<label for="Payment Name">{{ trans('Payreto::Template.BACKEND_GENERAL_PAYMENTMETHOD_NAME') }}</label>
+					<input type="text" class="input-text" id="payretoPaymentNameEn" name="languageEnPaymentName" value="{{ setting.language.en.paymentName }}"/>
+					<input style="display: none;" type="text" class="input-text" id="payretoPaymentNameDe" name="languageDePaymentName" value="{{ setting.language.de.paymentName }}"/>
 				</div>
 			{% endif %}
 			<div class="div-separator clear"></div>

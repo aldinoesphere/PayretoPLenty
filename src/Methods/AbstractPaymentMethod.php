@@ -31,6 +31,11 @@ class AbstractPaymentMethod extends PaymentMethodService
 	protected $paymentSettings;
 
 	/**
+	 * @var generalSettings
+	 */
+	protected $generalSettings;
+
+	/**
 	 * @var name
 	 */
 	protected $name = '';
@@ -53,21 +58,42 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		$this->checkout         = $checkout;
 		$this->paymentService   = $paymentService;
+		$this->generalSettings 	= $this->paymentService->getPayretoSettings();
 		$this->paymentSettings 	= $this->paymentService->getPaymentSettings($this->settingsType);
 	}
 
 	/**
-	 * Check whether the payment setting is enabled
+	 * Check whether the payment setting is display
 	 *
 	 * @return bool
 	 */
 	protected function isEnabled()
 	{
-		// if (array_key_exists('enabled', $this->paymentService->settings) && $this->paymentService->settings['enabled'] == 1)
-		// {
-		// 	return true;
-		// }
-		// return false;
+		if (array_key_exists('display', $this->paymentService->settings) && $this->paymentService->settings['display'] == 1)
+		{
+			if ($this->generalSettings['recurring'] == 1) {
+				if ( $this->settingsType == 'PAYRETO_ACC' 
+					|| $this->settingsType == 'PAYRETO_DDS' 
+					|| $this->settingsType == 'PAYRETO_PPM' 
+				) {
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				if ($this->settingsType == 'PAYRETO_ACC_RC' 
+					|| $this->settingsType == 'PAYRETO_DDS_RC' 
+					|| $this->settingsType == 'PAYRETO_PPM_RC' 
+				) {
+					return false;
+				} else {
+					return true;
+				}
+				
+			}
+		}
+		
+		return false;
 	}
 
 	/**
@@ -87,11 +113,11 @@ class AbstractPaymentMethod extends PaymentMethodService
 	 */
 	public function isActive()
 	{
-		// if ($this->isEnabled())
-		// {
-		// 	return true;
-		// }
-		return true;
+		if ($this->isEnabled())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -101,7 +127,28 @@ class AbstractPaymentMethod extends PaymentMethodService
 	 */
 	public function getName()
 	{
-		return $this->name;
+		$session = pluginApp(FrontendSessionStorageFactoryContract::class);
+		$lang = $session->getLocaleSettings()->language;
+		$name = '';
+
+		if (array_key_exists('language', $this->paymentService->settings))
+		{
+			$this->getLogger(__METHOD__)->error('Payreto:language', array_key_exists('language', $this->paymentService->settings));
+			if (array_key_exists($lang, $this->paymentService->settings['language']))
+			{
+				if (array_key_exists('paymentName', $this->paymentService->settings['language'][$lang]))
+				{
+					$name = $this->paymentService->settings['language'][$lang]['paymentName'];
+				}
+			}
+		}
+
+		if (!strlen($name))
+		{
+			return $this->name;
+		}
+
+		return $name;
 	}
 
 	/**
@@ -124,7 +171,6 @@ class AbstractPaymentMethod extends PaymentMethodService
 	{
 		$app = pluginApp(Application::class);
 		$icon = $app->getUrlPath('payreto').'/images/logos/'.$this->getLogoFileName();
-
 		return $icon;
 	}
 

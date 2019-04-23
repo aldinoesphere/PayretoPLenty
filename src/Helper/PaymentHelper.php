@@ -8,10 +8,13 @@ use Plenty\Modules\Payment\Contracts\PaymentRepositoryContract;
 use Plenty\Modules\Payment\Contracts\PaymentPropertyRepositoryContract;
 use Plenty\Modules\Order\Contracts\OrderRepositoryContract;
 use Plenty\Modules\Authorization\Services\AuthHelper;
+use Plenty\Modules\Order\Shipping\ServiceProvider\Contracts\ShippingServiceProviderRepositoryContract;
 use Plenty\Modules\Payment\Models\Payment;
 use Plenty\Modules\Order\Models\Order;
 use Plenty\Modules\Order\Shipping\Countries\Contracts\CountryRepositoryContract;
 use Plenty\Plugin\Log\Loggable;
+
+use Payreto\Services\GatewayService;
 
 /**
 * 
@@ -44,13 +47,27 @@ class PaymentHelper
 	 * @var OrderRepositoryContract
 	 */
 	private $orderRepository;
+
+	/**
+	 *
+	 * @var gatewayService
+	 */
+	private $gatewayService;
+
+	/**
+	 *
+	 * @var shippingServiceProviders
+	 */
+	private $shippingServiceProviders;
 	
 	public function __construct(
 		PaymentMethodRepositoryContract $paymentMethodRepository,
 		PaymentRepositoryContract $paymentRepository,
 		PaymentPropertyRepositoryContract $paymentPropertyRepository,
 		PaymentOrderRelationRepositoryContract $paymentOrderRelationRepository,
-		OrderRepositoryContract $orderRepository
+		OrderRepositoryContract $orderRepository,
+		ShippingServiceProviderRepositoryContract $shippingServiceProviders,
+		GatewayService $gatewayService
 	)
 	{
 		$this->paymentMethodRepository          = $paymentMethodRepository;
@@ -58,6 +75,51 @@ class PaymentHelper
 		$this->paymentRepository                = $paymentRepository;
 		$this->paymentPropertyRepository        = $paymentPropertyRepository;
 		$this->orderRepository                  = $orderRepository;
+		$this->shippingServiceProviders 		= $shippingServiceProviders;
+		$this->orderRepository 					= $orderRepository;
+		$this->gatewayService = $gatewayService;
+	}
+
+
+	public function setAccountData($paymentResult)
+	{
+		$accountData = [
+			'customerId' => $this->getCustomerId() ,
+			'paymentGroup' => $paymentResult['paymentKey'] ,
+			'brand' => $paymentResult['paymentBrand'] ,
+			'holder' => '' ,
+			'email' => '' ,
+			'last4digits' => '',
+			'expMonth' => '' ,
+			'expYear' => '' ,
+			'serverMode' => $paymentResult['server'] ,
+			'channelId' => $paymentResult['entityId'] ,
+			'refId' => $paymentResult['registrationId'] ,
+			'paymentDefault' => 0 
+		];
+
+
+		switch ($paymentResult['paymentKey']) {
+			case 'PAYRETO_ACC_RC':
+				$accountData['holder'] = $paymentResult['card']['holder'];
+				$accountData['last4digits'] = $paymentResult['card']['last4Digits'];
+				$accountData['expMonth'] = $paymentResult['card']['expiryMonth'];
+				$accountData['expYear'] = $paymentResult['card']['expiryYear'];
+				break;
+
+			case 'PAYRETO_DDS_RC':
+				$accountData['holder'] = $paymentResult['bankAccount']['holder'];
+				$accountData['last4digits'] = substr($paymentResult['bankAccount']['iban'], -4);
+				break;
+
+			case 'PAYRETO_PPM_RC':
+				$accountData['holder'] = $paymentResult['virtualAccount']['holder'];
+				$accountData['email'] = $paymentResult['virtualAccount']['accountId'];
+				$accountData['refId'] = $paymentResult['id'];
+				break;
+		}
+
+		return $accountData;
 	}
 
 	/**
@@ -88,9 +150,9 @@ class PaymentHelper
 
 		if ($state == Payment::STATUS_REFUNDED)
 		{
-			$debitPayment->unaccountable = 1;
-		} else {
 			$debitPayment->unaccountable = 0;
+		} else {
+			$debitPayment->unaccountable = 1;
 		}
 
 		$paymentProperty = [];
@@ -120,6 +182,16 @@ class PaymentHelper
 		$this->orderRepository->updateOrder($status, $orderId);
 	}
 
+	public function getPaymentMethodById($paymentId) 
+	{
+		return $this->paymentMethodRepository->findByPaymentMethodId($paymentId);
+	}
+
+	public function mapStatus() {
+		$statusConstants = $this->paymentRepository->getStatusConstants();
+		$this->getLogger(__METHOD__)->error('Payreto:statusConstants', $statusConstants);
+	}
+
 	/**
 	 * get domain from webstoreconfig.
 	 *
@@ -133,6 +205,13 @@ class PaymentHelper
 		$this->getLogger(__METHOD__)->error('Payreto:domain', $domain);
 
 		return $domain;
+	}
+
+	public function getShippingServiceProviderById($shippingServiceProviderId) {
+		$this->getLogger(__METHOD__)->error('Payreto:shippingServiceProviderId', $shippingServiceProviderId);
+		$shippingServiceProviders = $this->shippingServiceProviders->find($shippingServiceProviderId);
+		$this->getLogger(__METHOD__)->error('Payreto:shippingServiceProviders', $shippingServiceProviders);
+		return $shippingServiceProviders;
 	}
 
 	public function getPaymentMethodByPaymentKey($paymentKey)
@@ -158,6 +237,26 @@ class PaymentHelper
 		return null;
 	}
 
+	public function getOrderCount($customerId) 
+	{
+		$orderRepository = $this->orderRepository;
+		$authHelper = pluginApp(AuthHelper::class);
+
+        $orders = $authHelper->processUnguarded(
+            function () use ($orderRepository, $customerId) {
+                return $orderRepository->allOrdersByContact($customerId, 1, 100, ['relation', 'reference']);
+            }
+        );
+
+	 	return $orders->getTotalCount();
+	}
+
+	public function getCustomerId() 
+	{
+		$customerService = pluginApp(\IO\Services\CustomerService::class);
+		return $customerService->getContactId();
+	}
+
 	/**
 	 * Create a credit payment when status_url triggered and no payment created before.
 	 *
@@ -168,8 +267,6 @@ class PaymentHelper
 	{
 
 		$payment = pluginApp(Payment::class);
-
-		$this->getLogger(__METHOD__)->error('Payreto:payment', $payment);
 
 		$mopId = 0;
 		$paymentMethod = $this->getPaymentMethodByPaymentKey($paymentStatus['paymentKey']);
@@ -190,7 +287,7 @@ class PaymentHelper
 		$payment->currency = $paymentStatus['currency'];
 		$payment->amount = $paymentStatus['amount'];
 
-		if ($state == Payment::STATUS_APPROVED)
+		if ($state == Payment::STATUS_CAPTURED)
 		{
 			$payment->unaccountable = 0;
 		} else {
@@ -219,6 +316,46 @@ class PaymentHelper
 	}
 
 	/**
+	 * get Variation Description
+	 *
+	 * @param BasketItem $basketItem
+	 * @return string
+	 */
+	public function getVariationSalesPrice($variationId)
+	{
+		$variationSalesPrice = pluginApp(\Plenty\Modules\Item\VariationSalesPrice\Contracts\VariationSalesPriceRepositoryContract::class);
+		$authHelper = pluginApp(AuthHelper::class);
+
+        $variationSalesPriceItem = $authHelper->processUnguarded(
+            function () use ($variationSalesPrice, $variationId) {
+                return $variationSalesPrice->findByVariationId($variationId);
+            }
+        );
+
+		return $variationSalesPriceItem;
+	}
+
+	/**
+	 * get Variation Description
+	 *
+	 * @param BasketItem $basketItem
+	 * @return string
+	 */
+	public function getVariationDescription($variationId)
+	{
+		$variationDescriptionContract = pluginApp(\Plenty\Modules\Item\VariationDescription\Contracts\VariationDescriptionRepositoryContract::class);
+		$authHelper = pluginApp(AuthHelper::class);
+
+        $variationDescription = $authHelper->processUnguarded(
+            function () use ($variationDescriptionContract, $variationId) {
+                return $variationDescriptionContract->findByVariationId($variationId);
+            }
+        );
+
+		return $variationDescription;
+	}
+
+	/**
 	 * update the payment by transaction_id when status_url triggered if payment already created before.
 	 * create a payment if no payment created before.
 	 *
@@ -240,7 +377,7 @@ class PaymentHelper
 	 */
 	public function isPayretoPaymentMopId($mopId)
 	{
-		$paymentMethods = $this->paymentMethodRepository->allForPlugin('PlentyPayreto');
+		$paymentMethods = $this->paymentMethodRepository->allForPlugin('Payreto');
 		
 		$this->getLogger(__METHOD__)->error('Payreto:isPayretoPaymentMopId', $paymentMethods);
 
@@ -257,6 +394,18 @@ class PaymentHelper
 
 		return false;
 	}
+
+	public function isPaymentRecurring($paymentMethod) 
+    {
+        switch ($paymentMethod) {
+            case 'PAYRETO_PPM_RC':
+            case 'PAYRETO_DDS_RC':
+            case 'PAYRETO_ACC_RC':
+                return true;
+            default:
+                return false;
+        }
+    }
 
 	/**
 	 * update payment property value.
@@ -376,20 +525,20 @@ class PaymentHelper
 		if (is_array($refundStatus))
 		{
 			$mbTransactionId = (string)$refundStatus['id'];
-			$status = 2;
+			$resultCode = $refundStatus['result']['code'];
 		}
 		else
 		{
 			$mbTransactionId = (string)$refundStatus->id;
-			$status = (string)$refundStatus->status;
+			$resultCode = (string)$refundStatus->result->code;
 		}
 		if (isset($mbTransactionId))
 		{
-			$paymentBookingText[] = "MB Transaction ID : " . $mbTransactionId;
+			$paymentBookingText[] = "Transaction ID : " . $mbTransactionId;
 		}
-		if (isset($status))
+		if (isset($resultCode))
 		{
-			$paymentBookingText[] = "Refund status : " . $this->getPaymentStatus($status);
+			$paymentBookingText[] = "Refund status : " . $this->getPaymentMessage($resultCode);
 		}
 		if (!empty($paymentBookingText))
 		{
@@ -400,30 +549,52 @@ class PaymentHelper
 	}
 
 	/**
+	 * Get payment status order transaction
+	 * @param String $paymentType
+	 * @return int
+	 * 
+	 * Status :
+	 * 1. Awaiting Approval -> In-review
+	 * 2. Approved -> Pre-Authorization
+	 * 3. Captured -> DB/RC/CP
+	 */
+	public function getPaymentStatus($paymentType) 
+	{
+		if ($paymentType === 'PA') {
+			return $this->mapTransactionState('2');
+		} elseif ($paymentType === 'CP' || $paymentType === 'RC' || $paymentType === 'DB') {
+			return $this->mapTransactionState('3');
+		} else {
+			return $this->mapTransactionState('1');
+		}
+	}
+
+	/**
 	 * get payment status (use for payment/refund detail information status).
 	 *
-	 * @param array $status
-	 * @param bool $isCredentialValid
+	 * @param array $resultCode
 	 * @return string
 	 */
-	public function getPaymentStatus(string $status, $isCredentialValid = true)
+	public function getPaymentMessage(string $resultCode)
 	{
-		if (!$isCredentialValid)
-		{
-			return 'Invalid Credential';
+		$paymentResult = $this->gatewayService->getTransactionResult($resultCode);
+		$isSuccessReview = $this->gatewayService->isSuccessReview($resultCode);
+		if ($isSuccessReview) {
+			return 'Pending';
+		} else {
+			switch ($paymentResult)
+			{
+				case 'ACK':
+					return 'Processed';
+					break;
+				case 'NOK':
+					return 'Failed';
+					break;
+				default :
+					return 'Canceled';
+					break;
+			}
 		}
-
-		switch ($status)
-		{
-			case '0':
-				return 'Pending';
-			case '2':
-				return 'Processed';
-			case '-2':
-				return 'Failed';
-		}
-
-		return 'null';
 	}
 
 	/**
@@ -435,9 +606,12 @@ class PaymentHelper
 	 */
 	public function mapTransactionState(string $status, $isRefund = false)
 	{
+		$statusConstants = $this->paymentRepository->getStatusConstants();
+
+		$this->getLogger(__METHOD__)->error('Payreto:statusConstants', $statusConstants);
 		switch ($status)
 		{
-			case '0':
+			case '1':
 				return Payment::STATUS_AWAITING_APPROVAL;
 			case '2':
 				if ($isRefund)
@@ -447,6 +621,10 @@ class PaymentHelper
 				return Payment::STATUS_APPROVED;
 			case '-2':
 				return Payment::STATUS_REFUSED;
+			case '3':
+				return Payment::STATUS_CAPTURED;
+			case '5':
+				return Payment::STATUS_CANCELED;
 		}
 
 		return Payment::STATUS_AWAITING_APPROVAL;
@@ -480,12 +658,11 @@ class PaymentHelper
 	 */
 	public function assignPlentyPaymentToPlentyOrder(Payment $payment, int $orderId)
 	{
-		$orderRepo = pluginApp(OrderRepositoryContract::class);
+		$orderRepository = $this->orderRepository;
 		$authHelper = pluginApp(AuthHelper::class);
-
 		$order = $authHelper->processUnguarded(
-						function () use ($orderRepo, $orderId) {
-							return $orderRepo->findOrderById($orderId);
+						function () use ($orderRepository, $orderId) {
+							return $orderRepository->findOrderById($orderId);
 						}
 		);
 
@@ -531,7 +708,7 @@ class PaymentHelper
 		if (isset($paymentStatus['status']))
 		{
 			$paymentBookingText[] = "Payment status : " .
-				$this->getPaymentStatus((string)$paymentStatus['status']);
+				$this->getPaymentMessage($paymentStatus['result']['code']);
 		}
 		if (isset($paymentStatus['IP_country']))
 		{

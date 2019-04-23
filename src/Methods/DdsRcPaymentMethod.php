@@ -5,25 +5,25 @@ namespace Payreto\Methods;
 use Plenty\Plugin\Log\Loggable;
 
 /**
-* Class PpmPaymentMethod
+* Class AdbPaymentMethod
 * @package Payreto\Methods
 */
-class PpmPaymentMethod extends AbstractPaymentMethod
+class DdsRcPaymentMethod extends AbstractPaymentMethod
 {
 	use Loggable;
 
 	/**
 	 * @var name
 	 */
-	protected $name = 'Paypal';
+	protected $name = 'Direct Debit (Sepa)';
 
 	/**
 	 * @var logoFileName
 	 */
-	protected $logoFileName = 'ppm.png';
+	protected $logoFileName = 'dds.png';
 
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'PAYRETO_PPM';
+	protected $settingsType = 'PAYRETO_DDS_RC';
 }

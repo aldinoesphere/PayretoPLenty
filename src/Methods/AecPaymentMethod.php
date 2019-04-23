@@ -5,25 +5,25 @@ namespace Payreto\Methods;
 use Plenty\Plugin\Log\Loggable;
 
 /**
-* Class PpmPaymentMethod
+* Class AecPaymentMethod
 * @package Payreto\Methods
 */
-class PpmPaymentMethod extends AbstractPaymentMethod
+class AecPaymentMethod extends AbstractPaymentMethod
 {
 	use Loggable;
 
 	/**
 	 * @var name
 	 */
-	protected $name = 'Paypal';
+	protected $name = 'ratenkauf by easyCredit';
 
 	/**
 	 * @var logoFileName
 	 */
-	protected $logoFileName = 'ppm.png';
+	protected $logoFileName = 'aec.png';
 
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'PAYRETO_PPM';
+	protected $settingsType = 'PAYRETO_AEC';
 }

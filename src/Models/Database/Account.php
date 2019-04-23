@@ -16,8 +16,18 @@ use Plenty\Modules\Plugin\DataBase\Contracts\Model;
 class Account extends Model
 {
     public $id = 0;
-    public $name = '';
-    public $value = [];
+    public $customerId = 0;
+    public $paymentGroup = '';
+    public $brand = '';
+    public $holder = '';
+    public $email = '';
+    public $last4digits = '';
+    public $expMonth = '';
+    public $expYear = '';
+    public $serverMode = '';
+    public $channelId = '';
+    public $refId = '';
+    public $paymentDefault = '';
     public $createdAt = '';
     public $updatedAt = '';
 

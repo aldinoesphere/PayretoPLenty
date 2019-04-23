@@ -1,0 +1,41 @@
+<div class="shipping-addresses-select">
+    <div>
+        <div class="cmp cmp-address-list m-b-3">
+            <div>
+                <ul>
+                    {% for value in directDebit %}
+                        <li class="item">
+                            <label for="addressSelectItem1326" class="item-inner">
+                                <span class="item-content">
+                                    <div class="col-sm-2">
+                                        <img src="{{ value.directDebit }}" width="80"/>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <strong>{{ trans('Payreto::Template.FRONTEND_MC_ACCOUNT') }}:****{{ value.last4digits }}</strong> <span></span>
+                                    </div>
+                                </span>
+                                <div class="item-controls">
+                                    <span class="item-edit">
+                                        <a class="btn btn-medium btn-primary" href="/change-account/direct-debit/{{ value.id }}">
+                                            <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+                                        </a>
+                                    </span>
+                                    <span class="item-remove">
+                                        <a class="btn btn-medium btn-remove-address" href="/payment/payreto/confirmation/account/delete/{{ value.id }}">
+                                            <i aria-hidden="true" class="fa fa-times"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="add-item"> 
+        <a href="/add-account/direct-debit" class="btn btn-primary">
+            {{ trans('Payreto::Template.FRONTEND_MC_DDNEW') }}
+            <i aria-hidden="true" class="fa fa-plus-square"></i></a>
+    </div>
+</div>

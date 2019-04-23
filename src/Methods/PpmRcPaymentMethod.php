@@ -8,7 +8,7 @@ use Plenty\Plugin\Log\Loggable;
 * Class PpmPaymentMethod
 * @package Payreto\Methods
 */
-class PpmPaymentMethod extends AbstractPaymentMethod
+class PpmRcPaymentMethod extends AbstractPaymentMethod
 {
 	use Loggable;
 
@@ -25,5 +25,5 @@ class PpmPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'PAYRETO_PPM';
+	protected $settingsType = 'PAYRETO_PPM_RC';
 }

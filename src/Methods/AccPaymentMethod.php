@@ -15,7 +15,7 @@ class AccPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var name
 	 */
-	protected $name = 'Credit Cards';
+	protected $name = 'Credit Card';
 
 	/**
 	 * @var logoFileName
@@ -25,5 +25,5 @@ class AccPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'credit-card';
+	protected $settingsType = 'PAYRETO_ACC';
 }

@@ -25,5 +25,5 @@ class PdrPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'paydirect';
+	protected $settingsType = 'PAYRETO_PDR';
 }

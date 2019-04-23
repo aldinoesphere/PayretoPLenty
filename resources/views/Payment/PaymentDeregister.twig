@@ -1,0 +1,40 @@
+
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+	
+    <div class="page-content checkout container-max">
+    	<div class="row m-b-3">
+    		<div class="col-sm-9">
+    			<h1 class="h2">{{ trans("Payreto::Template.FRONTEND_MC_DELETE") }}</h1>
+            </div> 
+        	<div class="col-xs-12"><hr></div>
+        </div>
+        <br>
+		<div class="row">
+    		<div class="col-sm-6">
+	    		<h4>{{ trans("Payreto::Template.FRONTEND_MC_DELETESURE") }}</h4>
+	    		<div class="col-sm-3">
+		    		<form action="{{ cancelUrl }}" method="post">
+		                <input type="submit" name="action" value="{{ trans("Payreto::Template.FRONTEND_BT_CANCEL") }}" class="btn btn-primary btn-medium">
+		            </form>
+	    		</div>
+	    		<div class="col-sm-3">
+	    			<form action="{{ deleteResponseUrl }}" method="post">
+		                <input type="hidden" name="id" value="{{ id }}"/>
+		                <input type="hidden" name="paymentKey" value="{{ paymentKey }}"/> 
+		                <input type="hidden" name="referenceId" value="{{ referenceId }}"/> 
+		                <input type="submit" name="action" value="{{ trans("Payreto::Template.FRONTEND_BT_CONFIRM") }}" class="btn btn-primary btn-medium">
+		            </form>
+	    		</div>
+	    	</div>
+		</div>
+		<div class="col-xs-12"><hr></div>
+    </div>
+
+{% endblock %}

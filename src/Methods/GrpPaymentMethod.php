@@ -25,5 +25,5 @@ class GrpPaymentMethod extends AbstractPaymentMethod
 	/**
 	 * @var settingsType
 	 */
-	protected $settingsType = 'giropay';
+	protected $settingsType = 'PAYRETO_GRP';
 }

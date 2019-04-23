@@ -19,8 +19,11 @@ use Plenty\Plugin\Log\Loggable;
 
 use Payreto\Services\OrderService;
 use Payreto\Helper\PaymentHelper;
+use Payreto\Helper\BasketHelper;
 use Payreto\Services\Database\SettingsService;
 use Payreto\Services\GatewayService;
+use Payreto\Controllers\SettingsController;
+use Payreto\Controllers\AccountController;
 /**
 * 
 */
@@ -65,6 +68,12 @@ class PaymentService
 	private $systemService;
 
 	/**
+     *
+     * @var notification
+     */
+    private $notification;
+
+	/**
 	 *
 	 * @var settingsService
 	 */
@@ -89,6 +98,24 @@ class PaymentService
 	private $orderRepository;
 
 	/**
+     *
+     * @var settingsController
+     */
+    private $settingsController;
+
+    /**
+     *
+     * @var basketHelper
+     */
+    private $basketHelper;
+
+    /**
+     *
+     * @var accountController
+     */
+    private $accountController;
+
+	/**
 	 * @var array
 	 */
 	public $settings = [];
@@ -103,7 +130,9 @@ class PaymentService
 		SettingsService $settingsService,
 		GatewayService $gatewayService,
 		OrderService $orderService,
-		OrderRepositoryContract $orderRepository
+		OrderRepositoryContract $orderRepository,
+		SettingsController $settingsController,
+		AccountController $accountController
 	){
 		$this->itemRepository = $itemRepository;
 		$this->session = $session;
@@ -115,6 +144,8 @@ class PaymentService
 		$this->gatewayService = $gatewayService;
 		$this->orderService = $orderService;
 		$this->orderRepository = $orderRepository;
+		$this->settingsController = $settingsController;
+		$this->accountController = $accountController;
 	}
 
 	/**
@@ -148,10 +179,16 @@ class PaymentService
 	 *
 	 * @return array|null
 	 */
-	public function getPaymentSettings($settingType)
+	public function getPaymentSettings($paymentKey)
 	{
-		$this->loadCurrentSettings($settingType);
+		$this->loadCurrentSettings($paymentKey);
 		return $this->settings;
+	}
+
+	public function getRecurringSetting()
+	{
+		$this->loadCurrentSettings();
+		return $this->settings['recurring'];
 	}
 
 	/**
@@ -179,37 +216,97 @@ class PaymentService
 	 */
 	public function getPaymentContent(Basket $basket, PaymentMethod $paymentMethod)
 	{
-		
-		
-		$parameters = array_merge(
-			$this->getCredentials(),
-			$this->getTransactionParameters($basket),
-			$this->getCcParameters($paymentMethod)
+		$transactionParameter = array_merge(
+			$this->getCredentials($paymentMethod->paymentKey),
+			$this->getTransactionParameters($basket, $paymentMethod),
+			$this->getCustomerParameters()
 		);
-		// $parameters = [
-		// 	'authentication.userId' => $payretoSettings['userId'],
-		// 	'authentication.password' => $payretoSettings['password'],
-		// 	'authentication.entityId' => $ccSettings['entityId'],
-		// 	'amount' => $basket->basketAmount,
-		// 	'currency' => $basket->currency,
-		// 	'paymentType' => $ccSettings['transactionMode']
-		// ];
 
-		try
+		if ($paymentMethod->paymentKey == 'PAYRETO_AEC')
 		{
-			$checkoutId = $this->gatewayService->getCheckoutId($parameters);
-		}
-		catch (\Exception $e)
-		{
-			$this->getLogger(__METHOD__)->error('Payreto:getCheckoutId', $e);
-			return [
-				'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
-				'content' => 'An error occurred while processing your transaction. Please contact our support.'
-			];
-		}
+			$customer = pluginApp(basketHelper::class)->getCustomer();
+			$transactionParameter = array_merge($transactionParameter, $this->getServerToServerParameters($basket, $paymentMethod));
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $transactionParameter); 
 
-		$this->getLogger(__METHOD__)->error('Payreto:parameters', $checkoutId);
-		$paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutId;
+			$paymentResponse = $this->gatewayService->getServerToServerResponse($transactionParameter);
+			$this->getLogger(__METHOD__)->error('Payreto:paymentResponse', $paymentResponse);
+
+			if (!$this->getEasycreditAmountAllowed($basket)) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'The financing amount is outside the permitted amounts (200 - 3,000 EUR)'
+				];
+			}
+
+			if (!$this->isDateOfBirthValid()) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'Please enter your date of birth to use easyCredit.'
+				];
+			}
+
+			if (!$this->isGenderValid()) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => 'Please enter your gender to make payment with easyCredit.'
+				];
+			}
+
+			if ($paymentResponse['is_valid']) {
+				if ($this->gatewayService->getTransactionResult($paymentResponse['response']['result']['code']) == 'ACK' ) {
+					$paymentPageUrl = $paymentResponse['response']['redirect']['url'];
+				} elseif($this->gatewayService->getTransactionResult($paymentResponse['response']['result']['code']) == 'NOK') {
+					$returnMessage = $this->gatewayService::getErrorIdentifier($paymentResponse['response']['result']['code']);
+					return [
+						'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+						'content' => $this->gatewayService->getErrorMessage($returnMessage)
+					];
+				}
+			} else {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
+				];
+			}
+			
+		} else {
+
+			$this->getLogger(__METHOD__)->error('Payreto:parameters', $transactionParameter); 
+			$checkoutResult = $this->gatewayService->getCheckoutResult($transactionParameter);	
+			$this->getLogger(__METHOD__)->error('Payreto:checkoutResult', $checkoutResult);
+
+			if (!$checkoutResult['is_valid']) {
+				$returnMessage = $this->gatewayService::getErrorIdentifier($checkoutResult['response']['result']['code']);
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage($returnMessage)
+				];
+			} elseif(!isset($checkoutResult['response']['id'])) {
+				return [
+					'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+					'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
+				];
+			} else {
+				$paymentWidgetUrl = $this->gatewayService->getPaymentWidgetUrl(
+	                $transactionParameter['server_mode'],
+	                $checkoutResult['response']['id']
+	            );
+				$this->getLogger(__METHOD__)->error('Payreto:paymentWidgetUrl', $paymentWidgetUrl);
+
+	            $paymentWidgetContent = $this->gatewayService->getGatewayResponse($paymentWidgetUrl, $transactionParameter['server_mode']);
+	            $this->getLogger(__METHOD__)->error('Payreto:paymentWidgetContent', $paymentWidgetContent);
+	            if ( !$paymentWidgetContent['is_valid']
+	            	|| strpos($paymentWidgetContent['response'], 'errorDetail') !== false
+	            ) {
+	            	return [
+						'type' => GetPaymentMethodContent::RETURN_TYPE_ERROR,
+						'content' => $this->gatewayService->getErrorMessage('ERROR_GENERAL_REDIRECT')
+					];
+	            }
+
+	            $paymentPageUrl = $this->paymentHelper->getDomain().'/payment/payreto/pay/' . $checkoutResult['response']['id'];
+			}
+		}
 
 		return [
 			'type' => GetPaymentMethodContent::RETURN_TYPE_REDIRECT_URL,
@@ -217,38 +314,396 @@ class PaymentService
 		];
 	}
 
-	public function getCredentials() {
+	protected function isGenderValid() {
+		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$gender = $customer->gender;
+
+		$this->getLogger(__METHOD__)->error('Payreto:gender', $gender);
+
+		if (is_null($gender)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	protected function isDateOfBirthValid() {
+		$customer = pluginApp(basketHelper::class)->getCustomer();
+		$birthdate = substr($customer->birthdayAt, 0,10);
+
+		$customerDateOfBirth = explode("-", $birthdate);
+
+        $year = (int)$customerDateOfBirth[0];
+        $month = (int)$customerDateOfBirth[1];
+        $day = (int)$customerDateOfBirth[2];
+
+        if ($year < 1900) {
+            return false;
+        }
+
+        if ($month < 0 || $month > 12) {
+            return false;
+        }
+
+        if ($day < 0 || $day > 31) {
+            return false;
+        }
+
+        return true;
+	}
+
+	protected function getEasycreditAmountAllowed($basket) {
+		if ((float)$basket->basketAmount < 200 || (float)$basket->basketAmount > 5000 || $basket->currency != 'EUR') {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Get the Credential payment
+	 *
+	 * @return array
+	 */
+	public function getCredentials($paymentKey) {
 		$payretoSettings = $this->getPayretoSettings();
+		$paymentSettings = $this->getPaymentSettings($paymentKey);
 		$credentials = [
-			'authentication.userId' => $payretoSettings['userId'],
-			'authentication.password' => $payretoSettings['password']
-		];
+						'login' 		=> $payretoSettings['userId'],
+						'password' 		=> $payretoSettings['password'],
+						'channel_id' 	=> $paymentSettings['entityId'],
+						'server_mode' 	=> $this->getServerMode($paymentKey)
+					];
 
 		return $credentials;
 	}
 
-	public function getCcParameters($paymentMethod) 
+	/**
+	 * Get the testMode Parameters
+	 *
+	 * @param class PaymentMethod
+	 * @return array|null
+	 */
+	public function getTestMode($paymentKey) 
 	{
-		$this->getLogger(__METHOD__)->error('Payreto:paymentMethod', $paymentMethod);
 
-		$ccSettings = $this->getPaymentSettings('credit-card');
-		$ccParameters = [
-			'authentication.entityId' => $ccSettings['entityId'],
-			'paymentType' => $ccSettings['transactionMode']
-		];
+		if ($this->getServerMode($paymentKey) == "LIVE") {
+            return false;
+        }
 
-		return $ccParameters;
+        
+        $this->getLogger(__METHOD__)->error('Payreto:paymentKey', $paymentKey);
+        if ($paymentKey == 'PAYRETO_GRP') {
+            return 'INTERNAL';
+        } else {
+            return "EXTERNAL";
+        }
 	}
 
-	public function getTransactionParameters($basket)
+
+	/**
+	 * Get the testMode Parameters
+	 *
+	 * @param class PaymentMethod
+	 * @return array|null
+	 */
+	public function getServerMode($paymentKey) 
+	{
+		$paymentSettings = $this->getPaymentSettings($paymentKey);
+		return $paymentSettings['server'];
+	}
+
+	/**
+	 * Get the Server To Server Parameters paymen
+	 *
+	 * @param Basket $basket
+	 * @param PaymentMethod $paymentMethod
+	 * @return array|null
+	 */
+	public function getServerToServerParameters(Basket $basket, PaymentMethod $paymentMethod) 
+	{
+		$paymentParameters = [];
+		if ($paymentMethod->paymentKey == 'PAYRETO_AEC') {
+			$paymentParameters =array_merge( 
+					$this->getChartParameters($basket),
+					[
+						'paymentBrand' => $this->getPaymentBrand($basket),
+						'shopperResultUrl' => $this->paymentHelper->getDomain() . '/payment/payreto/confirmation/',
+						'customParameters' => [
+												'RISK_ANZAHLBESTELLUNGEN' => $this->paymentHelper->getOrderCount((int)$this->paymentHelper->getCustomerId()),
+												'RISK_KUNDENSTATUS' => $this->getRiskKundenStatus(),
+												'RISK_KUNDESEIT' => '2016-01-01',
+												'RISK_BESTELLUNGERFOLGTUEBERLOGIN' => $this->checkCustomerLoginStatus()
+											]
+					]
+				);
+		}
+
+		return $paymentParameters;
+	}
+
+	/**
+     * Get risk kunden status
+     *
+     * @return string|boolean
+     */
+    public function checkCustomerLoginStatus()
+    {
+    	$customerId = $this->paymentHelper->getCustomerId();
+    	$this->getLogger(__METHOD__)->error('Payreto:customerId', $customerId);
+    	if ($customerId) {
+			return 'true';
+		} else {
+			return 'false';
+		}
+    }
+
+	/**
+     * Get risk kunden status
+     *
+     * @return string|boolean
+     */
+    protected function getRiskKundenStatus()
+    {
+    	if ($this->paymentHelper->getOrderCount((int)$this->paymentHelper->getCustomerId()) > 0) {
+            return 'BESTANDSKUNDE';
+        }
+        return 'NEUKUNDE';
+    }
+
+	public function getCustomerParameters() 
+	{
+		$shippings = pluginApp(basketHelper::class)->getShippingAddress();
+		$billings = pluginApp(basketHelper::class)->getBillingAddress();
+		$customer = pluginApp(basketHelper::class)->getCustomer(); 
+		$this->getLogger(__METHOD__)->error('Payreto:shippings', $shippings);
+		$this->getLogger(__METHOD__)->error('Payreto:billings', $billings);
+		$this->getLogger(__METHOD__)->error('Payreto:customer', $customer);
+
+		$customerParameters = [
+			'customer' => 
+							[
+								'email' => $customer->email,
+								'sex' => $this->getGender($customer->gender),
+								'phone' => $customer->privatePhone,
+								'last_name' => $customer->lastName,
+								'birthdate' => date('Y-m-d', strtotime($customer->birthdayAt)),
+								'first_name' => $customer->firstName
+							],
+			'shipping' => 
+							[
+								'city' => $shippings->town,
+								'country' => 'DE',
+								'street1' => $shippings->address1 . ' ' . $shippings->address2 . ' ' . $shippings->address3 . ' ' . $shippings->address4,
+								'postcode' => $shippings->postalCode
+							],
+			'billing' =>
+							[
+								'city' => $billings->town,
+								'country_code' => 'DE',
+								'street' => $billings->address1 . ' ' . $billings->address2 . ' ' . $billings->address3 . ' ' . $billings->address4,
+								'zip' => $billings->postalCode
+							]
+		];
+
+		return $customerParameters;
+	}
+
+	/**
+	 * Get Gender
+	 *
+	 * @param string $gender
+	 * @return string
+	 */
+
+	public function getGender($gender = '')
+	{
+		if ($gender) {
+			switch ($gender) {
+				case 'male':
+					return 'M';
+					break;
+				
+				default:
+					return 'F';
+					break;
+			}
+		} else {
+			return '';
+		}
+	}
+
+	public function getChartParameters($basket) 
+	{
+		$chartParameters = [];
+		foreach ($basket->basketItems as $key => $item) {
+			$itemName = $this->paymentHelper->getVariationDescription($item->variationId); 
+			$chartParameters['cartItems'][$key]['name'] = $itemName[0]->name;
+			$chartParameters['cartItems'][$key]['type'] = 'basic';
+			$chartParameters['cartItems'][$key]['price'] = (int)$item->price;
+			$chartParameters['cartItems'][$key]['currency'] = $basket->currency;
+			$chartParameters['cartItems'][$key]['quantity'] = $item->quantity;
+			$chartParameters['cartItems'][$key]['merchantItemId'] = $item->itemId;	
+		} 
+
+		return $chartParameters;
+	}
+
+	/**
+	 * Get the Transaction Parameters payment
+	 *
+	 * @param class Basket
+	 * @return array
+	 */
+	public function getTransactionParameters(Basket $basket, PaymentMethod $paymentMethod)
 	{
 		$transactionParameters = [];
 		$transactionParameters = [
+			'transaction_id' => $basket->id,
 			'amount' => $basket->basketAmount,
-			'currency' => $basket->currency
+			'currency' => $basket->currency,
+			'test_mode' => $this->getTestMode($paymentMethod->paymentKey)
 		];
+		$transactionParameters['payment_type'] = $this->getPaymentType($basket);
+
+		if ($paymentMethod->paymentKey == 'PAYRETO_PPM_RC') {
+			unset($transactionParameters['payment_type']);
+		}
+
+		if ($this->paymentHelper->isPaymentRecurring($paymentMethod->paymentKey)) {
+			$recurringParameter = $this->getRecurringPrameter($paymentMethod, $transactionParameters);
+			$transactionParameters = array_merge($transactionParameters, $recurringParameter);
+		}
 
 		return $transactionParameters;
+	}
+
+
+	private function getRecurringPrameter($paymentMethod, $transaction)
+    {
+        $recurringParameter = $this->getPaymentReference($paymentMethod);
+        
+        $recurringParameter['payment_registration'] = 'true';
+        if ($paymentMethod->paymentKey == 'PAYRETO_ACC_RC') {
+            $recurringParameter['3D']['amount'] = $transaction['amount'];
+            $recurringParameter['3D']['currency'] = $transaction['currency'];
+        }
+
+        return $recurringParameter;
+    }
+
+    public function getRecurringPaymentParameters($paymentKey)
+    {
+    	$payretoSettings = $this->getPayretoSettings();
+    	$paymentSettings = $this->getPaymentSettings($paymentKey);
+
+        $transactionData = array_merge(
+            $this->getCredentials($paymentKey),
+            $this->getCustomerParameters()
+        );
+
+        $transactionData['amount'] = $this->getRegisterAmount($paymentKey);
+        $transactionData['currency'] = 'EUR';
+        $transactionData['3D']['amount'] = $this->get3dAmount($paymentKey);
+        $transactionData['3D']['currency'] = $this->get3dCurrency($paymentKey, 'EUR');
+        $transactionData['test_mode'] = $this->getTestMode($paymentKey);
+        if ($paymentKey <> 'PAYRETO_PPM_RC') {
+        	$transactionData['payment_type'] = $this->getPaymentType(false, $paymentKey);
+        }
+        $transactionData['payment_recurring'] = 'INITIAL';
+
+    	$transactionData['payment_registration'] = 'true';
+        $transactionData['transaction_id'] = $this->getTransactionIdbyReference();
+
+        return $transactionData;
+    }
+
+    protected function getRegisterAmount($paymentKey)
+    {
+    	$paymentSettings = $this->getPaymentSettings($paymentKey);
+
+    	return $paymentSettings['amount'];
+    }
+
+    protected function get3dAmount($paymentKey)
+    {
+        if ($paymentKey == 'PAYRETO_ACC_RC') {
+            return $this->getRegisterAmount($paymentKey);
+        }
+    }
+
+    protected function get3dCurrency($paymentKey, $currency)
+    {
+        if ($paymentKey == 'PAYRETO_ACC_RC') {
+            return $currency;
+        }
+    }
+
+    protected function getTransactionIdbyReference()
+    {
+        return (int)$this->paymentHelper->getCustomerId();
+    }
+
+    public function isRedirectPayment($paymentKey)
+    {
+        if ($paymentKey == 'PAYRETO_PPM_RC') {
+            return  true;
+        }
+
+        return false;
+    }
+
+
+    public function getPaymentReference($paymentMethod)
+    {
+        $registeredPayments = $this->getRegisteredPayment($paymentMethod); 
+
+        $paymentReference = array();
+        $i = 0;
+        foreach ($registeredPayments as $value) {
+            $paymentReference['registrations'][$i ] = $value->refId;
+            $i++;
+        }
+
+        return $paymentReference;
+    }
+
+
+    public function getRegisteredPayment($paymentMethod)
+    {
+        $registeredPayments = $this->accountController->loadAccount($this->paymentHelper->getCustomerId(), $paymentMethod->paymentKey);
+        return $registeredPayments;
+    }
+
+	/**
+	 * get payment type
+	 *
+	 * @param Basket $basket
+	 * @return Address
+	 */
+	public function getPaymentType($basket = false, $paymentKey = false)
+	{
+		if ($basket) {
+			$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+			$paymentKey = $paymentMethod->paymentKey;
+		}
+		
+        $paymentSettings = $this->getPaymentSettings($paymentKey);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentKey);
+        return !empty($paymentSettings['transactionMode']) ? $paymentSettings['transactionMode'] : $optionSetting['paymentType'];
+	}
+
+	/**
+	 * get payment brand
+	 *
+	 * @param Basket $basket
+	 * @return Address
+	 */
+	public function getPaymentBrand(Basket $basket)
+	{
+		$paymentMethod = $this->paymentHelper->getPaymentMethodById($basket->methodOfPaymentId);
+        $optionSetting = $this->settingsController->getOptionSetting($paymentMethod->paymentKey);
+        return $optionSetting['paymentBrand'];
 	}
 
 	/**
@@ -257,7 +712,7 @@ class PaymentService
 	 * @param Basket $basket
 	 * @return Address
 	 */
-	private function getBillingAddress(Basket $basket)
+	public function getBillingAddress(Basket $basket)
 	{
 		$addressId = $basket->customerInvoiceAddressId;
 		return $this->addressRepository->findAddressById($addressId);
@@ -281,7 +736,7 @@ class PaymentService
 	 * @param Basket $basket
 	 * @return Address
 	 */
-	private function getShippingAddress(Basket $basket)
+	public function getShippingAddress(Basket $basket)
 	{
 		$addressId = $basket->customerShippingAddressId;
 		if ($addressId != null && $addressId != - 99)
@@ -292,69 +747,6 @@ class PaymentService
 		{
 			return $this->getBillingAddress($basket);
 		}
-	}
-
-	/**
-	 * get address by given parameter
-	 *
-	 * @param Address $address
-	 * @return array
-	 */
-	private function getAddress(Address $address)
-	{
-		return [
-			'email' => $address->email,
-			'firstName' => $address->firstName,
-			'lastName' => $address->lastName,
-			'address' => $address->street . ' ' . $address->houseNumber,
-			'postalCode' => $address->postalCode,
-			'city' => $address->town,
-			'country' => $this->countryRepository->findIsoCode($address->countryId, 'iso_code_3'),
-			'birthday' => $address->birthday,
-			'companyName' => $address->companyName,
-			'phone' => $address->phone
-		];
-	}
-
-	/**
-	 * get basket items
-	 *
-	 * @param Basket $basket
-	 * @return array
-	 */
-	private function getBasketItems(Basket $basket)
-	{
-		$items = [];
-		/** @var BasketItem $basketItem */
-		foreach ($basket->basketItems as $basketItem)
-		{
-			$item = $basketItem->getAttributes();
-			$item['name'] = $this->getBasketItemName($basketItem);
-			$items[] = $item;
-		}
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItems', $items);
-
-		return $items;
-	}
-
-	/**
-	 * get basket item name
-	 *
-	 * @param BasketItem $basketItem
-	 * @return string
-	 */
-	private function getBasketItemName(BasketItem $basketItem)
-	{
-		$this->getLogger(__METHOD__)->error('Payreto::item name', $basketItem);
-		/** @var \Plenty\Modules\Item\Item\Models\Item $item */
-		$item = $this->itemRepository->show($basketItem->itemId);
-
-		/** @var \Plenty\Modules\Item\Item\Models\ItemText $itemText */
-		$itemText = $item->texts;
-
-		$this->getLogger(__METHOD__)->error('Payreto:getBasketItemName', $itemText);
-
-		return $itemText->first()->name1;
 	}
 
 	/**
@@ -385,87 +777,51 @@ class PaymentService
 	{
 		try
 		{
-			$payretoSettings = $this->getPayretoSettings();
 			$transactionId = $payment->properties[0]->value;
-			$ccSettings = $this->getPaymentSettings('credit-card');
-			$parameters = [
-				'authentication.userId' => $payretoSettings['userId'],
-				'authentication.password' => $payretoSettings['password'],
-				'authentication.entityId' => $ccSettings['entityId'],
-				'amount' => $payment->amount,
-				'currency' => $payment->currency,
-				'paymentType' => 'RF'
-			];
+			$transactionData = array_merge(
+				$this->getCredentials($payment->method->paymentKey),
+				[
+					'amount' => $payment->amount,
+					'currency' => $payment->currency,
+					'payment_type' => 'RF',
+					'test_mode' => $this->getTestMode($payment->method->paymentKey)
+				]
+			);
 
-			$this->getLogger(__METHOD__)->error('Payreto:refund', $payment->properties[0]->value);
+			$refundResult = $this->gatewayService->backOfficeOperation($transactionId, $transactionData);
 
-			$response = $this->gatewayService->doRefund($transactionId, $parameters);
+			$resultRefund = $this->gatewayService->getTransactionResult($refundResult['response']['result']['code']);
 
-			$this->getLogger(__METHOD__)->error('Payreto:response', $response);
+			if ($resultRefund == 'ACK') 
+			{
+				return [
+					'success' => true,
+					'response' => $refundResult['response']
+				];
+			} elseif ($resultRefund == 'NOK') {
+				$returnMessage = $this->gatewayService->getErrorIdentifier($resultRefund);
+				return [
+					'error' => true,
+					'errorMessage' => $returnMessage
+				];
+			} else {
+				return [
+					'error' => true,
+					'errorMessage' => 'ERROR_UNKNOWN'
+				];
+			}
 
 		}
 		catch (\Exception $e)
 		{
-			$this->getLogger(__METHOD__)->error('Payreto:refundFailed', $e);
-
 			return [
 				'error' => true,
 				'errorMessage' => $e->getMessage()
 			];
 		}
-
-		return [
-			'success' => true,
-			'response' => $response
-		];
 	}
 
-	/**
-	 * send get currenty payment status to the gateway with transaction_id and returns error or success.
-	 *
-	 * @param string $transactionId
-	 * @param Order $order
-	 */
-	public function updateOrderStatus($transactionId, Order $order)
-	{
-		try {
-			// $skrillSettings = $this->getSkrillSettings();
-			// $parameters['email'] = $skrillSettings['merchantAccount'];
-			// $parameters['password'] = md5($skrillSettings['apiPassword']);
-			// $parameters['trn_id'] = $transactionId;
-
-			// $parametersLog = $parameters;
-			// $parametersLog['password'] = '*****';
-
-			// $this->getLogger(__METHOD__)->error('Skrill:parametersLog', $parametersLog);
-
-			// $response = $this->gatewayService->getPaymentStatus($parameters);
-			$response = '';
-
-			// $this->getLogger(__METHOD__)->error('Skrill:response', $response);
-		}
-		catch (\Exception $e)
-		{
-			$this->getLogger(__METHOD__)->error('Payreto:updateOrderStatusFailed', $e->getMessage());
-
-			// $this->orderRepository->updateOrder(['statusId' => 3], $order->id);
-
-			return [
-				'error' => true,
-				'errorMessage' => $e->getMessage()
-			];
-		}
-
-		if ($response['status'] != '2')
-		{
-			// $this->orderRepository->updateOrder(['statusId' => 3], $order->id);
-		}
-
-		return [
-			'success' => true,
-			'response' => $response
-		];
-	}
+	
 
 }
 

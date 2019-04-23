@@ -27,6 +27,11 @@ class OrderService
 	private $orderRepository;
 
 	/**
+	 * @var orderStatus
+	 */
+	private $orderStatus;
+
+	/**
 	 * OrderService constructor.
 	 * @param OrderRepositoryContract $orderRepository
 	 */
@@ -39,7 +44,7 @@ class OrderService
 	 * Place an order
 	 * @return LocalizedOrder
 	 */
-	public function placeOrder()
+	public function placeOrder($paymentType, $isCapture = false)
 	{
 		$basketService = pluginApp(BasketService::class);
 		$sessionStorageService = pluginApp(SessionStorageService::class);
@@ -54,7 +59,7 @@ class OrderService
 
 		$order = pluginApp(OrderBuilder::class)->prepare(OrderType::ORDER)
 						->fromBasket()
-						->withStatus(3)
+						->withStatus($this->getOrderStatus($paymentType))
 						->withContactId($customerService->getContactId())
 						->withAddressId($checkoutService->getBillingAddressId(), AddressType::BILLING)
 						->withAddressId($checkoutService->getDeliveryAddressId(), AddressType::DELIVERY)
@@ -78,6 +83,39 @@ class OrderService
 		}
 
 		return LocalizedOrder::wrap($order, "de");
+	}
+
+	public function updateOrderStatus($orderId, $paymentType) {
+		$data = [
+			'statusId' => $this->getOrderStatus($paymentType)
+		];
+
+		return $order = $this->orderRepository->updateOrder($data, $orderId);
+	}
+
+	public function getOrderStatus($paymentType) 
+	{
+		if ($paymentType == 'CP' || $paymentType == 'RC' || $paymentType == 'DB') {
+			return 5;
+		} else {
+			switch ($paymentType) {
+				case 'PA':
+					return 4.5;
+					break;
+
+				case 'DB':
+					return 5;
+					break;
+
+				case 'IR':
+					return 3.5;
+					break;
+				
+				default:
+					return 5;
+					break;
+			}
+		}
 	}
 
 }

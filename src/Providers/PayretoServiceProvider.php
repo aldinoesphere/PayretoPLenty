@@ -21,9 +21,12 @@ use Plenty\Plugin\Log\Loggable;
 use Payreto\Helper\PaymentHelper;
 use Payreto\Services\PaymentService;
 use Payreto\Methods\AccPaymentMethod;
-use Payreto\Methods\EcpPaymentMethod;
+use Payreto\Methods\AccRcPaymentMethod;
+use Payreto\Methods\AecPaymentMethod;
 use Payreto\Methods\DdsPaymentMethod;
+use Payreto\Methods\DdsRcPaymentMethod;
 use Payreto\Methods\PpmPaymentMethod;
+use Payreto\Methods\PpmRcPaymentMethod;
 use Payreto\Methods\AdbPaymentMethod;
 use Payreto\Methods\PdrPaymentMethod;
 use Payreto\Methods\GrpPaymentMethod;
@@ -48,9 +51,12 @@ class PayretoServiceProvider extends ServiceProvider
 		EventProceduresService $eventProceduresService
     ) {
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC', AccPaymentMethod::class);
-    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ECP', EcpPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_ACC_RC', AccRcPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_AEC', AecPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS', DdsPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_DDS_RC', DdsRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM', PpmPaymentMethod::class);
+    	$this->registerPaymentMethod($payContainer, 'PAYRETO_PPM_RC', PpmRcPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_ADB', AdbPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_PDR', PdrPaymentMethod::class);
     	$this->registerPaymentMethod($payContainer, 'PAYRETO_GRP', GrpPaymentMethod::class);
@@ -71,8 +77,8 @@ class PayretoServiceProvider extends ServiceProvider
 						'Payreto',
 						ProcedureEntry::PROCEDURE_GROUP_ORDER,
 						[
-						'de' => 'Update order status the Payreto-Payment',
-						'en' => 'Update order status the Payreto-Payment'
+						'de' => 'Bestellstatus aktualisieren',
+						'en' => 'Update Order Status'
 						],
 						'Payreto\Procedures\UpdateOrderStatusEventProcedure@run'
 		);
@@ -81,6 +87,7 @@ class PayretoServiceProvider extends ServiceProvider
 		$eventDispatcher->listen(
 						GetPaymentMethodContent::class,
 						function (GetPaymentMethodContent $event) use ($paymentHelper, $basket, $paymentService, $paymentMethodService) {
+							$this->getLogger(__METHOD__)->error('Payreto:Event', $event);
 							if ($paymentHelper->isPayretoPaymentMopId($event->getMop()))
 							{
 								$content = $paymentService->getPaymentContent(
@@ -88,6 +95,8 @@ class PayretoServiceProvider extends ServiceProvider
 												$paymentMethodService->findByPaymentMethodId($event->getMop())
 								);
 								$this->getLogger(__METHOD__)->error('Payreto:Content', $content);
+
+								$this->getLogger(__METHOD__)->error('Payreto:event', $event);
 
 								$event->setValue(isset($content['content']) ? $content['content'] : null);
 								$event->setType(isset($content['type']) ? $content['type'] : '');

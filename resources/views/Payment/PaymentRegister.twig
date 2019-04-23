@@ -1,0 +1,65 @@
+
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+	{% if redirect %}
+	    <style>
+			body {
+				display:none;
+				background: white;
+			}
+		</style>
+
+		<script type="text/javascript">
+			var wpwlOptions = {
+				onReady: function(){
+					jQuery(".wpwl-form").submit();
+				}
+			}
+		</script>
+
+		<input type="submit" value="Submit" style="display:none" />
+		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+		<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}">{{ paymentBrand }}</form> 
+	{% else %}
+		<div class="page-content checkout container-max">
+	    	<div class="row m-b-3">
+	    		<div class="col-sm-9">
+	    			<h1 class="h2">Add Payment Information</h1>
+	            </div> 
+	        	<div class="col-xs-12"><hr></div>
+	        </div>
+	        <div>
+	    		<link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
+	    		<script type="text/javascript"> 
+				    var wpwlOptions = {
+						style: "card",
+				        onReady: function(){
+							var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>{{ trans('Payreto::Template.FRONTEND_BT_CANCEL') }}</a>";
+							var ttRegistration = "<div class='register-tooltip'>{{ trans('Payreto::Template.FRONTEND_TT_REGISTRATION') }}</div>";
+							var ttTestMode = "<div class='testmode'>{{ trans('Payreto::Template.FRONTEND_TT_TESTMODE') }}</div>";
+							var headerWidget = "<h2 style='text-align: center'>{{ trans('Payreto::Template.FRONTEND_RECURRING_WIDGET_HEADER2') }}</h2>";
+				            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+				            jQuery('.wpwl-container').after(ttRegistration);
+				            {% if frameTestMode == 'TEST' %}
+					            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
+				            {% endif %}
+						},
+						registrations: {
+				        	hideInitialPaymentForms: false,
+				        	requireCvv: false
+				    	}
+				    }
+				</script>
+	    		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+		    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
+			</div>
+	    </div>
+	{% endif %}
+
+{% endblock %}

@@ -22,12 +22,18 @@ class SettingsService extends DatabaseBaseService
     protected $tableName = 'settings';
 
     /**
+     * @var db
+     */
+    protected $db;
+
+    /**
      * SettingsService constructor.
      * @param DataBase $dataBase
      */
     public function __construct(DataBase $dataBase)
     {
         parent::__construct($dataBase);
+        $this->db = $dataBase;
     }
 
     /**
@@ -83,8 +89,10 @@ class SettingsService extends DatabaseBaseService
         {
             foreach ($settings as $setting)
             {
-                foreach ($setting as $store => $values)
+                foreach ($setting[0] as $store => $values)
                 {
+                    $this->getLogger(__METHOD__)->error('Payreto:setting', $setting[0]);
+
                     $id = 0;
                     $store = (int)str_replace('PID_', '', $store);
 
@@ -109,11 +117,7 @@ class SettingsService extends DatabaseBaseService
                         $settingModel->name = $mode;
                         $settingModel->value = $values;
                         $settingModel->updatedAt = date('Y-m-d H:i:s');
-
-                        if ($settingModel instanceof Settings)
-                        {
-                            $this->setValue($settingModel);
-                        }
+                        $this->db->save($settingModel);
                     }
                 }
             }
@@ -144,26 +148,6 @@ class SettingsService extends DatabaseBaseService
 
         return $clients;
     }
-
-    /**
-     * set initial settings payment method name for each plentyId
-     *
-     */
-    // public function setInitialSettings()
-    // {
-    //     $clients = $this->getClients();
-
-    //     foreach ($clients as $plentyId)
-    //     {
-    //         $settings = array();
-    //         $settings[] = array(
-    //             'PID_'.$plentyId => array(
-    //                 'language' => $value
-    //             )
-    //         );
-    //         $this->saveSettings('payreto_settings', $settings);
-    //     }
-    // }
 
     /**
      * get Payreto configuration by plentyId and settingType

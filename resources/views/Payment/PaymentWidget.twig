@@ -7,11 +7,30 @@
 {% endblock %}
 
 {% block PageBody %}
-
+	
     <div class="page-content checkout container-max">
     	<div>
-    		<script src="https://test.oppwa.com/v1/paymentWidgets.js?checkoutId={{ checkoutId }}" type="text/javascript"></script>
-	    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ cardType }}"></form>
+    		<link rel="stylesheet" href="{{ plugin_path('Payreto') }}/css/payment_widget.css">
+    		<script type="text/javascript"> 
+			    var wpwlOptions = {
+					style: "card",
+			        onReady: function(){
+						var buttonCancel = "<a href='{{ cancelUrl }}' class='wpwl-button btn_cancel'>{{ trans('Payreto::Template.FRONTEND_BT_CANCEL') }}</a>";
+						var ttTestMode = "<div class='testmode'>{{ trans('Payreto::Template.FRONTEND_TT_TESTMODE') }}</div>";
+						var headerWidget = "<h2 style='text-align: center'>{{ trans('Payreto::Template.FRONTEND_RECURRING_WIDGET_HEADER2') }}</h2>";
+			            jQuery('form.wpwl-form').find('.wpwl-button').before(buttonCancel);
+			            {% if frameTestMode == 'TEST' %}
+				            jQuery(".wpwl-container").wrap( "<div class='frametest'></div>").before(ttTestMode);   
+			            {% endif %}
+					},
+					registrations: {
+			        	hideInitialPaymentForms: false,
+			        	requireCvv: false
+			    	}
+			    }
+			</script>
+    		<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+	    	<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}"></form>
 		</div>
     </div>
 

@@ -9,7 +9,7 @@ use Plenty\Plugin\Log\Loggable;
 /**
 * 
 */
-class CreatePaymentMethod
+class CreatesPaymentMethod_b_1_0_2
 {
 	use Loggable;
 	
@@ -33,10 +33,14 @@ class CreatePaymentMethod
 	}
 
 	public function run() {
+		$this->getLogger(__METHOD__)->error('Payreto:StartInstall', 'OK');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_ACC', 'Credit Card Payment Methods');
-		$this->createPaymentMethodByPaymentKey('PAYRETO_ECP', 'Easy Credit Payment Methods');
+		$this->createPaymentMethodByPaymentKey('PAYRETO_ACC_RC', 'Credit Card Payment Methods Recurring');
+		$this->createPaymentMethodByPaymentKey('PAYRETO_AEC', 'ratenkauf by easyCredit Payment Methods');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_DDS', 'Direct Debit SEPA');
+		$this->createPaymentMethodByPaymentKey('PAYRETO_DDS_RC', 'Direct Debit SEPA Recurring');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_PPM', 'Paypal Payment Methods');
+		$this->createPaymentMethodByPaymentKey('PAYRETO_PPM_RC', 'Paypal Payment Methods Recurring');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_ADB', 'Online Bank Transfer Payment Methods');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_PDR', 'Paydirect Payment Methods');
 		$this->createPaymentMethodByPaymentKey('PAYRETO_GRP', 'Giropay Payment Methods');

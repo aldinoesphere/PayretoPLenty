@@ -1,0 +1,31 @@
+
+
+{% extends getPartial('page-design') %}
+{% import "Ceres::PageDesign.Macros.LayoutContainer" as LayoutContainer %}
+
+{% block PartialHead %}
+    <title>{{ trans("Ceres::Template.orderCheckout") }} | {{ config("Ceres.header.company_name") }}</title>
+{% endblock %}
+
+{% block PageBody %}
+	
+<style>
+	body {
+		display:none;
+		background: white;
+	}
+</style>
+
+<script type="text/javascript">
+	var wpwlOptions = {
+		onReady: function(){
+			jQuery(".wpwl-form").submit();
+		}
+	}
+</script>
+
+<input type="submit" value="Submit" style="display:none" />
+<script src="{{ paymentWidgetUrl }}" type="text/javascript"></script>
+<form action="{{ paymentPageUrl }}" class="paymentWidgets" data-brands="{{ paymentBrand }}">{{ paymentBrand }}</form>
+
+{% endblock %}
